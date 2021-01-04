@@ -43,17 +43,18 @@ export class OrderResolver {
     async products(@Parent() order: OrderEntity): Promise<ProductDTO[]> {
         return this.orderProductLoader.loadMany(order.products);
     }
-    @Query()
+    @Query(returns=> OrderEntity)
     @UseGuards(new AuthGuard())
     orders(@Context("user") user: any): Promise<OrderDTO[]> {
         return this.orderService.indexOrdersByUser(user.id);
     }
-    @Mutation()
+    @Mutation(returns=> OrderEntity)
     @UseGuards(new AuthGuard())
     deleteOrder(@Args("order") { id }: UUID, @Context("user") user: any) {
         return this.orderService.destroyUserOrder(id, user.id);
     }
-    @Mutation()
+    
+    @Mutation(returns=> OrderEntity)
     @UseGuards(new AuthGuard())
     createOrder(
         @Args("products") products: CreateOrder[],

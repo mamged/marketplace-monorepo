@@ -6,17 +6,18 @@ import { RegisterUser } from "./register-user.validation";
 import { AuthGuard } from "../middlewares/auth.guard";
 import { SellerGuard } from "../middlewares/seller.guard";
 import { UserService } from "./user.service";
+import { UserEntity } from "@commerce/users";
 
 @Resolver("User")
 export class UserResolver {
     constructor(private readonly userService: UserService) {}
 
-    @Query()
+    @Query(returns=> UserEntity)
     users(): Promise<UserDTO[]> {
         return this.userService.get();
     }
 
-    @Mutation()
+    @Mutation(returns=> LoginUser)
     login(
         @Args("data") data: LoginUser
     ): Promise<void | UserLoginDTO> {
@@ -27,12 +28,12 @@ export class UserResolver {
                 console.log(err);
             });
     }
-    @Mutation()
+    @Mutation(returns=> LoginUser)
     register(@Args("data") data: RegisterUser): Promise<UserDTO> {
         return this.userService.register(data);
     }
 
-    @Query()
+    @Query(returns=> UserEntity)
     @UseGuards(new AuthGuard())
     me(@Context("user") user: any) {
         return this.userService.me(user.id);

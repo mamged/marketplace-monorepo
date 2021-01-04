@@ -12,23 +12,20 @@ import { PaymentCardsModule } from "./payments/payment.module";
 import { ProductsModule } from "./products/products.module";
 import { UsersModule } from "./users/users.module";
 
+console.log('process.cwd()>>>!!!!!',__dirname, "src/schemas/graphql.d.ts");
+
 @Module({
   imports: [
     config.APP_ENV === "production"
       ? GraphQLModule.forRoot({
-          typePaths: ["./**/*.gql"],
-          context: ({ req, res }) => ({ headers: req.headers }),
+          typePaths: ['./**/*.gql'],
           debug: true,
-          installSubscriptionHandlers: true
+          playground: true,
         })
       : GraphQLModule.forRoot({
-          typePaths: ["./**/*.gql"],
-          definitions: {
-            path: join(process.cwd(), "src/schemas/graphql.d.ts")
-          },
-          context: ({ req, res }) => ({ headers: req.headers }),
-          debug: true,
-          installSubscriptionHandlers: true
+        typePaths: ['./**/*.gql', join(__dirname, "/src/**/*.gql")],
+        installSubscriptionHandlers: true,
+        autoSchemaFile: 'schema.gql',
         }),
     UsersModule,
     ProductsModule,
