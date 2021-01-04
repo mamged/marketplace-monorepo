@@ -9,7 +9,7 @@
         "database": "payments-module",
         "synchronize": true,
         "logging": false,
-        "entities": ["../../dist/**/*.entity.js"]
+        "autoLoadEntities": true
     },
     {
         "name": "production",
