@@ -5,7 +5,7 @@ import DataLoader = require("dataloader"); // commonjs module
 
 import { IDataLoader } from "../contracts/nest-dataloader";
 import { ProductService } from "../products/product.service";
-import { ProductEntity } from "@commerce/products/src/products/product.entity";
+import { ProductEntity } from "@commerce/products";
 
 @Injectable()
 export class OrderProductDataLoader implements IDataLoader<string, ProductDTO> {

@@ -10,9 +10,9 @@ import {
 } from "@nestjs/graphql";
 import { UseGuards } from "@nestjs/common";
 import { config, ProductDTO, OrderDTO, UserDTO, ProductOrder } from "@commerce/shared";
-import { UserEntity } from "@commerce/users/dist/users/user.entity";
-import { ProductEntity } from "@commerce/products/dist/products/product.entity";
-import { OrderEntity } from "@commerce/orders/dist/orders/order.entity";
+import { UserEntity } from "@commerce/users";
+import { ProductEntity } from "@commerce/products";
+import { OrderEntity } from "@commerce/orders";
 import { AuthGuard } from "../middlewares/auth.guard";
 import { CreateOrder } from "./create-order.validation";
 import { OrderProductDataLoader } from "../loaders/order-product.loader";

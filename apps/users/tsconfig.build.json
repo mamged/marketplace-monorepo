@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "incremental": true,
+    "baseUrl": "./src",
+    // "rootDir": "../../",
+    // "outDir": "../../dist/apps/users/"
+  },
+  "extends": "./tsconfig.app.json",
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
+}

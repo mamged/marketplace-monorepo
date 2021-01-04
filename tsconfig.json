@@ -29,6 +29,24 @@
       ],
       "@commerce/orders/*": [
         "apps/orders/src/*"
+      ],
+      "@commerce/gateway": [
+        "apps/gateway/src"
+      ],
+      "@commerce/gateway/*": [
+        "apps/gateway/src/*"
+      ],
+      "@commerce/payments": [
+        "apps/payments/src"
+      ],
+      "@commerce/payments/*": [
+        "apps/payments/src/*"
+      ],
+      "@commerce/products": [
+        "apps/products/src"
+      ],
+      "@commerce/products/*": [
+        "apps/products/src/*"
       ]
     }
   }

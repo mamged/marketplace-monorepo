@@ -1,7 +1,7 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { LoginUser } from "@commerce/gateway/dist/src/users/login-user.validation";
-import { RegisterUser } from "@commerce/gateway/dist/src/users/register-user.validation";
+import { LoginUser } from "@commerce/gateway";
+import { RegisterUser } from "@commerce/gateway";
 import { UserDTO } from "@commerce/shared";
 import { Repository } from "typeorm";
 import { UserEntity as User, UserEntity } from "./user.entity";

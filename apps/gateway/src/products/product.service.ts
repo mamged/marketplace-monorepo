@@ -4,8 +4,9 @@ import { UserDTO, ProductDTO } from "@commerce/shared";
 
 import { config } from "@commerce/shared";
 import { redis, redisProductsKey } from "../utils/redis";
-import { CreateProduct } from "@commerce/gateway/src/products/create-product.validation";
-import { ProductEntity } from "@commerce/products/src/products/product.entity";
+import { CreateProduct } from "./create-product.validation";
+// import { ProductEntity } from "apps/products/src";
+import { ProductEntity } from "@commerce/products";
 @Injectable()
 export class ProductService {
   @Client({
@@ -17,6 +18,7 @@ export class ProductService {
   private client: ClientProxy;
   async show(id: string): Promise<ProductDTO> {
     return new Promise((resolve, reject) => {
+      ProductEntity
       this.client
         .send<ProductDTO>("show-product", id)
         .subscribe(product => resolve(product), error => reject(error));

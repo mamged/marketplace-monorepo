@@ -1,6 +1,6 @@
 import { Controller } from "@nestjs/common";
-import { LoginUser } from "@commerce/gateway/dist/src/users/login-user.validation";
-import { RegisterUser } from "@commerce/gateway/dist/src/users/register-user.validation";
+import { LoginUser } from "@commerce/gateway";
+import { RegisterUser } from "@commerce/gateway";
 import { MessagePattern, EventPattern } from "@nestjs/microservices";
 import { ObjectID } from "typeorm";
 import { UserService } from "./user.service";

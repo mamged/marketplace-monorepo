@@ -4,7 +4,7 @@ import { UserDTO, ProductDTO, OrderDTO } from "@commerce/shared";
 
 import { config } from "@commerce/shared";
 import { redis, redisProductsKey } from "../utils/redis";
-import { CreateProduct } from "@commerce/gateway/src/products/create-product.validation";
+import { CreateProduct } from "../products/create-product.validation";
 @Injectable()
 export class OrderService {
   @Client({

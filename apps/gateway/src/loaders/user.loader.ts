@@ -13,7 +13,7 @@ export class UserDataLoader implements IDataLoader<string, UserDTO> {
     public static async create(
         userService: UserService
     ): Promise<UserDataLoader> {
-        const dataloader = new DataLoader<string, UserDTO>(async ids => {
+        const dataloader = new DataLoader<string, UserDTO>(async ([...ids]) => {
             let users = await userService.fetchUsersByIds(ids);
             return ids.map(key => users.find(entity =>  entity.id.toString() === key));
         });

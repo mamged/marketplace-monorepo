@@ -1,8 +1,8 @@
 import { Client, ClientProxy, Transport } from "@nestjs/microservices";
 import { Injectable } from "@nestjs/common";
 import { UserDTO, UserLoginDTO } from "@commerce/shared";
-import { LoginUser } from "@commerce/gateway/src/users/login-user.validation";
-import { RegisterUser } from "@commerce/gateway/src/users/register-user.validation";
+import { LoginUser } from "./login-user.validation";
+import { RegisterUser } from "./register-user.validation";
 import { ObjectID } from "typeorm";
 import { config } from "@commerce/shared";
 

@@ -7,7 +7,7 @@ import {
     PrimaryGeneratedColumn,
     ManyToOne
 } from "typeorm";
-import { UserEntity } from "@commerce/users/src/users/user.entity";
+import { UserEntity } from "@commerce/users";
 
 @Entity("payments")
 export class PaymentEntity extends BaseEntity {

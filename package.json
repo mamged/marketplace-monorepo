@@ -29,8 +29,10 @@
     "@nestjs/platform-express": "^7.6.5",
     "@nestjs/platform-fastify": "^7.6.5",
     "@nestjs/typeorm": "^7.1.5",
+    "@types/bcryptjs": "^2.4.2",
     "apollo-server-express": "^2.19.1",
     "apollo-server-fastify": "^2.19.1",
+    "bcryptjs": "^2.4.3",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
     "dataloader": "^2.0.0",
@@ -46,6 +48,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.3",
+    "stripe": "^8.129.0",
     "type-graphql": "0.17.6",
     "typeorm": "^0.2.29",
     "x-xss-protection": "^2.0.0"
@@ -67,7 +70,9 @@
     "eslint-plugin-prettier": "^3.1.4",
     "graphql-tools": "4.0.7",
     "jest": "^26.6.3",
+    "pg": "^8.5.1",
     "prettier": "^2.1.2",
+    "redis": "^3.0.2",
     "supertest": "^6.0.0",
     "ts-jest": "^26.4.3",
     "ts-loader": "^8.0.8",
@@ -101,7 +106,13 @@
       "@commerce/users/(.*)": "<rootDir>/apps/users/src/$1",
       "@commerce/users": "<rootDir>/apps/users/src",
       "@commerce/orders/(.*)": "<rootDir>/apps/orders/src/$1",
-      "@commerce/orders": "<rootDir>/apps/orders/src"
+      "@commerce/orders": "<rootDir>/apps/orders/src",
+      "@commerce/payments/(.*)": "<rootDir>/apps/payments/src/$1",
+      "@commerce/payments": "<rootDir>/apps/payments/src",
+      "@commerce/products/(.*)": "<rootDir>/apps/products/src/$1",
+      "@commerce/products": "<rootDir>/apps/products/src",
+      "@commerce/gateway/(.*)": "<rootDir>/apps/gateway/src/$1",
+      "@commerce/gateway": "<rootDir>/apps/gateway/src"
     }
   }
 }

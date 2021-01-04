@@ -16,7 +16,7 @@ import { CreateProduct } from "./create-product.validation";
 import { ProductService } from "./product.service";
 import { SellerGuard } from "../middlewares/seller.guard";
 import { UserDataLoader } from "../loaders/user.loader";
-import { UserEntity } from "@commerce/users/dist/users/user.entity";
+import { UserEntity } from "@commerce/users";
 
 @Resolver("Product")
 export class ProductResolver {

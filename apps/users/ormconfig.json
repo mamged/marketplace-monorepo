@@ -1,0 +1,22 @@
+[
+    {
+        "name": "default",
+        "type": "postgres",
+        "host": "127.0.0.1",
+        "port": 5432,
+        "username": "postgres",
+        "password": "postgres",
+        "database": "users-module",
+        "synchronize": true,
+        "logging": false,
+        "autoLoadEntities": true
+    },
+    {
+        "name": "production",
+        "type": "mongodb",
+        "host": "localhost",
+        "database": "users-module",
+        "entities": ["../../dist/**/*.entity.{ts,js}"],
+        "synchronize": true
+    }
+]

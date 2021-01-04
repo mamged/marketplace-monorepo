@@ -5,13 +5,13 @@ import {
 } from "@nestjs/platform-fastify";
 import { AppModule } from "./app.module";
 import { ValidationPipe } from "./pipes/validation.pipe";
-import { config } from "@commerce/shared/dist/index";
+import { config } from "@commerce/shared";
 import * as helmet from "helmet";
 import * as fastifyRateLimit from "fastify-rate-limit";
 import { redis } from "./utils/redis";
 import * as FastifyCompress from "fastify-compress";
 import * as bodyParser from "body-parser";
-import * as xssFilter from "x-xss-protection";
+import { xssFilter } from "helmet";
 import * as hpp from "hpp";
 
 async function bootstrap() {
@@ -37,14 +37,13 @@ async function bootstrap() {
         helmet.contentSecurityPolicy({
             directives: {
                 defaultSrc: ["'self'"],
-                imgSrc: ["'self'"]
-            },
-            disableAndroid: true,
-            setAllHeaders: true
+                imgSrc: ["'self'"],
+            }
         })
     );
-
+    
     app.useGlobalPipes(new ValidationPipe());
     await app.listen(Number(config.GATEWAY_PORT));
 }
 bootstrap();
+console.log('hello');
