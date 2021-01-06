@@ -16,17 +16,13 @@ console.log('process.cwd()>>>!!!!!',__dirname, "src/schemas/graphql.d.ts");
 
 @Module({
   imports: [
-    config.APP_ENV === "production"
-      ? GraphQLModule.forRoot({
-          typePaths: ['./**/*.gql'],
-          debug: true,
-          playground: true,
-        })
-      : GraphQLModule.forRoot({
-        typePaths: ['./**/*.gql', join(__dirname, "/src/**/*.gql")],
-        installSubscriptionHandlers: true,
-        autoSchemaFile: 'schema.gql',
-        }),
+    GraphQLModule.forRoot({
+      typePaths: ['./**/*.gql', join(__dirname, "/src/**/*.gql")],
+      installSubscriptionHandlers: true,
+      autoSchemaFile: 'schema.gql',
+      debug: true,
+      playground: true,
+    }),
     UsersModule,
     ProductsModule,
     OrdersModule,

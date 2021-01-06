@@ -53,8 +53,7 @@ export class OrderResolver {
     deleteOrder(@Args("order") { id }: UUID, @Context("user") user: any) {
         return this.orderService.destroyUserOrder(id, user.id);
     }
-    
-    @Mutation(returns=> OrderEntity)
+    @Mutation(returns=> [CreateOrder])
     @UseGuards(new AuthGuard())
     createOrder(
         @Args("products") products: CreateOrder[],
