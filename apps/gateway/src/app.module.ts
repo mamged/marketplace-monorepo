@@ -23,7 +23,7 @@ console.log('process.cwd()>>>!!!!!',join(__dirname,'../../../apps/gateway/src/**
       // autoSchemaFile: 'schema.gql',
       debug: true,
       playground: true,
-      path:'playground'
+      // path:'playground'
     }),
     UsersModule,
     ProductsModule,

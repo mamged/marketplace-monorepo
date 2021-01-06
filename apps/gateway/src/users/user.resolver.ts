@@ -25,7 +25,7 @@ export class UserResolver {
             .login(data)
             .then(user => user)
             .catch(err => {
-                console.log(err);
+                console.log('login mutation', err);
             });
     }
     @Mutation(returns=> LoginUser)
