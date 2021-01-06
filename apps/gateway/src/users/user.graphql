@@ -1,0 +1,40 @@
+scalar DateTime
+type Address {
+    address_1: String!
+    address_2: String!
+    city: String!
+    state: String!
+    country: String!
+    zip: Float!
+}
+type User {
+    id: String!
+    name: String!
+    seller: Boolean!
+    address: Address
+    created_at: DateTime!
+}
+type AuthToken {
+    id: String!
+    name: String!
+    token: String!
+}
+input LoginUser {
+    email: String!
+    password: String!
+}
+input RegisterUser {
+    email: String!
+    password: String!
+    password_confirmation: String!
+    name: String!
+    seller: Boolean!
+}
+type Query {
+    users: [User!]
+    me: User!
+}
+type Mutation {
+    login(data: LoginUser!): AuthToken!
+    register(data: RegisterUser!): User!
+}

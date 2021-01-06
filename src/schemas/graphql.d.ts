@@ -90,7 +90,7 @@ export interface PaymentCard {
 
 export interface Product {
     id: string;
-    user: User;
+    // user: User;
     title: string;
     description: string;
     image: string;

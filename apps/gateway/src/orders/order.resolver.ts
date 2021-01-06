@@ -19,8 +19,10 @@ import { OrderProductDataLoader } from "../loaders/order-product.loader";
 import { OrderService } from "./order.service";
 import { UUID } from "../shared/validation/uuid.validation";
 import { UserDataLoader } from "../loaders/user.loader";
+import { Order, ProductInput } from "../schemas/graphql";
+import { Product } from "src/schemas/graphql";
 
-@Resolver("Order")
+@Resolver('Order')
 export class OrderResolver {
     @Client({
         transport: Transport.REDIS,
@@ -35,7 +37,7 @@ export class OrderResolver {
         private readonly usersDataLoader: UserDataLoader,
         private readonly orderProductLoader: OrderProductDataLoader
     ) {}
-    @ResolveField("user", () => UserEntity)
+    @ResolveField(() => UserEntity)
     async user(@Parent() order: OrderDTO): Promise<UserDTO> {
         return this.usersDataLoader.load(order.user.id.toString());
     }
@@ -48,17 +50,18 @@ export class OrderResolver {
     orders(@Context("user") user: any): Promise<OrderDTO[]> {
         return this.orderService.indexOrdersByUser(user.id);
     }
-    @Mutation(returns=> OrderEntity)
+    @Mutation(returns=> [OrderEntity])
     @UseGuards(new AuthGuard())
     deleteOrder(@Args("order") { id }: UUID, @Context("user") user: any) {
         return this.orderService.destroyUserOrder(id, user.id);
     }
-    @Mutation(returns=> [CreateOrder])
+    @Mutation(returns=> ['Order'])
     @UseGuards(new AuthGuard())
     createOrder(
-        @Args("products") products: CreateOrder[],
+        // @Args('id', { type: () => Int }) id: number,
+        @Args("products", {type: ()=> [ProductEntity]}) products: ProductInput[],
         @Context("user") user: any
-    ): Promise<ProductDTO> {
+    ): Promise<Product[]> {
         return new Promise((resolve, reject) => {
             // fetch products user is trying to purchase to check on the quantity.
             this.client

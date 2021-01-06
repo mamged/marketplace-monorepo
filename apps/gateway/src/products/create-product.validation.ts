@@ -1,3 +1,4 @@
+import { ObjectType } from "@nestjs/graphql";
 import {
     IsNotEmpty,
     MinLength,
@@ -7,8 +8,9 @@ import {
     Max,
     IsInt
 } from "class-validator";
-import { InputType, Field } from "type-graphql";
-@InputType()
+import { InputType, Field } from "@nestjs/graphql";
+// @InputType()
+@ObjectType()
 export class CreateProduct {
     @Min(1)
     @Max(999)

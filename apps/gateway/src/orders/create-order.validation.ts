@@ -1,6 +1,7 @@
+import { Field, InputType } from "@nestjs/graphql";
 import { IsNotEmpty, Min, IsInt, IsUUID, Validate } from "class-validator";
 
-import { InputType, Field } from "type-graphql";
+
 @InputType()
 export class CreateOrder {
     @Min(1)

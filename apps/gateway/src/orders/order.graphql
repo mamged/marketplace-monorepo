@@ -1,3 +1,28 @@
+# type Query {
+#   getCats: [Cat]
+#   cat(id: ID!): Cat
+# }
+
+# type Mutation {
+#   createCat(createCatInput: CreateCatInput): Cat
+# }
+
+type Subscription {
+  catCreated: Cat
+}
+
+type Cat {
+  id: Int
+  name: String
+  age: Int
+}
+
+input CreateCatInput {
+  name: String
+  age: Int
+}
+
+
 scalar DateTime
 type ProductWithQuantity {
     product: Product!
@@ -13,7 +38,7 @@ input ProductInput {
 
 type Order {
     id: String!
-    # user: User!
+    user: User!
     total_price: Float!
     products: [ProductWithQuantity!]!
 }
@@ -24,5 +49,5 @@ type Query {
 type Mutation {
     createOrder(products: [ProductInput!]!): Order!
     deleteOrder(order: UUID!): Order!
-    user(order: Order!): User!
+    # user(order: Order!): User!
 }

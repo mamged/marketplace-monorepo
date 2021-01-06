@@ -1,7 +1,7 @@
 scalar DateTime
 type PaymentCard {
     id: String!
-    user: User!
+    # user: User!
     last_four: String!
     brand: String!
     default: Boolean!

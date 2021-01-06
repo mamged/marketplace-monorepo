@@ -1,5 +1,5 @@
 import { IsNotEmpty, Length, IsNumberString, IsBoolean } from "class-validator";
-import { InputType, Field } from "type-graphql";
+import { InputType, Field } from "@nestjs/graphql";
 @InputType()
 export class CreatePaymentCard {
     @IsNotEmpty()

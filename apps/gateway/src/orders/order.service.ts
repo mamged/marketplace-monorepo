@@ -5,6 +5,9 @@ import { UserDTO, ProductDTO, OrderDTO } from "@commerce/shared";
 import { config } from "@commerce/shared";
 import { redis, redisProductsKey } from "../utils/redis";
 import { CreateProduct } from "../products/create-product.validation";
+import { OrderEntity } from "@commerce/orders";
+import { Order } from "../schemas/graphql";
+import { Product } from "src/schemas/graphql";
 @Injectable()
 export class OrderService {
   @Client({
@@ -36,7 +39,7 @@ export class OrderService {
         });
     });
   }
-  store(products: any, user_id, fetchedProducts): Promise<ProductDTO> {
+  store(products: any, user_id, fetchedProducts): Promise<Product[]> {
     return new Promise((resolve, reject) => {
       const mappedProducts = fetchedProducts
         .map(product => {

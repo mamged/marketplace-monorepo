@@ -8,7 +8,7 @@ import { SellerGuard } from "../middlewares/seller.guard";
 import { UserService } from "./user.service";
 import { UserEntity } from "@commerce/users";
 
-@Resolver("User")
+@Resolver(()=> LoginUser)
 export class UserResolver {
     constructor(private readonly userService: UserService) {}
 

@@ -6,10 +6,10 @@ import {
 import { AppModule } from "./app.module";
 import { ValidationPipe } from "./pipes/validation.pipe";
 import { config } from "@commerce/shared";
-import * as helmet from "helmet";
-import * as fastifyRateLimit from "fastify-rate-limit";
+// import * as helmet from "helmet";
+// import * as fastifyRateLimit from "fastify-rate-limit";
 import { redis } from "./utils/redis";
-import * as FastifyCompress from "fastify-compress";
+// import * as FastifyCompress from "fastify-compress";
 import * as bodyParser from "body-parser";
 import { xssFilter } from "helmet";
 import * as hpp from "hpp";
@@ -20,27 +20,27 @@ async function bootstrap() {
         AppModule,
         fastify
     );
-    fastify.register(fastifyRateLimit.default, {
-        max: 100,
-        timeWindow: "1 minute",
-        redis,
-        whitelist: ["127.0.0.1"]
-    });
+    // fastify.register(fastifyRateLimit.default, {
+    //     max: 100,
+    //     timeWindow: "1 minute",
+    //     redis,
+    //     whitelist: ["127.0.0.1"]
+    // });
     app.enableCors();
-    app.use(helmet());
-    app.use(helmet.noSniff());
-    app.use(helmet.ieNoOpen());
+    // app.use(helmet());
+    // app.use(helmet.noSniff());
+    // app.use(helmet.ieNoOpen());
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(xssFilter());
     app.use(hpp());
-    app.use(
-        helmet.contentSecurityPolicy({
-            directives: {
-                defaultSrc: ["'self'"],
-                imgSrc: ["'self'"],
-            }
-        })
-    );
+    // app.use(
+    //     helmet.contentSecurityPolicy({
+    //         directives: {
+    //             defaultSrc: ["'self'"],
+    //             imgSrc: ["'self'"],
+    //         }
+    //     })
+    // );
     
     app.useGlobalPipes(new ValidationPipe());
     await app.listen(Number(config.GATEWAY_PORT));

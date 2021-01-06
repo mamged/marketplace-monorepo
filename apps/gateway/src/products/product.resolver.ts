@@ -19,21 +19,14 @@ import { UserDataLoader } from "../loaders/user.loader";
 import { UserEntity } from "@commerce/users";
 import { ProductEntity } from "@commerce/products";
 
-@Resolver("Product")
+@Resolver(()=> CreateProduct)
 export class ProductResolver {
-    @Client({
-        transport: Transport.REDIS,
-        options: {
-            url: `redis://${config.REDIS_URL}:${config.REDIS_PORT}`
-        }
-    })
-    private client: ClientProxy;
-
     constructor(
         private readonly productService: ProductService,
         private readonly usersDataLoader: UserDataLoader
     ) {}
-    @ResolveField("user", () => UserEntity)
+    
+    @ResolveField(returns=> UserEntity)
     async user(@Parent() product: ProductDTO): Promise<UserDTO> {
         return this.usersDataLoader.load(product.user.id.toString());
     }

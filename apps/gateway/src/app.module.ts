@@ -12,16 +12,18 @@ import { PaymentCardsModule } from "./payments/payment.module";
 import { ProductsModule } from "./products/products.module";
 import { UsersModule } from "./users/users.module";
 
-console.log('process.cwd()>>>!!!!!',__dirname, "src/schemas/graphql.d.ts");
+console.log('process.cwd()>>>!!!!!',join(__dirname,'../../../apps/gateway/src/**/*.gql'));
 
 @Module({
   imports: [
     GraphQLModule.forRoot({
-      typePaths: ['./**/*.gql', join(__dirname, "/src/**/*.gql")],
+      typePaths: [join(__dirname,'../../../apps/gateway/src/**/*.graphql')],
+      fieldResolverEnhancers: ['interceptors'],
       installSubscriptionHandlers: true,
-      autoSchemaFile: 'schema.gql',
+      // autoSchemaFile: 'schema.gql',
       debug: true,
       playground: true,
+      path:'playground'
     }),
     UsersModule,
     ProductsModule,

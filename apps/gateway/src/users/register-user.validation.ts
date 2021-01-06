@@ -1,6 +1,6 @@
 import { IsNotEmpty, MinLength, MaxLength, IsBoolean } from "class-validator";
 import { LoginUser } from "./login-user.validation";
-import { InputType, Field } from "type-graphql";
+import { InputType, Field } from "@nestjs/graphql";
 @InputType()
 export class RegisterUser extends LoginUser {
     @MinLength(8)
