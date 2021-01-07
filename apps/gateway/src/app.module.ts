@@ -17,7 +17,12 @@ import { UsersModule } from "./users/users.module";
       typePaths: [join(__dirname,'../../../apps/gateway/src/**/*.graphql')],
       // autoSchemaFile: 'schema.gql',
       debug: true,
-      playground: true
+      playground: true,
+      context: ({ req }) => {
+        return {
+          ...req
+        };
+    },
     }),
     UsersModule,
     ProductsModule,
