@@ -11,19 +11,13 @@ import { OrdersModule } from "./orders/orders.module";
 import { PaymentCardsModule } from "./payments/payment.module";
 import { ProductsModule } from "./products/products.module";
 import { UsersModule } from "./users/users.module";
-
-console.log('process.cwd()>>>!!!!!',join(__dirname,'../../../apps/gateway/src/**/*.gql'));
-
 @Module({
   imports: [
     GraphQLModule.forRoot({
       typePaths: [join(__dirname,'../../../apps/gateway/src/**/*.graphql')],
-      fieldResolverEnhancers: ['interceptors'],
-      installSubscriptionHandlers: true,
       // autoSchemaFile: 'schema.gql',
       debug: true,
-      playground: true,
-      // path:'playground'
+      playground: true
     }),
     UsersModule,
     ProductsModule,

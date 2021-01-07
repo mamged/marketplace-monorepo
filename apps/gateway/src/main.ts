@@ -47,7 +47,7 @@ async function bootstrap() {
     
     app.useGlobalPipes(new ValidationPipe());
     await app.listen(Number(config.GATEWAY_PORT));
-    console.log(`Application is running on: http://127.0.0.1:${config.GATEWAY_PORT}`);
+    console.log(`Gateway is running on: http://127.0.0.1:${config.GATEWAY_PORT}`);
 }
 bootstrap();
 console.log('hello');
