@@ -50,4 +50,3 @@ async function bootstrap() {
     console.log(`Gateway is running on: http://127.0.0.1:${config.GATEWAY_PORT}`);
 }
 bootstrap();
-console.log('hello');
