@@ -1,0 +1,69 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type ProductEntity {
+  user: UserEntity!
+}
+
+type UserEntity {
+  id: String!
+  seller: Boolean!
+  name: String!
+  email: String!
+}
+
+type ProductOutPutType {
+  id: ID!
+  title: String!
+  description: String
+  image: [String!]!
+  price: Float!
+  created_at: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type LoginUserOutput {
+  id: String!
+  name: String!
+  seller: String!
+  created_at: String!
+}
+
+type Query {
+  users: LoginUserOutput!
+  me: LoginUserOutput!
+  products: [ProductOutPutType!]!
+  showProduct(id: String!): ProductEntity!
+}
+
+type Mutation {
+  login(data: LoginUser!): LoginUserOutput!
+  register(data: RegisterUser!): LoginUserOutput!
+  createProduct(data: CreateProduct!): ProductEntity!
+  updateProduct(id: String!, data: CreateProduct!): ProductEntity!
+  deleteProduct(id: String!): ProductEntity!
+}
+
+input LoginUser {
+  email: String!
+  password: String!
+}
+
+input RegisterUser {
+  email: String!
+  password: String!
+  name: String!
+  password_confirmation: String!
+  seller: Boolean!
+}
+
+input CreateProduct {
+  price: Float!
+  title: String!
+  description: String!
+}
