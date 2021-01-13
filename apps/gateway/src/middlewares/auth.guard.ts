@@ -9,18 +9,17 @@ import { GqlExecutionContext, GraphQLArgumentsHost, GraphQLExecutionContext } fr
 import { config } from "@commerce/shared";
 import { verify } from "jsonwebtoken";
 import { ExecutionContextHost } from "@nestjs/core/helpers/execution-context-host";
-import { IncomingMessage } from "http";
-import { IncomingRequest } from "@nestjs/microservices";
-import { Request } from "apollo-server-express";
+import { Request } from "express";
 @Injectable()
 export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    
+    const request: Request = context.switchToHttp().getRequest();
     if (request) {
       if (!request.headers.authorization) {
         return false;
       }
-      request.user = await this.validateToken(request.headers.authorization);
+      await this.validateToken(request.headers.authorization);
       return true;
     } else {
       const ctx: any = GqlExecutionContext.create(context).getContext();

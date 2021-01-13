@@ -1,5 +1,5 @@
 import { Query, Resolver, Context, Mutation, Args } from "@nestjs/graphql";
-import { UseGuards } from "@nestjs/common";
+import { SetMetadata, UseGuards } from "@nestjs/common";
 import { UserDTO, UserLoginDTO } from "@commerce/shared";
 import { LoginUser } from "./login-user.validation";
 import { RegisterUser } from "./register-user.validation";
@@ -7,6 +7,8 @@ import { AuthGuard } from "../middlewares/auth.guard";
 import { SellerGuard } from "../middlewares/seller.guard";
 import { UserService } from "./user.service";
 import { UserEntity } from "@commerce/users";
+import { RolesGuard } from "../middlewares/roles.guard";
+import { Roles } from "../decorators/roles.decorator";
 
 @Resolver(()=> LoginUser)
 export class UserResolver {
@@ -35,6 +37,7 @@ export class UserResolver {
 
     @Query(returns=> UserEntity)
     @UseGuards(new AuthGuard())
+    @Roles("adminx")
     me(@Context("user") user: any) {
         return this.userService.me(user.id);
     }

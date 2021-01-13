@@ -18,6 +18,7 @@ import { SellerGuard } from "../middlewares/seller.guard";
 import { UserDataLoader } from "../loaders/user.loader";
 import { UserEntity } from "@commerce/users";
 import { ProductEntity } from "@commerce/products";
+import { Roles } from "../decorators/roles.decorator";
 
 @Resolver(()=> CreateProduct)
 export class ProductResolver {
@@ -40,6 +41,7 @@ export class ProductResolver {
     }
 
     @Mutation(returns=> ProductEntity)
+    @Roles("admin")
     @UseGuards(new AuthGuard(), new SellerGuard())
     async createProduct(
         @Args("data") data: CreateProduct,

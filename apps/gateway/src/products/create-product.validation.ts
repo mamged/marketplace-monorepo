@@ -7,10 +7,11 @@ import {
     Min,
     Max,
     IsInt,
-    isURL
+    isURL,
+    IsArray
 } from "class-validator";
 import { InputType, Field } from "@nestjs/graphql";
-// @InputType()
+@InputType()
 @ObjectType()
 export class CreateProduct {
     @Min(1)
@@ -30,7 +31,7 @@ export class CreateProduct {
     @IsNotEmpty()
     @Field()
     description: string;
-    @IsUrl({require_protocol: true})
+    @IsArray()
     @IsNotEmpty()
-    image: string;
+    image: string[];
 }

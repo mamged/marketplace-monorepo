@@ -6,6 +6,7 @@ import {
     UpdateDateColumn,
     PrimaryGeneratedColumn
 } from "typeorm";
+import { ColumnMetadata } from "typeorm/metadata/ColumnMetadata";
 
 @Entity("products")
 export class ProductEntity extends BaseEntity {
@@ -23,7 +24,12 @@ export class ProductEntity extends BaseEntity {
     @Column("text")
     description: string;
 
-    @Column("text")
+    @Column({
+        type: 'jsonb',
+        array: false,
+        default: () => "'[]'",
+        nullable: false,
+    })
     image: string;
 
     @CreateDateColumn()

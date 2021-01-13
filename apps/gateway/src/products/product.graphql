@@ -4,14 +4,14 @@ type Product {
     # user: User!
     title: String!
     description: String!
-    image: String!
+    image: [String]!
     price: Float!
     created_at: DateTime!
 }
 input CreateProduct {
     title: String!
     description: String!
-    image: String!
+    image: [String!]
     price: Float!
 }
 type User {

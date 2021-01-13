@@ -1,4 +1,4 @@
-import { APP_INTERCEPTOR, APP_FILTER } from "@nestjs/core";
+import { APP_INTERCEPTOR, APP_FILTER, APP_GUARD } from "@nestjs/core";
 import { GraphQLModule } from "@nestjs/graphql";
 import { Module } from "@nestjs/common";
 import { config } from "@commerce/shared";
@@ -11,6 +11,7 @@ import { OrdersModule } from "./orders/orders.module";
 import { PaymentCardsModule } from "./payments/payment.module";
 import { ProductsModule } from "./products/products.module";
 import { UsersModule } from "./users/users.module";
+import { RolesGuard } from "./middlewares/roles.guard";
 @Module({
   imports: [
     GraphQLModule.forRoot({
@@ -37,6 +38,10 @@ import { UsersModule } from "./users/users.module";
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard
     }
   ]
 })
