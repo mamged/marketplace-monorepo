@@ -1,6 +1,6 @@
 import { InjectRepository } from "@nestjs/typeorm";
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { Repository } from "typeorm";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { QueryFailedError, Repository } from "typeorm";
 import { RpcException } from "@nestjs/microservices";
 
 import { ProductEntity } from "./product.entity";
@@ -20,8 +20,13 @@ export class ProductService {
             .where(`products.id IN (:...ids)`, { ids })
             .getMany();
     }
-    store(data: any): Promise<ProductEntity> {
-        return this.products.save(data);
+    async store(product: ProductEntity): Promise<ProductEntity> {
+        try {
+            return await this.products.save(product);
+        } catch (error: any) {
+            throw new RpcException(new BadRequestException(error.message))
+        }
+        
     }
     async update(
         id: string,

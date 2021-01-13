@@ -9,24 +9,25 @@ export class ProductController {
     constructor(private readonly products: ProductService) {}
 
     @MessagePattern("products")
-    index(data: any = undefined): Promise<ProductEntity[]> {
+    index(data: any = undefined, arg2, arg3): Promise<ProductEntity[]> {
         return this.products.get(data);
     }
 
     @MessagePattern("create-product")
-    store(data: any): Promise<ProductEntity> {
-        return this.products.store(data);
+    store(product: ProductEntity): Promise<ProductEntity> {
+        return this.products.store(product);
     }
 
     @MessagePattern("update-product")
-    update({
-        id,
-        title,
-        description,
-        image,
-        price,
-        user_id
-    }: any): Promise<ProductEntity> {
+    update(product: ProductEntity): Promise<ProductEntity> {
+        const {
+            id,
+            title,
+            description,
+            image,
+            price,
+            user_id
+        } = product;
         return this.products.update(
             id,
             { title, description, image, price },
