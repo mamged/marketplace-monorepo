@@ -41,8 +41,7 @@ export class CategoryResolver {
     
     const { children: childrenIds } = category;
     if(typeof(childrenIds[0]) === 'string'){
-        console.log('children field resolver');
-        // console.log('childrenIds>>', childrenIds);
+        // console.log('children field resolver');
         return this.categoryService.fetchCategoriesByIds(childrenIds);
     } else if(typeof(childrenIds[0]) === 'object'){
         return childrenIds
