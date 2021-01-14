@@ -19,7 +19,7 @@ import { OrderProductDataLoader } from "../loaders/order-product.loader";
 import { OrderService } from "./order.service";
 import { UUID } from "../shared/validation/uuid.validation";
 import { UserDataLoader } from "../loaders/user.loader";
-import { Order, ProductInput } from "../schemas/graphql";
+// import { Order, ProductInput } from "../schemas/graphql";
 import { Product } from "src/schemas/graphql";
 
 @Resolver('Order')
@@ -59,7 +59,7 @@ export class OrderResolver {
     @UseGuards(new AuthGuard())
     createOrder(
         // @Args('id', { type: () => Int }) id: number,
-        @Args("products", {type: ()=> [ProductEntity]}) products: ProductInput[],
+        @Args("products", {type: ()=> [ProductEntity]}) products: ProductEntity[],
         @Context("user") user: any
     ): Promise<Product[]> {
         return new Promise((resolve, reject) => {

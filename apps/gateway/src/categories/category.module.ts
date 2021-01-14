@@ -1,7 +1,7 @@
 import { Module, Scope } from "@nestjs/common";
 
-import { CategoryResolver } from "./product.resolver";
-import { CategoryService } from "./product.service";
+import { CategoryResolver } from "./category.resolver";
+import { CategoryService } from "./category.service";
 import { UserDataLoader } from "../loaders/user.loader";
 import { UserService } from "../users/user.service";
 import { UsersModule } from "../users/users.module";
@@ -11,7 +11,7 @@ import { UsersModule } from "../users/users.module";
         CategoryResolver,
         CategoryService,
         {
-            inject: [UserService],
+            inject: [CategoryService],
             useFactory: UserDataLoader.create,
             provide: UserDataLoader,
             scope: Scope.REQUEST

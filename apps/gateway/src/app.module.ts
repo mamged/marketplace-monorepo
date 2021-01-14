@@ -12,6 +12,7 @@ import { PaymentCardsModule } from "./payments/payment.module";
 import { ProductsModule } from "./products/products.module";
 import { UsersModule } from "./users/users.module";
 import { RolesGuard } from "./middlewares/roles.guard";
+import { CategoriesModule } from "./categories/category.module";
 @Module({
   imports: [
     GraphQLModule.forRoot({
@@ -28,7 +29,8 @@ import { RolesGuard } from "./middlewares/roles.guard";
     UsersModule,
     ProductsModule,
     OrdersModule,
-    PaymentCardsModule
+    PaymentCardsModule,
+    CategoriesModule
   ],
   providers: [
     {

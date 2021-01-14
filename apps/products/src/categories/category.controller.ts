@@ -4,16 +4,25 @@ import { MessagePattern, EventPattern } from "@nestjs/microservices";
 import { CategoryEntity } from "./category.entity";
 import { CategoryService } from "./category.service";
 
-@Controller("products")
-export class ProductController {
-    constructor(private readonly products: CategoryService) {}
+@Controller("category")
+export class CategoryController {
+    constructor(private readonly category: CategoryService) {}
 
-    @MessagePattern("create-product")
-    store(data: any): Promise<CategoryEntity> {
-        return this.products.store(data);
+    @MessagePattern("categories")
+    categories(): Promise<CategoryEntity[]> {
+        console.log('all categories');
+        
+        return this.category.get({});
     }
 
-    @MessagePattern("update-product")
+    @MessagePattern("create-category")
+    store(data: any): Promise<CategoryEntity> {
+        console.log('create-category: controller', data);
+        
+        return this.category.store(data);
+    }
+
+    @MessagePattern("update-category")
     update(category: CategoryEntity): Promise<CategoryEntity> {
         const {
             id,
@@ -21,19 +30,19 @@ export class ProductController {
             children,
             parent
         } = category;
-        return this.products.update(
+        return this.category.update(
             id,
             { name, children, parent }
         );
     }
 
-    @MessagePattern("show-product")
+    @MessagePattern("show-category")
     show(id: string): Promise<CategoryEntity> {
-        return this.products.show(id);
+        return this.category.show(id);
     }
 
-    @MessagePattern("delete-product")
+    @MessagePattern("delete-category")
     destroy({ id, user_id }: { id: string; user_id: string }) {
-        return this.products.destroy(id, user_id);
+        return this.category.destroy(id, user_id);
     }
 }

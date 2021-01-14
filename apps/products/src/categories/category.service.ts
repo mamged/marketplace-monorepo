@@ -21,6 +21,8 @@ export class CategoryService {
             .getMany();
     }
     store(data: any): Promise<CategoryEntity> {
+        console.log('<<data>>', data, '<<<');
+        
         return this.categories.save(data);
     }
 

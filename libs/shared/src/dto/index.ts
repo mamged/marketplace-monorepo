@@ -4,3 +4,4 @@ export * from "./product.dto";
 export * from "./order.dto";
 export * from "./auth-token.dto";
 export * from "./payment.dto";
+export * from "./category.dto"

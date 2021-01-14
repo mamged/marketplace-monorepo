@@ -16,66 +16,70 @@ export class CategoryService {
     }
   })
   private client: ClientProxy;
-  async show(id: string): Promise<CategoryDTO> {
+
+  async show(id: string): Promise<CategoryEntity> {
     return new Promise((resolve, reject) => {
       CategoryEntity
       this.client
-        .send<CategoryDTO>("show-product", id)
+        .send<CategoryEntity>("show-category", id)
         .subscribe(product => resolve(product), error => reject(error));
     });
   }
-  async get(): Promise<CategoryDTO[]> {
+  async get(): Promise<CategoryEntity[]> {
     return new Promise((resolve, reject) => {
-      // get products through cache.
-      redis.get(redisCategoriesKey, (err, products) => {
-        // if products don't persist, retrieve them, and store in redis.
-        if (!products) {
-          this.client.send<CategoryDTO[]>("products", []).subscribe(
-            products => {
+      // get categories through cache.
+      redis.get(redisCategoriesKey, (err, categories) => {
+        console.log('redis categories', categories);
+        
+        // if categories don't persist, retrieve them, and store in redis.
+        if (!categories) {
+          this.client.send<CategoryEntity[]>("categories", []).subscribe(
+            categories => {
               redis.set(
                 redisCategoriesKey,
-                JSON.stringify(products),
+                JSON.stringify(categories),
                 "EX",
                 60 * 60 * 30 // 30 mins until expiration
               );
-              return resolve(products);
+              return resolve(categories);
             },
             error => reject(error)
           );
         }
-        // return the parsed products from cache.
-        resolve(JSON.parse(products));
+        // return the parsed categories from cache.
+        resolve(JSON.parse(categories));
       });
     });
   }
-  store(data: CreateCategory, id: string): Promise<CategoryDTO> {
+  store(data: CreateCategory): Promise<CategoryDTO> {
+    
     // TODO: handle the failure create produc
     return new Promise((resolve, reject) => {
       this.client
-        .send<CategoryDTO>("create-product", {
-          ...data,
-          user_id: id
+        .send<CategoryDTO>("create-category", {
+          ...data
         })
         .subscribe(
-          product => {
+          category => {
             redis.del(redisCategoriesKey);
-            return resolve(product);
+            return resolve(category);
           },
-          error => reject(error)
+          error => {
+            console.log('catch@@@');
+            return reject(error);
+          }
         );
     });
   }
   update(
     data: CreateCategory,
-    productId: string,
-    id: string
+    categoryId: number
   ): Promise<CategoryDTO> {
     return new Promise((resolve, reject) => {
       this.client
         .send<CategoryDTO>("update-product", {
           ...data,
-          id: productId,
-          user_id: id
+          id: categoryId
         })
         .subscribe(
           product => {
@@ -86,10 +90,10 @@ export class CategoryService {
         );
     });
   }
-  async fetchCategoriesByIds(ids: string[]): Promise<CategoryDTO[]>{
+  async fetchCategoriesByIds(ids: string[]): Promise<CategoryEntity[]>{
     return this.client
-      .send<CategoryDTO[], string[]>("fetch-products-by-ids", ids)
-      .toPromise<CategoryDTO[]>();
+      .send<CategoryEntity[], string[]>("fetch-products-by-ids", ids)
+      .toPromise<CategoryEntity[]>();
   }
   destroy(productId: string, id: string) {
     return new Promise((resolve, reject) => {

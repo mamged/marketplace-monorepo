@@ -1,0 +1,22 @@
+scalar DateTime
+type Category {
+    id: String!
+    name: String!
+    parent: String
+    children: [String]
+}
+input CreateCategory {
+    name: String!
+    parent: String
+    children: [String]
+}
+
+type Query {
+    categories: [Category!]
+    showCategory(id: String!): Category!
+}
+type Mutation {
+    createCategory(data: CreateCategory!): Category!
+    updateCategory(data: CreateCategory!, id: String!): Category!
+    deleteCategory(id: String!): Category!
+}

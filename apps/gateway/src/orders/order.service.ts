@@ -6,7 +6,7 @@ import { config } from "@commerce/shared";
 import { redis, redisProductsKey } from "../utils/redis";
 import { CreateProduct } from "../products/create-product.validation";
 import { OrderEntity } from "@commerce/orders";
-import { Order } from "../schemas/graphql";
+// import { Order } from "../schemas/graphql";
 import { Product } from "src/schemas/graphql";
 @Injectable()
 export class OrderService {

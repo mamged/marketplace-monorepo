@@ -11,27 +11,19 @@ import {
     IsArray
 } from "class-validator";
 import { InputType, Field } from "@nestjs/graphql";
+import { CategoryEntity } from "@commerce/products";
 @InputType()
 @ObjectType()
 export class CreateCategory {
-    @Min(1)
-    @Max(999)
-    @IsNotEmpty()
-    @IsInt()
-    @Field()
-    price: number;
-
-    @MinLength(8)
+    @MinLength(3)
     @MaxLength(32)
     @IsNotEmpty()
     @Field()
-    title: string;
-    @MinLength(32)
-    @MaxLength(255)
-    @IsNotEmpty()
+    name: string;
+    
     @Field()
-    description: string;
-    @IsArray()
-    @IsNotEmpty()
-    image: string[];
+    children: number[]
+
+    @Field()
+    parent: number
 }
