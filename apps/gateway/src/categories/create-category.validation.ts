@@ -1,4 +1,4 @@
-import { ObjectType } from "@nestjs/graphql";
+import { ObjectType, OmitType, PartialType } from "@nestjs/graphql";
 import {
     IsNotEmpty,
     MinLength,
@@ -8,22 +8,28 @@ import {
     Max,
     IsInt,
     isURL,
-    IsArray
+    IsArray,
+    IsEmpty,
+    IsOptional,
 } from "class-validator";
 import { InputType, Field } from "@nestjs/graphql";
 import { CategoryEntity } from "@commerce/products";
+
 @InputType()
-@ObjectType()
-export class CreateCategory {
+export class CategoryRelationsInput{
+    @Field(_=> [String])
+    children: string[]
+
+    @Field(_=> String)
+    parent: string
+}
+
+@InputType()
+export class CreateCategoryInput extends PartialType(CategoryRelationsInput) {
     @MinLength(3)
     @MaxLength(32)
     @IsNotEmpty()
     @Field()
     name: string;
-    
-    @Field()
-    children: number[]
-
-    @Field()
-    parent: number
 }
+

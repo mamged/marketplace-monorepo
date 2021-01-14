@@ -4,7 +4,7 @@ import { UserDTO, CategoryDTO } from "@commerce/shared";
 
 import { config } from "@commerce/shared";
 import { redis, redisCategoriesKey } from "../utils/redis";
-import { CreateCategory } from "./create-category.validation";
+import { CreateCategoryInput } from "./create-category.validation";
 // import { CategoryEntity } from "apps/products/src";
 import { CategoryEntity } from "@commerce/products";
 @Injectable()
@@ -29,7 +29,7 @@ export class CategoryService {
     return new Promise((resolve, reject) => {
       // get categories through cache.
       redis.get(redisCategoriesKey, (err, categories) => {
-        console.log('redis categories', categories);
+        // console.log('redis categories', categories);
         
         // if categories don't persist, retrieve them, and store in redis.
         if (!categories) {
@@ -51,7 +51,7 @@ export class CategoryService {
       });
     });
   }
-  store(data: CreateCategory): Promise<CategoryDTO> {
+  store(data: CreateCategoryInput): Promise<CategoryDTO> {
     
     // TODO: handle the failure create produc
     return new Promise((resolve, reject) => {
@@ -72,7 +72,7 @@ export class CategoryService {
     });
   }
   update(
-    data: CreateCategory,
+    data: CreateCategoryInput,
     categoryId: number
   ): Promise<CategoryDTO> {
     return new Promise((resolve, reject) => {
@@ -92,7 +92,7 @@ export class CategoryService {
   }
   async fetchCategoriesByIds(ids: string[]): Promise<CategoryEntity[]>{
     return this.client
-      .send<CategoryEntity[], string[]>("fetch-products-by-ids", ids)
+      .send<CategoryEntity[], string[]>("fetch-categories-by-ids", ids)
       .toPromise<CategoryEntity[]>();
   }
   destroy(productId: string, id: string) {

@@ -16,8 +16,8 @@ import { CategoriesModule } from "./categories/category.module";
 @Module({
   imports: [
     GraphQLModule.forRoot({
-      typePaths: [join(__dirname,'../../../apps/gateway/src/**/*.graphql')],
-      // autoSchemaFile: 'schema.gql',
+      // typePaths: [join(__dirname,'../../../apps/gateway/src/**/*.graphql')],
+      autoSchemaFile: 'schema.gql',
       debug: true,
       playground: true,
       context: ({ req }) => {
@@ -26,10 +26,10 @@ import { CategoriesModule } from "./categories/category.module";
         };
     },
     }),
-    UsersModule,
-    ProductsModule,
-    OrdersModule,
-    PaymentCardsModule,
+    // UsersModule,
+    // ProductsModule,
+    // OrdersModule,
+    // PaymentCardsModule,
     CategoriesModule
   ],
   providers: [

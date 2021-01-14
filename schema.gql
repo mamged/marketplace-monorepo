@@ -1,0 +1,27 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type CategoryEntity {
+  id: String!
+  name: String!
+  children: [CategoryEntity!]
+  parent: CategoryEntity
+}
+
+type Query {
+  categories: [CategoryEntity!]!
+  showCategory(id: String!): CategoryEntity!
+}
+
+type Mutation {
+  createCategory(data: CreateCategoryInput!): CategoryEntity!
+  updateCategory(id: Float!, data: CreateCategoryInput!): CategoryEntity!
+  deleteCategory(id: String!): CategoryEntity!
+}
+
+input CreateCategoryInput {
+  children: [String!]
+  parent: String
+  name: String!
+}

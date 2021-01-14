@@ -1,18 +1,23 @@
-import { InjectRepository } from "@nestjs/typeorm";
+import { InjectEntityManager, InjectRepository } from "@nestjs/typeorm";
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { Repository } from "typeorm";
+import { Repository, getManager } from "typeorm";
 import { RpcException } from "@nestjs/microservices";
 
 import { CategoryEntity } from "./category.entity";
+import { CategoryDTO } from "@commerce/shared";
 
 @Injectable()
 export class CategoryService {
     constructor(
         @InjectRepository(CategoryEntity)
-        private readonly categories: Repository<CategoryEntity>
+        private readonly categories: Repository<CategoryEntity>,
     ) {}
-    get(data: any = undefined): Promise<CategoryEntity[]> {
-        return this.categories.find(data);
+    async get(data: any = undefined): Promise<CategoryEntity[]> {
+        const mgr = getManager();
+        const trees  = await mgr.getTreeRepository(CategoryEntity).findTrees();
+        console.log('treestreestrees:',trees);
+        
+        return trees;
     }
     fetchCategoriesByIds(ids: Array<string>) {
         return this.categories
@@ -20,14 +25,23 @@ export class CategoryService {
             .where(`categories.id IN (:...ids)`, { ids })
             .getMany();
     }
-    store(data: any): Promise<CategoryEntity> {
-        console.log('<<data>>', data, '<<<');
-        
+    async store(data: any): Promise<CategoryEntity> {
+        console.log('<<data>>', data);
+        // if(data.parent){
+        //     const parent: CategoryEntity = await this.show(data.parent);
+        //     console.log('<<parent>>', parent);
+            
+        //     data.parent = parent;
+        // }
+        // if(data.children && data.children.length>0){
+        //     const children: CategoryEntity[] = await this.fetchCategoriesByIds(data.children)
+        //     data.children = children;
+        // }
         return this.categories.save(data);
     }
 
     async update(
-        id: number,
+        id: string,
         data: any
     ): Promise<CategoryEntity> {
         const category = await this.categories.findOneOrFail(id);

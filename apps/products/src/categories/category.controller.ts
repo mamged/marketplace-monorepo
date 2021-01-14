@@ -9,9 +9,8 @@ export class CategoryController {
     constructor(private readonly category: CategoryService) {}
 
     @MessagePattern("categories")
-    categories(): Promise<CategoryEntity[]> {
+    async categories(): Promise<CategoryEntity[]> {
         console.log('all categories');
-        
         return this.category.get({});
     }
 
@@ -39,6 +38,11 @@ export class CategoryController {
     @MessagePattern("show-category")
     show(id: string): Promise<CategoryEntity> {
         return this.category.show(id);
+    }
+
+    @MessagePattern("fetch-categories-by-ids")
+    fetchCategoriesByIds(ids: string[]): Promise<CategoryEntity[]> {
+        return this.category.fetchCategoriesByIds(ids)
     }
 
     @MessagePattern("delete-category")

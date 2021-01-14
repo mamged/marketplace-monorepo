@@ -35,6 +35,6 @@ type Query {
     me: User!
 }
 type Mutation {
-    login(data: LoginUser!): AuthToken!
+    # login(data: LoginUser!): AuthToken!
     register(data: RegisterUser!): User!
 }

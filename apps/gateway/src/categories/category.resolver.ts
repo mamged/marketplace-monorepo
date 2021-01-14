@@ -1,65 +1,73 @@
-import { Client, ClientProxy, Transport } from "@nestjs/microservices";
-import { UserDTO, config, CategoryDTO } from "@commerce/shared";
+import { Client, ClientProxy, Transport } from '@nestjs/microservices';
+import { UserDTO, config, CategoryDTO } from '@commerce/shared';
 import {
-    Query,
-    Resolver,
-    Context,
-    Mutation,
-    Args,
-    ResolveField,
-    Parent
-} from "@nestjs/graphql";
-import { UseGuards } from "@nestjs/common";
+  Query,
+  Resolver,
+  Context,
+  Mutation,
+  Args,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
 
-import { AuthGuard } from "../middlewares/auth.guard";
-import { CreateCategory } from "./create-category.validation";
-import { SellerGuard } from "../middlewares/seller.guard";
-import { CategoryEntity, ProductEntity } from "@commerce/products";
-import { CategoryService } from "./category.service";
+import { AuthGuard } from '../middlewares/auth.guard';
+import { CategoryRelationsInput, CreateCategoryInput } from './create-category.validation';
+import { SellerGuard } from '../middlewares/seller.guard';
+import { CategoryEntity, ProductEntity } from '@commerce/products';
+import { CategoryService } from './category.service';
 
-@Resolver(()=> CreateCategory)
+@Resolver(of => CategoryEntity)
 export class CategoryResolver {
-    constructor(
-        private readonly categoryService: CategoryService
-    ) {}
-    
-    @Query(returns=> [CategoryEntity])
-    categories(): Promise<CategoryEntity[]> {
-        return this.categoryService.get()
-    }
-    @Query(returns=> CategoryEntity)
-    async showCategory(@Args("id") id: string) {
-        return this.categoryService.show(id);
-    }
+  constructor(private readonly categoryService: CategoryService) {}
 
-    @Mutation(returns=> CategoryEntity)
-    @UseGuards(new AuthGuard())
-    async createCategory(
-        @Args("data") data: CreateCategory
-    ) {
-        console.log('data>$',data, '$<');
-        try {
-            this.categoryService.store(data)
-            .then(_=> console.log('then#'))
-            .catch(_=> console.log('catch###'))
-            .finally(()=> {console.log('finally###')});
-        } catch (error) {
-            console.log('cccc!!!!!!');
-            
-        }
-        return this.categoryService.store(data);
+  @Query(returns => [CategoryEntity])
+  async categories(): Promise<CategoryEntity[]> {
+    const f = await this.categoryService.get();
+    console.log('FF!!!FFF>>>', f)
+    return f;
+  }
+  @ResolveField(returns => CategoryEntity)
+  async parent(@Parent() category: CategoryRelationsInput) {
+    const { parent: parentId } = category;
+    if(parentId === null)
+        return;
+    
+    console.log('parent field resolver');
+    return this.categoryService.show(parentId);
+  }
+  @ResolveField(returns => [CategoryEntity])
+  async children(@Parent() category: CreateCategoryInput) {
+    
+    const { children: childrenIds } = category;
+    if(typeof(childrenIds[0]) === 'string'){
+        console.log('children field resolver');
+        // console.log('childrenIds>>', childrenIds);
+        return this.categoryService.fetchCategoriesByIds(childrenIds);
+    } else if(typeof(childrenIds[0]) === 'object'){
+        return childrenIds
     }
-    @Mutation(returns=> CategoryEntity)
-    @UseGuards(new AuthGuard(), new SellerGuard())
-    async updateCategory(
-        @Args("data") data: CreateCategory,
-        @Args("id") id: number
-    ) {
-        return this.categoryService.update(data, id);
-    }
-    @Mutation(returns=> undefined)
-    @UseGuards(new AuthGuard(), new SellerGuard())
-    async deleteProduct(@Context("user") user: any, @Args("id") id: string) {
-        return this.categoryService.destroy(id, user.id);
-    }
+  }
+  @Query(returns => CategoryEntity)
+  async showCategory(@Args('id') id: string) {
+    return this.categoryService.show(id);
+  }
+
+  @Mutation(returns => CategoryEntity)
+
+  async createCategory(@Args('data') data: CreateCategoryInput) {
+    // console.log('data>$', data, '$<');
+    return this.categoryService.store(data);
+  }
+  @Mutation(returns => CategoryEntity)
+  async updateCategory(
+    @Args('data') data: CreateCategoryInput,
+    @Args('id') id: number,
+  ) {
+    return this.categoryService.update(data, id);
+  }
+  @Mutation(returns => CategoryEntity)
+  async deleteCategory(@Context('user') user: any, @Args('id') id: string) {
+    return this.categoryService.destroy(id, user.id);
+  }
 }

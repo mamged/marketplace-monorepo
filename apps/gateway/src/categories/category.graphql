@@ -2,8 +2,14 @@ scalar DateTime
 type Category {
     id: String!
     name: String!
-    parent: String
-    children: [String]
+    parent: Category
+    children: [Category]
+}
+type CategoryResponse {
+    id: String!
+    name: String!
+    parent: Category
+    children: [Category]
 }
 input CreateCategory {
     name: String!
@@ -16,7 +22,7 @@ type Query {
     showCategory(id: String!): Category!
 }
 type Mutation {
-    createCategory(data: CreateCategory!): Category!
+    createCategory(data: CreateCategory): Category!
     updateCategory(data: CreateCategory!, id: String!): Category!
     deleteCategory(id: String!): Category!
 }
