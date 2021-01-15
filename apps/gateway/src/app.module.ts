@@ -27,7 +27,7 @@ import { CategoriesModule } from "./categories/category.module";
     },
     }),
     UsersModule,
-    // ProductsModule,
+    ProductsModule,
     // OrdersModule,
     // PaymentCardsModule,
     CategoriesModule

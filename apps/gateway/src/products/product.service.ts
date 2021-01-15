@@ -4,9 +4,9 @@ import { UserDTO, ProductDTO } from "@commerce/shared";
 
 import { config } from "@commerce/shared";
 import { redis, redisProductsKey } from "../utils/redis";
-import { CreateProduct } from "./create-product.validation";
 // import { ProductEntity } from "apps/products/src";
 import { ProductEntity } from "@commerce/products";
+import { CreateProductInput } from "./input/create-product.input";
 @Injectable()
 export class ProductService {
   @Client({
@@ -24,14 +24,14 @@ export class ProductService {
         .subscribe(product => resolve(product), error => reject(error));
     });
   }
-  async get(): Promise<ProductDTO[]> {
+  async get(): Promise<ProductEntity[]> {
     return new Promise((resolve, reject) => {
       // get products through cache.
       redis.get(redisProductsKey, (err, products) => {
         // if products don't persist, retrieve them, and store in redis.
         if (!products) {
-          this.client.send<ProductDTO[]>("products", []).subscribe(
-            products => {
+          this.client.send<ProductEntity[]>("products", []).subscribe(
+            (products: ProductEntity[]) => {
               redis.set(
                 redisProductsKey,
                 JSON.stringify(products),
@@ -48,16 +48,19 @@ export class ProductService {
       });
     });
   }
-  store(data: CreateProduct, id: string): Promise<ProductDTO> {
+  store(data: CreateProductInput, id: string): Promise<ProductEntity> {
     // TODO: handle the failure create produc
     return new Promise((resolve, reject) => {
       this.client
-        .send<ProductDTO>("create-product", {
+        .send<ProductEntity>("create-product", {
           ...data,
           user_id: id
         })
         .subscribe(
-          product => {
+          (product) => {
+            // fix date values to be valid with gql type
+            product.created_at = new Date(product.created_at);
+            product.updated_at = new Date(product.updated_at);
             redis.del(redisProductsKey);
             return resolve(product);
           },
@@ -66,7 +69,7 @@ export class ProductService {
     });
   }
   update(
-    data: CreateProduct,
+    data: CreateProductInput,
     productId: string,
     id: string
   ): Promise<ProductDTO> {

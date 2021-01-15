@@ -3,11 +3,9 @@ import {
     IsNotEmpty,
     MinLength,
     MaxLength,
-    IsUrl,
     Min,
     Max,
     IsInt,
-    isURL,
     IsArray
 } from "class-validator";
 import { InputType, Field } from "@nestjs/graphql";

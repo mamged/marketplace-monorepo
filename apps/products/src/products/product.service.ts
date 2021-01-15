@@ -22,7 +22,10 @@ export class ProductService {
     }
     async store(product: ProductEntity): Promise<ProductEntity> {
         try {
-            return await this.products.save(product);
+            const p = await this.products.save(product);
+            console.log('product', p);
+            
+            return p;
         } catch (error: any) {
             throw new RpcException(new BadRequestException(error.message))
         }

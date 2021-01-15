@@ -1,4 +1,14 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import {
+    IsNotEmpty,
+    MinLength,
+    MaxLength,
+    Min,
+    Max,
+    IsInt,
+    IsArray,
+    IsNumber
+} from "class-validator";
+import { Field, GraphQLISODateTime, GraphQLTimestamp, ObjectType } from "@nestjs/graphql";
 import {
     Column,
     Entity,
@@ -16,38 +26,53 @@ export class ProductEntity extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
+    @Min(1)
+    @Max(9999)
+    @IsNotEmpty()
+    @IsNumber()
     @Field()
-    @Column("integer")
+    @Column("float")
     price: number;
+
     @Field()
     @PrimaryGeneratedColumn("uuid")
     user_id: string;
     
-    @Field()
+    @Field({defaultValue: 1})
     @Column("integer", { default: 1 })
     quantity: number;
 
+    @MinLength(8)
+    @MaxLength(32)
+    @IsNotEmpty()
     @Field()
-    @Column("text", { unique: true })
+    // UNCOMMENT ME some time later!! @Column("text", { unique: true })
+    @Column("text")
     title: string;
 
-    @Field()
+    @MinLength(32)
+    @MaxLength(1255)
+    @IsNotEmpty()
+    @Field({nullable: true})
     @Column("text")
     description: string;
 
 
-    @Field()
+    @IsArray()
+    @IsNotEmpty()
+    @Field(of=> [String])
     @Column({
         type: 'jsonb',
         array: false,
         default: () => "'[]'",
         nullable: false,
     })
-    image: string;
+    image: string[];
 
     @Field()
     @CreateDateColumn()
     created_at: Date;
+    // @Field(of=> GraphQLISODateTime)
     @Field()
     @UpdateDateColumn()
     updated_at: Date;
