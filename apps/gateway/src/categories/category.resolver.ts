@@ -12,67 +12,66 @@ import {
 import { UseGuards } from '@nestjs/common';
 
 import { AuthGuard } from '../middlewares/auth.guard';
-import { CategoryRelationsInput, CreateCategoryInput } from './create-category.validation';
+import {
+  CategoryRelationsInput,
+  CreateCategoryInput,
+} from './create-category.validation';
 import { SellerGuard } from '../middlewares/seller.guard';
 import { CategoryEntity, ProductEntity } from '@commerce/products';
 import { CategoryService } from './category.service';
 
-@Resolver(of => CategoryEntity)
+@Resolver((of) => CategoryEntity)
 export class CategoryResolver {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Query(returns => [CategoryEntity])
+  @Query((returns) => [CategoryEntity])
   async categories(): Promise<CategoryEntity[]> {
     return await this.categoryService.get();
   }
-  @ResolveField(returns => CategoryEntity)
+  @ResolveField((returns) => CategoryEntity)
   async parent(@Parent() category: CategoryRelationsInput) {
     const { parent: parentId } = category;
-    if(!parentId)
+    if (!parentId) return;
+    switch (typeof parentId) {
+      case 'string':
+        return this.categoryService.show(parentId);
+      case 'object':
+        return parentId;
+      default:
         return;
-    switch (typeof(parentId)) {
-        case 'string':
-            return this.categoryService.show(parentId);
-        case 'object':
-            return parentId;
-        default:
-            return;
     }
   }
-  @ResolveField(returns => [CategoryEntity])
-  async children(@Parent() category: CreateCategoryInput) {
+  @ResolveField((returns) => [CategoryEntity])
+  children(@Parent() category: CreateCategoryInput) {
     const { children: childrenIds } = category;
-    if(!childrenIds)
+    if (!childrenIds) return;
+    switch (typeof childrenIds[0]) {
+      case 'string':
+        return this.categoryService.fetchCategoriesByIds(childrenIds);
+      case 'object':
+        return childrenIds;
+      default:
         return;
-    switch (typeof(childrenIds[0])) {
-        case 'string':
-            return this.categoryService.fetchCategoriesByIds(childrenIds);
-        case 'object':
-            return childrenIds;
-        default:
-            return;
     }
   }
-  @Query(returns => CategoryEntity)
-  async showCategory(@Args('id') id: string) {
+  @Query((returns) => CategoryEntity)
+  showCategory(@Args('id') id: string) {
     return this.categoryService.show(id);
   }
 
-  @Mutation(returns => CategoryEntity)
-
-  async createCategory(@Args('data') data: CreateCategoryInput) {
-    // console.log('data>$', data, '$<');
+  @Mutation((returns) => CategoryEntity)
+  createCategory(@Args('data') data: CreateCategoryInput) {
     return this.categoryService.store(data);
   }
-  @Mutation(returns => CategoryEntity)
-  async updateCategory(
+  @Mutation((returns) => CategoryEntity)
+  updateCategory(
     @Args('data') data: CreateCategoryInput,
     @Args('id') id: number,
   ) {
     return this.categoryService.update(data, id);
   }
-  @Mutation(returns => CategoryEntity)
-  async deleteCategory(@Context('user') user: any, @Args('id') id: string) {
+  @Mutation((returns) => CategoryEntity)
+  deleteCategory(@Context('user') user: any, @Args('id') id: string) {
     return this.categoryService.destroy(id, user.id);
   }
 }
