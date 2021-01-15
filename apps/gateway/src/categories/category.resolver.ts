@@ -23,34 +23,34 @@ export class CategoryResolver {
 
   @Query(returns => [CategoryEntity])
   async categories(): Promise<CategoryEntity[]> {
-    const f = await this.categoryService.get();
-    console.log('FF!!!FFF>>>', f)
-    return f;
+    return await this.categoryService.get();
   }
   @ResolveField(returns => CategoryEntity)
   async parent(@Parent() category: CategoryRelationsInput) {
     const { parent: parentId } = category;
-    console.log('parentId',parentId);
-    
     if(!parentId)
         return;
-    
-    console.log('parent field resolver');
-    return this.categoryService.show(parentId);
+    switch (typeof(parentId)) {
+        case 'string':
+            return this.categoryService.show(parentId);
+        case 'object':
+            return parentId;
+        default:
+            return;
+    }
   }
   @ResolveField(returns => [CategoryEntity])
   async children(@Parent() category: CreateCategoryInput) {
-    
     const { children: childrenIds } = category;
-    console.log('childrenIds',childrenIds);
-    
     if(!childrenIds)
-        return null;
-    if(typeof(childrenIds[0]) === 'string'){
-        // console.log('children field resolver');
-        return this.categoryService.fetchCategoriesByIds(childrenIds);
-    } else if(typeof(childrenIds[0]) === 'object'){
-        return childrenIds
+        return;
+    switch (typeof(childrenIds[0])) {
+        case 'string':
+            return this.categoryService.fetchCategoriesByIds(childrenIds);
+        case 'object':
+            return childrenIds;
+        default:
+            return;
     }
   }
   @Query(returns => CategoryEntity)
