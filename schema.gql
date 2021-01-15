@@ -2,6 +2,53 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AddressEntity {
+  address_1: String!
+  address_2: String!
+  city: String!
+  state: String!
+  country: String!
+  zip: Float!
+}
+
+type UserEntity {
+  id: String!
+  seller: Boolean!
+  name: String!
+  email: String!
+  password: String!
+  gateway_customer_id: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  address: AddressEntity!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type AuthTokenSchema {
+  id: String!
+  name: String!
+  token: String!
+}
+
+type RegisterUserSchema {
+  id: String!
+  seller: Boolean!
+  name: String!
+  email: String!
+}
+
+type MeSchema {
+  id: String!
+  seller: Boolean!
+  name: String!
+  email: String!
+  address: AddressEntity
+}
+
 type CategoryEntity {
   id: String!
   name: String!
@@ -10,14 +57,31 @@ type CategoryEntity {
 }
 
 type Query {
+  users: UserEntity!
+  me: MeSchema!
   categories: [CategoryEntity!]!
   showCategory(id: String!): CategoryEntity!
 }
 
 type Mutation {
+  login(data: LoginUserInput!): AuthTokenSchema!
+  register(data: RegisterUserInput!): RegisterUserSchema!
   createCategory(data: CreateCategoryInput!): CategoryEntity!
   updateCategory(id: Float!, data: CreateCategoryInput!): CategoryEntity!
   deleteCategory(id: String!): CategoryEntity!
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+input RegisterUserInput {
+  email: String!
+  password: String!
+  name: String!
+  password_confirmation: String!
+  seller: Boolean!
 }
 
 input CreateCategoryInput {

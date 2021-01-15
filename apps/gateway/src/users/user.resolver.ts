@@ -1,16 +1,19 @@
-import { Query, Resolver, Context, Mutation, Args } from "@nestjs/graphql";
+import { Query, Resolver, Context, Mutation, Args, PickType } from "@nestjs/graphql";
 import { SetMetadata, UseGuards } from "@nestjs/common";
 import { UserDTO, UserLoginDTO } from "@commerce/shared";
-import { LoginUser } from "./login-user.validation";
-import { RegisterUser } from "./register-user.validation";
+import { LoginUserInput } from "./input/login-user.input";
+import { RegisterUserInput } from "./input/register-user.input";
 import { AuthGuard } from "../middlewares/auth.guard";
 import { SellerGuard } from "../middlewares/seller.guard";
 import { UserService } from "./user.service";
 import { UserEntity } from "@commerce/users";
 import { RolesGuard } from "../middlewares/roles.guard";
 import { Roles } from "../decorators/roles.decorator";
+import { AuthTokenSchema } from "./schema/authtoken.schema";
+import { RegisterUserSchema } from "./schema/register-user-schema";
+import { MeSchema } from "./schema/me.schema";
 
-@Resolver(()=> LoginUser)
+@Resolver(()=> UserEntity)
 export class UserResolver {
     constructor(private readonly userService: UserService) {}
 
@@ -19,9 +22,9 @@ export class UserResolver {
         return this.userService.get();
     }
 
-    @Mutation(returns=> LoginUser)
+    @Mutation(returns=> AuthTokenSchema)
     login(
-        @Args("data") data: LoginUser
+        @Args("data") data: LoginUserInput
     ): Promise<void | UserLoginDTO> {
         return this.userService
             .login(data)
@@ -30,12 +33,12 @@ export class UserResolver {
                 console.log('login mutation', err);
             });
     }
-    @Mutation(returns=> LoginUser)
-    register(@Args("data") data: RegisterUser): Promise<UserDTO> {
+    @Mutation(returns=> RegisterUserSchema)
+    register(@Args("data") data: RegisterUserInput): Promise<UserDTO> {
         return this.userService.register(data);
     }
 
-    @Query(returns=> UserEntity)
+    @Query(returns=> MeSchema)
     @UseGuards(new AuthGuard())
     @Roles("adminx")
     me(@Context("user") user: any) {

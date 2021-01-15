@@ -1,7 +1,7 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { LoginUser } from "@commerce/gateway";
-import { RegisterUser } from "@commerce/gateway";
+import { LoginUserInput } from "@commerce/gateway";
+import { RegisterUserInput } from "@commerce/gateway";
 import { UserDTO } from "@commerce/shared";
 import { Repository } from "typeorm";
 import { UserEntity as User, UserEntity } from "./user.entity";
@@ -39,7 +39,7 @@ export class UserService {
         };
         return this.users.find(options);
     }
-    async login({ email, password }: LoginUser): Promise<UserDTO> {
+    async login({ email, password }: LoginUserInput): Promise<UserDTO> {
         const user = await this.users.findOneOrFail({
             where: { email }
         });
@@ -56,7 +56,7 @@ export class UserService {
         password_confirmation,
         seller,
         name
-    }: RegisterUser): Promise<UserDTO> {
+    }: RegisterUserInput): Promise<UserDTO> {
         if (password != password_confirmation) {
             throw new RpcException(
                 new NotFoundException(
