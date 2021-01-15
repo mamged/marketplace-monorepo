@@ -30,6 +30,7 @@
     "@nestjs/platform-fastify": "^7.6.5",
     "@nestjs/typeorm": "^7.1.5",
     "@types/bcryptjs": "^2.4.2",
+    "@types/ioredis": "^4.17.11",
     "apollo-server": "2.19.1",
     "apollo-server-fastify": "^2.19.1",
     "bcryptjs": "^2.4.3",

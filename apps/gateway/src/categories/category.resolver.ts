@@ -30,7 +30,9 @@ export class CategoryResolver {
   @ResolveField(returns => CategoryEntity)
   async parent(@Parent() category: CategoryRelationsInput) {
     const { parent: parentId } = category;
-    if(parentId === null)
+    console.log('parentId',parentId);
+    
+    if(!parentId)
         return;
     
     console.log('parent field resolver');
@@ -40,6 +42,10 @@ export class CategoryResolver {
   async children(@Parent() category: CreateCategoryInput) {
     
     const { children: childrenIds } = category;
+    console.log('childrenIds',childrenIds);
+    
+    if(!childrenIds)
+        return null;
     if(typeof(childrenIds[0]) === 'string'){
         // console.log('children field resolver');
         return this.categoryService.fetchCategoriesByIds(childrenIds);

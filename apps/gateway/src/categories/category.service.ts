@@ -32,14 +32,18 @@ export class CategoryService {
         // console.log('redis categories', categories);
         
         // if categories don't persist, retrieve them, and store in redis.
-        if (!categories) {
+        // console.log('redis categories = ', categories);
+        
+        if (!categories) 
+        {
           this.client.send<CategoryEntity[]>("categories", []).subscribe(
             categories => {
               redis.set(
                 redisCategoriesKey,
                 JSON.stringify(categories),
                 "EX",
-                60 * 60 * 30 // 30 mins until expiration
+                // 60 * 30 // 30 mins until expiration
+                10
               );
               return resolve(categories);
             },
