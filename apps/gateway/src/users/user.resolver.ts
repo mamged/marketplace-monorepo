@@ -11,7 +11,7 @@ import { RolesGuard } from "../middlewares/roles.guard";
 import { Roles } from "../decorators/roles.decorator";
 import { AuthTokenSchema } from "./schema/authtoken.schema";
 import { RegisterUserSchema } from "./schema/register-user-schema";
-import { MeSchema } from "./schema/me.schema";
+import { UserSchema } from "./schema/me.schema";
 
 @Resolver(()=> UserEntity)
 export class UserResolver {
@@ -38,7 +38,7 @@ export class UserResolver {
         return this.userService.register(data);
     }
 
-    @Query(returns=> MeSchema)
+    @Query(returns=> UserSchema)
     @UseGuards(new AuthGuard())
     @Roles("adminx")
     me(@Context("user") user: any) {

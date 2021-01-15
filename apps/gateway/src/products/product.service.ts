@@ -7,6 +7,7 @@ import { redis, redisProductsKey } from "../utils/redis";
 // import { ProductEntity } from "apps/products/src";
 import { ProductEntity } from "@commerce/products";
 import { CreateProductInput } from "./input/create-product.input";
+import { ProductSchema } from "./schema/product.schema";
 @Injectable()
 export class ProductService {
   @Client({
@@ -48,11 +49,12 @@ export class ProductService {
       });
     });
   }
-  store(data: CreateProductInput, id: string): Promise<ProductEntity> {
+  store(data: CreateProductInput, id: string): Promise<ProductSchema> {
+    
     // TODO: handle the failure create produc
     return new Promise((resolve, reject) => {
       this.client
-        .send<ProductEntity>("create-product", {
+        .send<ProductSchema>("create-product", {
           ...data,
           user_id: id
         })

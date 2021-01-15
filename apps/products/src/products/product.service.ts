@@ -4,6 +4,7 @@ import { QueryFailedError, Repository } from "typeorm";
 import { RpcException } from "@nestjs/microservices";
 
 import { ProductEntity } from "./product.entity";
+import { ProductInput } from "src/schemas/graphql";
 
 @Injectable()
 export class ProductService {
@@ -20,16 +21,8 @@ export class ProductService {
             .where(`products.id IN (:...ids)`, { ids })
             .getMany();
     }
-    async store(product: ProductEntity): Promise<ProductEntity> {
-        try {
-            const p = await this.products.save(product);
-            console.log('product', p);
-            
-            return p;
-        } catch (error: any) {
-            throw new RpcException(new BadRequestException(error.message))
-        }
-        
+    async store(product: ProductInput): Promise<any> {
+        return this.products.save(product).catch(error=>{throw new RpcException(new BadRequestException(error.message))});
     }
     async update(
         id: string,

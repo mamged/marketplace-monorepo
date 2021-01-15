@@ -15,9 +15,12 @@ import {
     BaseEntity,
     CreateDateColumn,
     UpdateDateColumn,
-    PrimaryGeneratedColumn
+    PrimaryGeneratedColumn,
+    ManyToOne
 } from "typeorm";
 import { ColumnMetadata } from "typeorm/metadata/ColumnMetadata";
+import { UserEntity } from "@commerce/users";
+import { UserSchema } from "@commerce/gateway/users/schema/me.schema";
 
 @Entity("products")
 @ObjectType()

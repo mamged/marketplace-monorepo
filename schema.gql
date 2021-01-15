@@ -47,12 +47,25 @@ type UserEntity {
   address: AddressEntity!
 }
 
-type MeSchema {
+type UserSchema {
   id: String!
   seller: Boolean!
   name: String!
   email: String!
   address: AddressEntity
+}
+
+type ProductSchema {
+  id: String!
+  price: Float!
+  user_id: String!
+  quantity: Float!
+  title: String!
+  description: String
+  image: [String!]!
+  created_at: DateTime!
+  updated_at: DateTime!
+  user: UserSchema!
 }
 
 type AuthTokenSchema {
@@ -70,9 +83,9 @@ type RegisterUserSchema {
 
 type Query {
   users: UserEntity!
-  me: MeSchema!
-  products: [ProductEntity!]!
-  showProduct(id: String!): ProductEntity!
+  me: UserSchema!
+  products: [ProductSchema!]!
+  showProduct(id: String!): ProductSchema!
   categories: [CategoryEntity!]!
   showCategory(id: String!): CategoryEntity!
 }
@@ -80,7 +93,7 @@ type Query {
 type Mutation {
   login(data: LoginUserInput!): AuthTokenSchema!
   register(data: RegisterUserInput!): RegisterUserSchema!
-  createProduct(data: CreateProductInput!): ProductEntity!
+  createProduct(data: CreateProductInput!): ProductSchema!
   updateProduct(id: String!, data: CreateProductInput!): ProductEntity!
   deleteProduct(id: String!): ProductEntity!
   createCategory(data: CreateCategoryInput!): CategoryEntity!
