@@ -5,6 +5,6 @@ import { Field, ObjectType, OmitType } from "@nestjs/graphql";
 
 @ObjectType()
 export class ProductSchema extends ProductEntity{
-    @Field()
-    user: UserSchema
+    // @Field()
+    // user: UserSchema
 }

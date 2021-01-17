@@ -8,7 +8,7 @@ import {
     IsArray,
     IsNumber
 } from "class-validator";
-import { Field, GraphQLISODateTime, GraphQLTimestamp, ObjectType } from "@nestjs/graphql";
+import { Field, ObjectType } from "@nestjs/graphql";
 import {
     Column,
     Entity,
@@ -16,11 +16,7 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     PrimaryGeneratedColumn,
-    ManyToOne
 } from "typeorm";
-import { ColumnMetadata } from "typeorm/metadata/ColumnMetadata";
-import { UserEntity } from "@commerce/users";
-import { UserSchema } from "@commerce/gateway/users/schema/me.schema";
 
 @Entity("products")
 @ObjectType()
@@ -40,7 +36,7 @@ export class ProductEntity extends BaseEntity {
     @Field()
     @PrimaryGeneratedColumn("uuid")
     user_id: string;
-    
+
     @Field({defaultValue: 1})
     @Column("integer", { default: 1 })
     quantity: number;

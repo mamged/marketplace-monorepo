@@ -32,22 +32,18 @@ export class AuthGuard implements CanActivate {
   }
   async validateToken(auth: string) {
     if (auth.indexOf("Bearer") !== 0) {
-      console.log('not bearer token');
-      
       throw new HttpException(
         "Invalid Token has been passed",
         HttpStatus.FORBIDDEN
       );
     }
     const token = auth.split(" ")[1];
-    
+    console.log('splitted token', token);
     try {
       const decodedToken = await verify(token, config.JWT_TOKEN);
       return decodedToken;
     } catch (err) {
       const message = "Token error:" + err.message;
-      console.log(message);
-      
       throw new HttpException(message, HttpStatus.FORBIDDEN);
     }
   }
