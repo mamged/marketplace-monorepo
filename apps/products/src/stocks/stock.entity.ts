@@ -16,28 +16,34 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     PrimaryGeneratedColumn,
-    OneToMany,
+    ManyToOne,
 } from "typeorm";
-import { StockEntity } from "../stocks/stock.entity";
+import { ProductEntity } from "../products/product.entity";
 
-@Entity("products")
+export enum stockStatus {
+    CONSUMED = "consumed",
+    AVAILABLE = "available",
+    DISABLED = "disabled",
+    DELETED = "deleted"
+}
+@Entity("stocks")
 @ObjectType()
-export class ProductEntity extends BaseEntity {
+export class StockEntity extends BaseEntity {
     @Field()
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Min(1)
-    @Max(9999)
-    @IsNotEmpty()
-    @IsNumber()
-    @Field()
-    @Column("float")
-    price: number;
+    @Field(returns=>ProductEntity)
+    @ManyToOne(type=> ProductEntity, product=>product.stock)
+    product: ProductEntity;
 
-    @Field()
-    @PrimaryGeneratedColumn("uuid")
-    user_id: string;
+    @Field({defaultValue: stockStatus.AVAILABLE, nullable: true})
+    @Column({
+        type: "enum",
+        enum: stockStatus,
+        default: stockStatus.AVAILABLE
+    })
+    status: stockStatus;
 
     @Field({defaultValue: 1})
     @Column("integer", { default: 1 })
@@ -57,21 +63,6 @@ export class ProductEntity extends BaseEntity {
     @Field({nullable: true})
     @Column("text")
     description: string;
-
-
-    @IsArray()
-    @IsNotEmpty()
-    @Field(of=> [String])
-    @Column({
-        type: 'jsonb',
-        array: false,
-        default: () => "'[]'",
-        nullable: false,
-    })
-    image: string[];
-
-    @OneToMany(type=> StockEntity, stock=> stock.product)
-    stock: StockEntity;
 
     @Field()
     @CreateDateColumn()

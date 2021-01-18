@@ -3,11 +3,14 @@ import { Injectable } from "@nestjs/common";
 import { UserDTO, ProductDTO } from "@commerce/shared";
 
 import { config } from "@commerce/shared";
-import { redis, redisProductsKey } from "../utils/redis";
+import { redis, redisProductsKey, redisStocksKey } from "../utils/redis";
 // import { ProductEntity } from "apps/products/src";
 import { ProductEntity } from "@commerce/products";
 import { CreateProductInput } from "./input/create-product.input";
 import { ProductSchema } from "./schema/product.schema";
+import { CreateStockInput } from "./input/create-stock.input";
+import { StockSchema } from "./schema/stock.schema";
+import { UpdateStockInput } from "./input/update-stock.input";
 @Injectable()
 export class ProductService {
   @Client({
@@ -49,8 +52,7 @@ export class ProductService {
       });
     });
   }
-  store(data: CreateProductInput, id: string): Promise<ProductSchema> {
-    
+  store(data: CreateProductInput, id: string): Promise<ProductSchema> {  
     // TODO: handle the failure create produc
     return new Promise((resolve, reject) => {
       this.client
@@ -70,9 +72,30 @@ export class ProductService {
         );
     });
   }
+
+  createStock(data: CreateStockInput, id: string): Promise<StockSchema> {  
+    // TODO: handle the failure create produc
+    return new Promise((resolve, reject) => {
+      this.client
+        .send<StockSchema>("create-stock", {
+          ...data
+        })
+        .subscribe(
+          (stock) => {
+            // fix date values to be valid with gql type
+            stock.created_at = new Date(stock.created_at);
+            stock.updated_at = new Date(stock.updated_at);
+            redis.del(redisStocksKey);
+            return resolve(stock);
+          },
+          error => reject(error)
+        );
+    });
+  }
+
   update(
-    data: CreateProductInput,
     productId: string,
+    data: UpdateStockInput,
     id: string
   ): Promise<ProductDTO> {
     return new Promise((resolve, reject) => {

@@ -20,6 +20,9 @@ import { Roles } from "../decorators/roles.decorator";
 import { UserSchema } from "../users/schema/me.schema";
 import { CreateProductInput } from "./input/create-product.input";
 import { ProductSchema } from "./schema/product.schema";
+import { StockSchema } from "./schema/stock.schema";
+import { CreateStockInput } from "./input/create-stock.input";
+import { UpdateStockInput } from "./input/update-stock.input";
 
 @Resolver(()=> ProductSchema)
 export class ProductResolver {
@@ -56,14 +59,31 @@ export class ProductResolver {
         return p;
 
     }
+
+    @Mutation(returns=> StockSchema)
+    @Roles("admin")
+    @UseGuards(new AuthGuard(), new SellerGuard())
+    async createStock(
+        @Args("data") data: CreateStockInput,
+        @Context("user") user: any
+    ) {
+        console.log('create stock',data);
+        
+        const p = await this.productService.createStock(data, user.id);;
+        console.log('pp:',p);
+        p.created_at = new Date(p.created_at);
+        return p;
+
+    }
+
     @Mutation(returns=> ProductEntity)
     @UseGuards(new AuthGuard(), new SellerGuard())
     updateProduct(
-        @Args("data") data: CreateProductInput,
+        @Args("data") data: UpdateStockInput,
         @Context("user") user: any,
-        @Args("id") id: string
+        @Args("id") stockId: string
     ) {
-        return this.productService.update(data, id, user.id);
+        return this.productService.update(stockId, data, user.id);
     }
     @Mutation(returns=> ProductEntity)
     @UseGuards(new AuthGuard(), new SellerGuard())
