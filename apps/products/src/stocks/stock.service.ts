@@ -41,11 +41,16 @@ export class Stockservice {
     ): Promise<StockEntity> {
         const stock = await this.Stocks.findOneOrFail({ id });
         console.log('stock!!!', stock);
+        console.log('data!!',data);
+        console.log('userid!!',userId);
         
-        // if (stock.user_id === user_id) {
-            await this.Stocks.update(id, data);
+        if (stock.product.user_id === userId) {
+            const updated = {...data};
+            console.log('updated', updated);
+            
+            await this.Stocks.update(id, updated);
             return this.Stocks.findOneOrFail({ id });
-        // }
+        }
         throw new RpcException(
             new NotFoundException("You cannot update what you don't own...")
         );

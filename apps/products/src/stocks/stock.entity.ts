@@ -8,7 +8,7 @@ import {
     IsArray,
     IsNumber
 } from "class-validator";
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, ObjectType, registerEnumType } from "@nestjs/graphql";
 import {
     Column,
     Entity,
@@ -26,6 +26,24 @@ export enum stockStatus {
     DISABLED = "disabled",
     DELETED = "deleted"
 }
+registerEnumType(stockStatus, {
+    name: 'StockStatus',
+    description: 'Show the status of stock item.',
+    valuesMap: {
+      CONSUMED: {
+        description: 'Means a user purchased this stock item.',
+      },
+      AVAILABLE: {
+        description: 'Stock item is available.',
+      },
+      DISABLED: {
+        description: 'Stock item is disable by seller.',
+      },
+      DELETED: {
+        description: 'Stock item is deleted by seller.',
+      }
+    }
+  });
 @Entity("stocks")
 @ObjectType()
 export class StockEntity extends BaseEntity {
@@ -34,10 +52,10 @@ export class StockEntity extends BaseEntity {
     id: string;
 
     @Field(returns=>ProductEntity)
-    @ManyToOne(type=> ProductEntity, product=>product.stock)
+    @ManyToOne(type=> ProductEntity, product=>product.stock, {eager: true})
     product: ProductEntity;
 
-    @Field({defaultValue: stockStatus.AVAILABLE, nullable: true})
+    @Field(returns=> stockStatus, {defaultValue: stockStatus.AVAILABLE, nullable: true})
     @Column({
         type: "enum",
         enum: stockStatus,

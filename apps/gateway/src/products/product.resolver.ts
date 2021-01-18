@@ -15,7 +15,7 @@ import { AuthGuard } from "../middlewares/auth.guard";
 import { ProductService } from "./product.service";
 import { SellerGuard } from "../middlewares/seller.guard";
 import { UserDataLoader } from "../loaders/user.loader";
-import { ProductEntity } from "@commerce/products";
+import { ProductEntity, StockEntity } from "@commerce/products";
 import { Roles } from "../decorators/roles.decorator";
 import { UserSchema } from "../users/schema/me.schema";
 import { CreateProductInput } from "./input/create-product.input";
@@ -42,6 +42,10 @@ export class ProductResolver {
     @Query(returns=> ProductSchema)
     showProduct(@Args("id") id: string) {
         return this.productService.show(id);
+    }
+    @Query(returns=> StockSchema)
+    showStock(@Args("id") id: string){
+        return this.productService.showStock(id);
     }
 
     @Mutation(returns=> ProductSchema)
@@ -79,11 +83,20 @@ export class ProductResolver {
     @Mutation(returns=> ProductEntity)
     @UseGuards(new AuthGuard(), new SellerGuard())
     updateProduct(
+        @Args("data") data: CreateProductInput,
+        @Context("user") user: any,
+        @Args("id") productId: string
+    ) {
+        return this.productService.update(productId, data, user.id);
+    }
+    @Mutation(returns=> StockSchema)
+    @UseGuards(new AuthGuard(), new SellerGuard())
+    updateStock(
         @Args("data") data: UpdateStockInput,
         @Context("user") user: any,
         @Args("id") stockId: string
     ) {
-        return this.productService.update(stockId, data, user.id);
+        return this.productService.updateStock(stockId, data, user.id);
     }
     @Mutation(returns=> ProductEntity)
     @UseGuards(new AuthGuard(), new SellerGuard())

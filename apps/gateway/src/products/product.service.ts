@@ -5,7 +5,7 @@ import { UserDTO, ProductDTO } from "@commerce/shared";
 import { config } from "@commerce/shared";
 import { redis, redisProductsKey, redisStocksKey } from "../utils/redis";
 // import { ProductEntity } from "apps/products/src";
-import { ProductEntity } from "@commerce/products";
+import { ProductEntity, StockEntity } from "@commerce/products";
 import { CreateProductInput } from "./input/create-product.input";
 import { ProductSchema } from "./schema/product.schema";
 import { CreateStockInput } from "./input/create-stock.input";
@@ -25,6 +25,14 @@ export class ProductService {
       ProductEntity
       this.client
         .send<ProductDTO>("show-product", id)
+        .subscribe(product => resolve(product), error => reject(error));
+    });
+  }
+  async showStock(id: string): Promise<StockEntity> {
+    return new Promise((resolve, reject) => {
+      ProductEntity
+      this.client
+        .send<StockSchema>("show-stock", id)
         .subscribe(product => resolve(product), error => reject(error));
     });
   }
@@ -95,7 +103,7 @@ export class ProductService {
 
   update(
     productId: string,
-    data: UpdateStockInput,
+    data: CreateProductInput,
     id: string
   ): Promise<ProductDTO> {
     return new Promise((resolve, reject) => {
@@ -105,6 +113,24 @@ export class ProductService {
           id: productId,
           user_id: id
         })
+        .subscribe(
+          product => {
+            redis.del(redisProductsKey);
+            return resolve(product);
+          },
+          error => reject(error)
+        );
+    });
+  }
+
+  updateStock(
+    stockId: string,
+    stock: UpdateStockInput,
+    userId: string
+  ): Promise<StockEntity> {
+    return new Promise((resolve, reject) => {
+      this.client
+        .send<StockEntity>("update-stock", {stockId, stock, userId})
         .subscribe(
           product => {
             redis.del(redisProductsKey);

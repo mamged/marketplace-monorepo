@@ -71,12 +71,27 @@ type ProductSchema {
 type StockSchema {
   id: String!
   product: ProductEntity!
-  status: String
+  status: StockStatus
   quantity: Float!
   title: String!
   description: String
   created_at: DateTime!
   updated_at: DateTime!
+}
+
+"""Show the status of stock item."""
+enum StockStatus {
+  """Means a user purchased this stock item."""
+  CONSUMED
+
+  """Stock item is available."""
+  AVAILABLE
+
+  """Stock item is disable by seller."""
+  DISABLED
+
+  """Stock item is deleted by seller."""
+  DELETED
 }
 
 type AuthTokenSchema {
@@ -97,6 +112,7 @@ type Query {
   me: UserSchema!
   products: [ProductSchema!]!
   showProduct(id: String!): ProductSchema!
+  showStock(id: String!): StockSchema!
   categories: [CategoryEntity!]!
   showCategory(id: String!): CategoryEntity!
 }
@@ -106,7 +122,8 @@ type Mutation {
   register(data: RegisterUserInput!): RegisterUserSchema!
   createProduct(data: CreateProductInput!): ProductSchema!
   createStock(data: CreateStockInput!): StockSchema!
-  updateProduct(id: String!, data: UpdateStockInput!): ProductEntity!
+  updateProduct(id: String!, data: CreateProductInput!): ProductEntity!
+  updateStock(id: String!, data: UpdateStockInput!): StockSchema!
   deleteProduct(id: String!): ProductEntity!
   createCategory(data: CreateCategoryInput!): CategoryEntity!
   updateCategory(id: Float!, data: CreateCategoryInput!): CategoryEntity!
@@ -135,14 +152,14 @@ input CreateProductInput {
 }
 
 input CreateStockInput {
-  status: String = "available"
+  status: StockStatus = AVAILABLE
   title: String!
   description: String
   product: String!
 }
 
 input UpdateStockInput {
-  status: String = "available"
+  status: StockStatus = AVAILABLE
   title: String
   description: String
 }

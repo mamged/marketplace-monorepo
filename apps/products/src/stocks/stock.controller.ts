@@ -21,7 +21,8 @@ export class StockController {
     }
 
     @MessagePattern("update-stock")
-    update(stockId, stock: UpdateStockInput, userId): Promise<StockEntity> {
+    update({stockId, stock, userId}): Promise<StockEntity> {
+        const {title, description, status}: UpdateStockInput = stock;
         return this.Stocks.update(
             stockId,
             stock,
