@@ -47,6 +47,10 @@ export class ProductResolver {
     showStock(@Args("id") id: string){
         return this.productService.showStock(id);
     }
+    @Query(returns=> [StockSchema])
+    getProductStock(@Args("id") id: string){
+        return this.productService.getProductStock(id);
+    }
 
     @Mutation(returns=> ProductSchema)
     @Roles("admin")
@@ -55,13 +59,7 @@ export class ProductResolver {
         @Args("data") data: CreateProductInput,
         @Context("user") user: any
     ) {
-        console.log('rrrr',data);
-        
-        const p = await this.productService.store(data, user.id);;
-        console.log('pp:',p);
-        p.created_at = new Date(p.created_at);
-        return p;
-
+        return this.productService.store(data, user.id);
     }
 
     @Mutation(returns=> StockSchema)

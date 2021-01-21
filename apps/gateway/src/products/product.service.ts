@@ -28,11 +28,19 @@ export class ProductService {
         .subscribe(product => resolve(product), error => reject(error));
     });
   }
-  async showStock(id: string): Promise<StockEntity> {
+  showStock(id: string): Promise<StockEntity> {
     return new Promise((resolve, reject) => {
       ProductEntity
       this.client
         .send<StockSchema>("show-stock", id)
+        .subscribe(product => resolve(product), error => reject(error));
+    });
+  }
+  async getProductStock(id: string): Promise<StockEntity[]> {
+    return new Promise((resolve, reject) => {
+      ProductEntity
+      this.client
+        .send<StockSchema[]>("get-product-stock", id)
         .subscribe(product => resolve(product), error => reject(error));
     });
   }

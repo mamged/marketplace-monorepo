@@ -1,6 +1,6 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { QueryFailedError, Repository } from "typeorm";
+import { getRepository, QueryFailedError, Repository } from "typeorm";
 import { RpcException } from "@nestjs/microservices";
 
 import { StockEntity } from "./stock.entity";
@@ -15,6 +15,7 @@ export class Stockservice {
         @InjectRepository(StockEntity)
         private readonly Stocks: Repository<StockEntity>,
         private readonly productService: ProductService,
+        private readonly products: ProductService
     ) {}
     get(data: any = undefined): Promise<StockEntity[]> {
         return this.Stocks.find(data);

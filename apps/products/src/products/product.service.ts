@@ -4,7 +4,8 @@ import { QueryFailedError, Repository } from "typeorm";
 import { RpcException } from "@nestjs/microservices";
 
 import { ProductEntity } from "./product.entity";
-import { ProductInput } from "src/schemas/graphql";
+import { Product, ProductInput } from "src/schemas/graphql";
+import { StockEntity } from "../stocks/stock.entity";
 
 @Injectable()
 export class ProductService {
@@ -14,6 +15,35 @@ export class ProductService {
     ) {}
     get(data: any = undefined): Promise<ProductEntity[]> {
         return this.products.find(data);
+    }
+    getStock(data: any): Promise<ProductEntity[]>{
+        return this.products.find({
+            where:{
+                id: "6189dfd1-b699-4479-938b-90c10493b1cb"
+            },
+            relations:['stock']
+        });
+    }
+    async getProductStock(id: string): Promise<StockEntity[]> {
+        console.log('product service..');
+        const product =await this.products.findOne({
+            where:{
+                id: "6189dfd1-b699-4479-938b-90c10493b1cb"
+            },
+            relations:['stock']
+        });
+        return product.stock;
+        // console.log('this.this.products.destroy2',this.products.destroy2);
+        // console.log('!!aa!!',aa.stock);
+        // return [aa.stock];
+        // // const rep = getRepository(StockEntity);
+        // const product = await this.products.show(id);
+        // this.Stocks.find({relations: [""]})
+        // console.log('stock product ', product);
+        // const a = await this.Stocks.find({ product });
+        // console.log('aaa',a);
+        
+        // return a;
     }
     fetchProductsByIds(ids: Array<string>) {
         return this.products
@@ -41,15 +71,29 @@ export class ProductService {
     async show(id: string): Promise<ProductEntity> {
         return this.products.findOneOrFail({ id });
     }
+    async destroy2(id: string, user_id: string): Promise<ProductEntity> {
+        return this.products.findOne({
+            where:{
+                id: "6189dfd1-b699-4479-938b-90c10493b1cb"
+            },
+            relations:['stock']
+        });
+    }
     async destroy(id: string, user_id: string): Promise<ProductEntity> {
-        const product = await this.products.findOneOrFail({ id });
-        if (product.user_id === user_id) {
-            await this.products.delete({ id });
-            return product;
-        }
-        throw new RpcException(
-            new NotFoundException("You cannot update what you don't own...")
-        );
+        return this.products.findOne({
+            where:{
+                id: "6189dfd1-b699-4479-938b-90c10493b1cb"
+            },
+            relations:['stock']
+        });
+        // const product = await this.products.findOneOrFail({ id });
+        // if (product.user_id === user_id) {
+        //     await this.products.delete({ id });
+        //     return product;
+        // }
+        // throw new RpcException(
+        //     new NotFoundException("You cannot update what you don't own...")
+        // );
     }
     async decrementProductsStock(products) {
         products.forEach(product => {

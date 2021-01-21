@@ -15,7 +15,7 @@ export class StockController {
         return this.Stocks.get(data);
     }
 
-    @MessagePattern("create-stock")
+    @MessagePattern("craeate-stock")
     store(stock: CreateStockInput): Promise<StockEntity> {
         return this.Stocks.store(stock);
     }
@@ -23,11 +23,7 @@ export class StockController {
     @MessagePattern("update-stock")
     update({stockId, stock, userId}): Promise<StockEntity> {
         const {title, description, status}: UpdateStockInput = stock;
-        return this.Stocks.update(
-            stockId,
-            stock,
-            userId
-        );
+        return this.Stocks.update(stockId, stock, userId);
     }
 
     @MessagePattern("show-stock")

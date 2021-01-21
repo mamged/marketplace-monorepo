@@ -71,7 +71,7 @@ export class ProductEntity extends BaseEntity {
     image: string[];
 
     @OneToMany(type=> StockEntity, stock=> stock.product)
-    stock: StockEntity;
+    stock: StockEntity[];
 
     @Field()
     @CreateDateColumn()

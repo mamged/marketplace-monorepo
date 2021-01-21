@@ -113,6 +113,7 @@ type Query {
   products: [ProductSchema!]!
   showProduct(id: String!): ProductSchema!
   showStock(id: String!): StockSchema!
+  getProductStock(id: String!): [StockSchema!]!
   categories: [CategoryEntity!]!
   showCategory(id: String!): CategoryEntity!
 }
