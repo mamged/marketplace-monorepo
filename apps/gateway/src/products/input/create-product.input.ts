@@ -5,6 +5,6 @@ import { ProductEntity } from '@commerce/products';
 @ObjectType()
 export class CreateProductInput extends PickType(
   ProductEntity,
-  ['title', 'image', 'price', 'quantity', 'description'],
+  ['title', 'image', 'price', 'description'],
   InputType,
 ) {}

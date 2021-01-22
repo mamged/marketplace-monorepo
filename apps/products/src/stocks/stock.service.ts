@@ -1,13 +1,15 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { getRepository, QueryFailedError, Repository } from 'typeorm';
 import { RpcException } from '@nestjs/microservices';
 
-import { StockEntity } from './stock.entity';
+import { StockEntity, stockStatus } from './stock.entity';
 import { CreateStockInput } from '@commerce/gateway/products/input/create-stock.input';
 import { ProductEntity } from '../products/product.entity';
 import { ProductService } from '../products/product.service';
@@ -18,8 +20,8 @@ export class Stockservice {
   constructor(
     @InjectRepository(StockEntity)
     private readonly Stocks: Repository<StockEntity>,
-    private readonly productService: ProductService,
-    private readonly products: ProductService,
+    @Inject(forwardRef(() => ProductService))
+    private productService: ProductService,
   ) {}
   get(data: any = undefined): Promise<StockEntity[]> {
     return this.Stocks.find(data);
@@ -35,7 +37,10 @@ export class Stockservice {
     newStock.title = stock.title;
     newStock.description = stock.description;
     newStock.product = await this.productService.show(stock.product);
-
+    const product = new ProductEntity();
+    product.id = stock.product;
+    product.quantity = 1;
+    this.productService.incrementProductsStock([product]);
     return this.Stocks.save(newStock).catch((error) => {
       throw new RpcException(new BadRequestException(error.message));
     });
@@ -73,10 +78,35 @@ export class Stockservice {
       new NotFoundException("You cannot update what you don't own..."),
     );
   }
-  async decrementStocksStock(Stocks) {
-    Stocks.forEach((stock) => {
-      this.Stocks.decrement({ id: stock.id }, 'quantity', stock.quantity);
+  async getStockByProductId(id: string) {
+    return this.Stocks.find({
+      where: {
+        product: id,
+        status: stockStatus.AVAILABLE,
+      },
     });
+  }
+  async consumeStock(productId: string) {
+    let stock;
+    try {
+      stock = await this.Stocks.findOneOrFail({
+        where: {
+          product: productId,
+          status: stockStatus.AVAILABLE,
+        },
+      });
+    } catch (error) {
+      return new RpcException(
+        new NotFoundException('cannot find available stock'),
+      );
+    }
+    stock.status = stockStatus.CONSUMED;
+    stock.save();
+    const product = new ProductEntity();
+    product.id = productId;
+    product.quantity = 1;
+    this.productService.decrementProductsStock([product]);
+    return stock;
   }
   async incrementStocksStock(Stocks) {
     Stocks.forEach((stock) => {

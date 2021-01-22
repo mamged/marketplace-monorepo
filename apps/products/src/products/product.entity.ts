@@ -39,8 +39,8 @@ export class ProductEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   user_id: string;
 
-  @Field({ defaultValue: 1 })
-  @Column('integer', { default: 1 })
+  @Field({ defaultValue: 0 })
+  @Column('integer', { default: 0 })
   quantity: number;
 
   @MinLength(8)

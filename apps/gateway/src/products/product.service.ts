@@ -160,6 +160,15 @@ export class ProductService {
         );
     });
   }
+  consumeStock(productId: string): Promise<StockEntity> {
+    return new Promise((resolve, reject) => {
+      ProductEntity;
+      this.client.send<StockSchema>('consume-stock', productId).subscribe(
+        (product) => resolve(product),
+        (error) => reject(error),
+      );
+    });
+  }
   async fetchProductsByIds(ids: string[]): Promise<ProductDTO[]> {
     return this.client
       .send<ProductDTO[], string[]>('fetch-products-by-ids', ids)

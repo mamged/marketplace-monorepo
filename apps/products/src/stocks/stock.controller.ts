@@ -15,7 +15,7 @@ export class StockController {
     return this.Stocks.get(data);
   }
 
-  @MessagePattern('craeate-stock')
+  @MessagePattern('create-stock')
   store(stock: CreateStockInput): Promise<StockEntity> {
     return this.Stocks.store(stock);
   }
@@ -34,19 +34,14 @@ export class StockController {
   getStockByProductId(id: string): Promise<StockEntity> {
     return this.Stocks.getProductByStockId(id);
   }
-  @MessagePattern('fetch-Stocks-by-ids')
+  @MessagePattern('fetch-stocks-by-ids')
   fetchStocksByIds(ids: Array<string>) {
     return this.Stocks.fetchStocksByIds(ids);
   }
-  @EventPattern('order_deleted')
-  async handleOrderDeleted(Stocks: Array<{ id: string; quantity: number }>) {
-    this.Stocks.incrementStocksStock(Stocks);
+  @EventPattern('consume-stock')
+  async handleOrderDeleted(productId: string) {
+    return this.Stocks.consumeStock(productId);
   }
-  @EventPattern('order_created')
-  async handleOrderCreated(Stocks: Array<{ id: string; quantity: number }>) {
-    this.Stocks.decrementStocksStock(Stocks);
-  }
-
   @MessagePattern('delete-stock')
   destroy({ id, user_id }: { id: string; user_id: string }) {
     return this.Stocks.destroy(id, user_id);

@@ -42,11 +42,11 @@ export class ProductController {
     return this.products.fetchProductsByIds(ids);
   }
   @EventPattern('order_deleted')
-  async handleOrderDeleted(products: Array<{ id: string; quantity: number }>) {
+  async handleOrderDeleted(products: Array<ProductEntity>) {
     this.products.incrementProductsStock(products);
   }
   @EventPattern('order_created')
-  async handleOrderCreated(products: Array<{ id: string; quantity: number }>) {
+  async handleOrderCreated(products: Array<ProductEntity>) {
     this.products.decrementProductsStock(products);
   }
 

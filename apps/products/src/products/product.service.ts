@@ -1,6 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -9,36 +11,26 @@ import { RpcException } from '@nestjs/microservices';
 
 import { ProductEntity } from './product.entity';
 import { Product, ProductInput } from 'src/schemas/graphql';
-import { StockEntity } from '../stocks/stock.entity';
+import { StockEntity, stockStatus } from '../stocks/stock.entity';
+import { Stockservice } from '../stocks/stock.service';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectRepository(ProductEntity)
     private readonly products: Repository<ProductEntity>,
+    @Inject(forwardRef(() => Stockservice))
+    private stock: Stockservice,
   ) {}
   get(data: any = undefined): Promise<ProductEntity[]> {
     return this.products.find(data);
   }
-  getStock(data: any): Promise<ProductEntity[]> {
-    return this.products.find({
-      where: {
-        id: '6189dfd1-b699-4479-938b-90c10493b1cb',
-      },
-      relations: ['stock'],
-    });
-  }
   async getProductStock(id: string): Promise<StockEntity[]> {
     try {
-      const product = await this.products.findOneOrFail({
-        where: {
-          id,
-        },
-        relations: ['stock'],
-      });
-      return product.stock;
+      const stock = await this.stock.getStockByProductId(id);
+      return stock;
     } catch (error) {
-      throw new NotFoundException(`Can't find product with ID ${id}`);
+      throw new NotFoundException(error);
     }
   }
   fetchProductsByIds(ids: Array<string>) {
@@ -52,26 +44,20 @@ export class ProductService {
       throw new RpcException(new BadRequestException(error.message));
     });
   }
-  async update(id: string, data: any, user_id: string): Promise<ProductEntity> {
+  async update(id: string, data: any, user_id?: string): Promise<ProductEntity> {
     const product = await this.products.findOneOrFail({ id });
-    if (product.user_id === user_id) {
+    // if (product.user_id === user_id) {
       await this.products.update({ id }, data);
+      console.log('updating product with:', data);
+      
       return this.products.findOneOrFail({ id });
-    }
+    // }
     throw new RpcException(
       new NotFoundException("You cannot update what you don't own..."),
     );
   }
   async show(id: string): Promise<ProductEntity> {
     return this.products.findOneOrFail({ id });
-  }
-  async destroy2(id: string, user_id: string): Promise<ProductEntity> {
-    return this.products.findOne({
-      where: {
-        id: '6189dfd1-b699-4479-938b-90c10493b1cb',
-      },
-      relations: ['stock'],
-    });
   }
   async destroy(id: string, user_id: string): Promise<ProductEntity> {
     return this.products.findOne({
@@ -89,12 +75,12 @@ export class ProductService {
     //     new NotFoundException("You cannot update what you don't own...")
     // );
   }
-  async decrementProductsStock(products) {
-    products.forEach((product) => {
-      this.products.decrement({ id: product.id }, 'quantity', product.quantity);
+  async decrementProductsStock(products: ProductEntity[]) {
+    products.forEach(async (product) => {
+        await this.products.decrement({ id: product.id }, 'quantity', product.quantity);
     });
   }
-  async incrementProductsStock(products) {
+  async incrementProductsStock(products: ProductEntity[]) {
     products.forEach((product) => {
       this.products.increment({ id: product.id }, 'quantity', product.quantity);
     });

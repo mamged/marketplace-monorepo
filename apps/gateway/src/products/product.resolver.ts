@@ -119,4 +119,12 @@ export class StockResolver {
   ) {
     return this.productService.updateStock(stockId, data, user.id);
   }
+  @Mutation((returns) => StockSchema)
+  @UseGuards(new AuthGuard(), new SellerGuard())
+  consumeStock(
+    @Context('user') user: any,
+    @Args('productId') productId: string,
+  ) {
+    return this.productService.consumeStock(productId);
+  }
 }
