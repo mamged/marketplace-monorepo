@@ -71,7 +71,7 @@ export class Stockservice {
     newStockData: UpdateStockInput,
     userId: string,
   ): Promise<StockEntity> {
-    const oldStock = await this.Stocks.findOneOrFail({ id });
+    const oldStock = await this.Stocks.findOneOrFail({ where:{id}, relations:["product"] });
     if (oldStock.product.user_id === userId) {
       await this.Stocks.update(id, newStockData);
       // if there is update on status we need to make sure product quantity is up to date
