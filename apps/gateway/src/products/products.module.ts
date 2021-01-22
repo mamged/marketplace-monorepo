@@ -1,6 +1,6 @@
 import { Module, Scope } from "@nestjs/common";
 
-import { ProductResolver } from "./product.resolver";
+import { ProductResolver, StockResolver } from "./product.resolver";
 import { ProductService } from "./product.service";
 import { UserDataLoader } from "../loaders/user.loader";
 import { UserService } from "../users/user.service";
@@ -9,6 +9,7 @@ import { UsersModule } from "../users/users.module";
 @Module({
     providers: [
         ProductResolver,
+        StockResolver,
         ProductService,
         {
             inject: [UserService],

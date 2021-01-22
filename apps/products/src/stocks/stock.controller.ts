@@ -30,6 +30,10 @@ export class StockController {
     show(id: string): Promise<StockEntity> {
         return this.Stocks.show(id);
     }
+    @MessagePattern("get-product-by-stock-id")
+    getStockByProductId(id: string): Promise<StockEntity> {
+        return this.Stocks.getProductByStockId(id);
+    }
     @MessagePattern("fetch-Stocks-by-ids")
     fetchStocksByIds(ids: Array<string>) {
         return this.Stocks.fetchStocksByIds(ids);

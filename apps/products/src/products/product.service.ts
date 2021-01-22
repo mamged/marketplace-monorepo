@@ -25,25 +25,17 @@ export class ProductService {
         });
     }
     async getProductStock(id: string): Promise<StockEntity[]> {
-        console.log('product service..');
-        const product =await this.products.findOne({
-            where:{
-                id: "6189dfd1-b699-4479-938b-90c10493b1cb"
-            },
-            relations:['stock']
-        });
-        return product.stock;
-        // console.log('this.this.products.destroy2',this.products.destroy2);
-        // console.log('!!aa!!',aa.stock);
-        // return [aa.stock];
-        // // const rep = getRepository(StockEntity);
-        // const product = await this.products.show(id);
-        // this.Stocks.find({relations: [""]})
-        // console.log('stock product ', product);
-        // const a = await this.Stocks.find({ product });
-        // console.log('aaa',a);
-        
-        // return a;
+        try {
+            const product = await this.products.findOneOrFail({
+                where:{
+                    id
+                },
+                relations:['stock']
+            });
+            return product.stock;
+        } catch (error) {
+            throw new NotFoundException(`Can't find product with ID ${id}`)
+        }
     }
     fetchProductsByIds(ids: Array<string>) {
         return this.products

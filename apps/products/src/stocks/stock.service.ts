@@ -41,13 +41,9 @@ export class Stockservice {
         userId: string
     ): Promise<StockEntity> {
         const stock = await this.Stocks.findOneOrFail({ id });
-        console.log('stock!!!', stock);
-        console.log('data!!',data);
-        console.log('userid!!',userId);
         
         if (stock.product.user_id === userId) {
             const updated = {...data};
-            console.log('updated', updated);
             
             await this.Stocks.update(id, updated);
             return this.Stocks.findOneOrFail({ id });
@@ -58,6 +54,9 @@ export class Stockservice {
     }
     async show(id: string): Promise<StockEntity> {
         return this.Stocks.findOneOrFail({ id });
+    }
+    async getProductByStockId(id: string): Promise<StockEntity> {
+        return this.Stocks.findOneOrFail({ where:{id}, relations:["product"] });
     }
     async destroy(id: string, user_id: string): Promise<StockEntity> {
         const stock = await this.Stocks.findOneOrFail({ id });

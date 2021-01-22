@@ -66,11 +66,12 @@ type ProductSchema {
   created_at: DateTime!
   updated_at: DateTime!
   user: UserSchema!
+  product: StockSchema!
 }
 
 type StockSchema {
   id: String!
-  product: ProductEntity!
+  product: ProductSchema!
   status: StockStatus
   quantity: Float!
   title: String!
@@ -112,8 +113,8 @@ type Query {
   me: UserSchema!
   products: [ProductSchema!]!
   showProduct(id: String!): ProductSchema!
-  showStock(id: String!): StockSchema!
   getProductStock(id: String!): [StockSchema!]!
+  showStock(id: String!): StockSchema!
   categories: [CategoryEntity!]!
   showCategory(id: String!): CategoryEntity!
 }
@@ -122,10 +123,10 @@ type Mutation {
   login(data: LoginUserInput!): AuthTokenSchema!
   register(data: RegisterUserInput!): RegisterUserSchema!
   createProduct(data: CreateProductInput!): ProductSchema!
-  createStock(data: CreateStockInput!): StockSchema!
   updateProduct(id: String!, data: CreateProductInput!): ProductEntity!
-  updateStock(id: String!, data: UpdateStockInput!): StockSchema!
   deleteProduct(id: String!): ProductEntity!
+  createStock(data: CreateStockInput!): StockSchema!
+  updateStock(id: String!, data: UpdateStockInput!): StockSchema!
   createCategory(data: CreateCategoryInput!): CategoryEntity!
   updateCategory(id: Float!, data: CreateCategoryInput!): CategoryEntity!
   deleteCategory(id: String!): CategoryEntity!

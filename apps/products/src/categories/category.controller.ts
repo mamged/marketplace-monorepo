@@ -10,14 +10,11 @@ export class CategoryController {
 
     @MessagePattern("categories")
     async categories(): Promise<CategoryEntity[]> {
-        console.log('all categories');
         return this.category.get({});
     }
 
     @MessagePattern("create-category")
     store(data: any): Promise<CategoryEntity> {
-        console.log('create-category: controller', data);
-        
         return this.category.store(data);
     }
 

@@ -36,6 +36,14 @@ export class ProductService {
         .subscribe(product => resolve(product), error => reject(error));
     });
   }
+  getProductByStockId(id: string): Promise<StockEntity> {
+    return new Promise((resolve, reject) => {
+      ProductEntity
+      this.client
+        .send<StockEntity>("get-product-by-stock-id", id)
+        .subscribe(product => resolve(product), error => reject(error));
+    });
+  }
   async getProductStock(id: string): Promise<StockEntity[]> {
     return new Promise((resolve, reject) => {
       ProductEntity

@@ -15,8 +15,6 @@ export class ProductController {
     }
     @MessagePattern("get-product-stock")
     getProductStock(id: string): Promise<StockEntity[]> {
-        console.log('product controller..');
-        
         return this.products.getProductStock(id);
     }
 
