@@ -3,9 +3,9 @@ import {
   ExecutionContext,
   HttpException,
   HttpStatus,
-  Injectable
-} from "@nestjs/common";
-import { GqlExecutionContext } from "@nestjs/graphql";
+  Injectable,
+} from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
 export class SellerGuard implements CanActivate {
@@ -16,6 +16,6 @@ export class SellerGuard implements CanActivate {
     if (ctx.user && ctx.user.seller) {
       return true;
     }
-    throw new HttpException("Unauthorized access", HttpStatus.UNAUTHORIZED);
+    throw new HttpException('Unauthorized access', HttpStatus.UNAUTHORIZED);
   }
 }

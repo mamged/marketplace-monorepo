@@ -1,91 +1,84 @@
-import { Client, ClientProxy, Transport } from "@nestjs/microservices";
-import { ProductDTO, UserDTO, config } from "@commerce/shared";
+import { Client, ClientProxy, Transport } from '@nestjs/microservices';
+import { ProductDTO, UserDTO, config } from '@commerce/shared';
 import {
-    Query,
-    Resolver,
-    Context,
-    Mutation,
-    Args,
-    Parent
-} from "@nestjs/graphql";
-import { UseGuards } from "@nestjs/common";
+  Query,
+  Resolver,
+  Context,
+  Mutation,
+  Args,
+  Parent,
+} from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
 
-import { AuthGuard } from "../middlewares/auth.guard";
-import { CreatePaymentCard } from "./create-payment-card.validation";
-import { PaymentCardService } from "./payment.service";
-import { UserDataLoader } from "../loaders/user.loader";
-import { PaymentCardDTO } from "@commerce/shared";
-import { OrderEntity } from "@commerce/orders";
-import { CreateOrder } from "../orders/create-order.validation";
-import { PaymentEntity } from "@commerce/payments";
+import { AuthGuard } from '../middlewares/auth.guard';
+import { CreatePaymentCard } from './create-payment-card.validation';
+import { PaymentCardService } from './payment.service';
+import { UserDataLoader } from '../loaders/user.loader';
+import { PaymentCardDTO } from '@commerce/shared';
+import { OrderEntity } from '@commerce/orders';
+import { CreateOrder } from '../orders/create-order.validation';
+import { PaymentEntity } from '@commerce/payments';
 
-@Resolver(()=> CreatePaymentCard)
+@Resolver(() => CreatePaymentCard)
 export class PaymentCardResolver {
-    @Client({
-        transport: Transport.REDIS,
-        options: {
-            url: `redis://${config.REDIS_URL}:${config.REDIS_PORT}`
-        }
-    })
-    private client: ClientProxy;
+  @Client({
+    transport: Transport.REDIS,
+    options: {
+      url: `redis://${config.REDIS_URL}:${config.REDIS_PORT}`,
+    },
+  })
+  private client: ClientProxy;
 
-    constructor(private readonly paymentCardsService: PaymentCardService) {}
-    @Query(returns=> [CreatePaymentCard])
-    @UseGuards(new AuthGuard())
-    async indexUserPaymentCards(@Context("user") user: any) {
-        return this.paymentCardsService.get(user.id);
-    }
-    @Query(returns=> CreatePaymentCard)
-    @UseGuards(new AuthGuard())
-    async showPaymentCard(@Args("id") id: string, @Context("user") user: any) {
-        return this.paymentCardsService.show(id, user.id);
-    }
-    @Mutation(returns=> CreatePaymentCard)
-    @UseGuards(new AuthGuard())
-    async deletePaymentCard(
-        @Args("id") id: string,
-        @Context("user") user: any
-    ) {
-        return this.paymentCardsService.destroy(id, user.id);
-    }
-    // @Mutation()
-    @Mutation(returns=> CreatePaymentCard)
-    @UseGuards(new AuthGuard())
-    async createPaymentCard(
-        @Args("data") data: CreatePaymentCard,
-        @Context("user") user: any
-    ) {
-        user = await this.client
-            .send("current-loggedin-user", user.id)
-            .toPromise();
-        return this.paymentCardsService.store(data, user);
-    }
-    // @Mutation()
-    @Mutation(returns=> OrderEntity)
-    @UseGuards(new AuthGuard())
-    async createChargeForUser(
-        @Args("orderId") orderId: string,
-        @Context("user") user: any
-    ) {
-        user = await this.client
-            .send("current-loggedin-user", user.id)
-            .toPromise();
-        let order = await this.client
-            .send("show-user-order", {
-                id: orderId,
-                user_id: user.id
-            })
-            .toPromise();
-        const charge = await this.paymentCardsService.charge(order, user);
+  constructor(private readonly paymentCardsService: PaymentCardService) {}
+  @Query((returns) => [CreatePaymentCard])
+  @UseGuards(new AuthGuard())
+  async indexUserPaymentCards(@Context('user') user: any) {
+    return this.paymentCardsService.get(user.id);
+  }
+  @Query((returns) => CreatePaymentCard)
+  @UseGuards(new AuthGuard())
+  async showPaymentCard(@Args('id') id: string, @Context('user') user: any) {
+    return this.paymentCardsService.show(id, user.id);
+  }
+  @Mutation((returns) => CreatePaymentCard)
+  @UseGuards(new AuthGuard())
+  async deletePaymentCard(@Args('id') id: string, @Context('user') user: any) {
+    return this.paymentCardsService.destroy(id, user.id);
+  }
+  // @Mutation()
+  @Mutation((returns) => CreatePaymentCard)
+  @UseGuards(new AuthGuard())
+  async createPaymentCard(
+    @Args('data') data: CreatePaymentCard,
+    @Context('user') user: any,
+  ) {
+    user = await this.client.send('current-loggedin-user', user.id).toPromise();
+    return this.paymentCardsService.store(data, user);
+  }
+  // @Mutation()
+  @Mutation((returns) => OrderEntity)
+  @UseGuards(new AuthGuard())
+  async createChargeForUser(
+    @Args('orderId') orderId: string,
+    @Context('user') user: any,
+  ) {
+    user = await this.client.send('current-loggedin-user', user.id).toPromise();
+    let order = await this.client
+      .send('show-user-order', {
+        id: orderId,
+        user_id: user.id,
+      })
+      .toPromise();
+    const charge = await this.paymentCardsService.charge(order, user);
 
-        this.client
-            .emit("order_charged", {
-                id: orderId,
-                status: charge.status
-            })
-            .subscribe(() => {});
-        order.status = charge.status;
-        order.user = user;
-        return order;
-    }
+    this.client
+      .emit('order_charged', {
+        id: orderId,
+        status: charge.status,
+      })
+      .subscribe(() => {});
+    order.status = charge.status;
+    order.user = user;
+    return order;
+  }
 }

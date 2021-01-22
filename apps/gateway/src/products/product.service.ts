@@ -1,55 +1,59 @@
-import { Client, ClientProxy, Transport } from "@nestjs/microservices";
-import { Injectable } from "@nestjs/common";
-import { UserDTO, ProductDTO } from "@commerce/shared";
+import { Client, ClientProxy, Transport } from '@nestjs/microservices';
+import { Injectable } from '@nestjs/common';
+import { UserDTO, ProductDTO } from '@commerce/shared';
 
-import { config } from "@commerce/shared";
-import { redis, redisProductsKey, redisStocksKey } from "../utils/redis";
+import { config } from '@commerce/shared';
+import { redis, redisProductsKey, redisStocksKey } from '../utils/redis';
 // import { ProductEntity } from "apps/products/src";
-import { ProductEntity, StockEntity } from "@commerce/products";
-import { CreateProductInput } from "./input/create-product.input";
-import { ProductSchema } from "./schema/product.schema";
-import { CreateStockInput } from "./input/create-stock.input";
-import { StockSchema } from "./schema/stock.schema";
-import { UpdateStockInput } from "./input/update-stock.input";
+import { ProductEntity, StockEntity } from '@commerce/products';
+import { CreateProductInput } from './input/create-product.input';
+import { ProductSchema } from './schema/product.schema';
+import { CreateStockInput } from './input/create-stock.input';
+import { StockSchema } from './schema/stock.schema';
+import { UpdateStockInput } from './input/update-stock.input';
 @Injectable()
 export class ProductService {
   @Client({
     transport: Transport.REDIS,
     options: {
-      url: `redis://${config.REDIS_URL}:${config.REDIS_PORT}`
-    }
+      url: `redis://${config.REDIS_URL}:${config.REDIS_PORT}`,
+    },
   })
   private client: ClientProxy;
   async show(id: string): Promise<ProductDTO> {
     return new Promise((resolve, reject) => {
-      ProductEntity
-      this.client
-        .send<ProductDTO>("show-product", id)
-        .subscribe(product => resolve(product), error => reject(error));
+      ProductEntity;
+      this.client.send<ProductDTO>('show-product', id).subscribe(
+        (product) => resolve(product),
+        (error) => reject(error),
+      );
     });
   }
   showStock(id: string): Promise<StockEntity> {
     return new Promise((resolve, reject) => {
-      ProductEntity
-      this.client
-        .send<StockSchema>("show-stock", id)
-        .subscribe(product => resolve(product), error => reject(error));
+      ProductEntity;
+      this.client.send<StockSchema>('show-stock', id).subscribe(
+        (product) => resolve(product),
+        (error) => reject(error),
+      );
     });
   }
   getProductByStockId(id: string): Promise<StockEntity> {
     return new Promise((resolve, reject) => {
-      ProductEntity
-      this.client
-        .send<StockEntity>("get-product-by-stock-id", id)
-        .subscribe(product => resolve(product), error => reject(error));
+      ProductEntity;
+      this.client.send<StockEntity>('get-product-by-stock-id', id).subscribe(
+        (product) => resolve(product),
+        (error) => reject(error),
+      );
     });
   }
   async getProductStock(id: string): Promise<StockEntity[]> {
     return new Promise((resolve, reject) => {
-      ProductEntity
-      this.client
-        .send<StockSchema[]>("get-product-stock", id)
-        .subscribe(product => resolve(product), error => reject(error));
+      ProductEntity;
+      this.client.send<StockSchema[]>('get-product-stock', id).subscribe(
+        (product) => resolve(product),
+        (error) => reject(error),
+      );
     });
   }
   async get(): Promise<ProductEntity[]> {
@@ -58,17 +62,17 @@ export class ProductService {
       redis.get(redisProductsKey, (err, products) => {
         // if products don't persist, retrieve them, and store in redis.
         if (!products) {
-          this.client.send<ProductEntity[]>("products", []).subscribe(
+          this.client.send<ProductEntity[]>('products', []).subscribe(
             (products: ProductEntity[]) => {
               redis.set(
                 redisProductsKey,
                 JSON.stringify(products),
-                "EX",
-                60 * 60 * 30 // 30 mins until expiration
+                'EX',
+                60 * 60 * 30, // 30 mins until expiration
               );
               return resolve(products);
             },
-            error => reject(error)
+            (error) => reject(error),
           );
         }
         // return the parsed products from cache.
@@ -76,13 +80,13 @@ export class ProductService {
       });
     });
   }
-  store(data: CreateProductInput, id: string): Promise<ProductSchema> {  
+  store(data: CreateProductInput, id: string): Promise<ProductSchema> {
     // TODO: handle the failure create produc
     return new Promise((resolve, reject) => {
       this.client
-        .send<ProductSchema>("create-product", {
+        .send<ProductSchema>('create-product', {
           ...data,
-          user_id: id
+          user_id: id,
         })
         .subscribe(
           (product) => {
@@ -92,17 +96,17 @@ export class ProductService {
             redis.del(redisProductsKey);
             return resolve(product);
           },
-          error => reject(error)
+          (error) => reject(error),
         );
     });
   }
 
-  createStock(data: CreateStockInput, id: string): Promise<StockSchema> {  
+  createStock(data: CreateStockInput, id: string): Promise<StockSchema> {
     // TODO: handle the failure create produc
     return new Promise((resolve, reject) => {
       this.client
-        .send<StockSchema>("create-stock", {
-          ...data
+        .send<StockSchema>('create-stock', {
+          ...data,
         })
         .subscribe(
           (stock) => {
@@ -112,7 +116,7 @@ export class ProductService {
             redis.del(redisStocksKey);
             return resolve(stock);
           },
-          error => reject(error)
+          (error) => reject(error),
         );
     });
   }
@@ -120,21 +124,21 @@ export class ProductService {
   update(
     productId: string,
     data: CreateProductInput,
-    id: string
+    id: string,
   ): Promise<ProductDTO> {
     return new Promise((resolve, reject) => {
       this.client
-        .send<ProductDTO>("update-product", {
+        .send<ProductDTO>('update-product', {
           ...data,
           id: productId,
-          user_id: id
+          user_id: id,
         })
         .subscribe(
-          product => {
+          (product) => {
             redis.del(redisProductsKey);
             return resolve(product);
           },
-          error => reject(error)
+          (error) => reject(error),
         );
     });
   }
@@ -142,38 +146,38 @@ export class ProductService {
   updateStock(
     stockId: string,
     stock: UpdateStockInput,
-    userId: string
+    userId: string,
   ): Promise<StockEntity> {
     return new Promise((resolve, reject) => {
       this.client
-        .send<StockEntity>("update-stock", {stockId, stock, userId})
+        .send<StockEntity>('update-stock', { stockId, stock, userId })
         .subscribe(
-          product => {
+          (product) => {
             redis.del(redisProductsKey);
             return resolve(product);
           },
-          error => reject(error)
+          (error) => reject(error),
         );
     });
   }
-  async fetchProductsByIds(ids: string[]): Promise<ProductDTO[]>{
+  async fetchProductsByIds(ids: string[]): Promise<ProductDTO[]> {
     return this.client
-      .send<ProductDTO[], string[]>("fetch-products-by-ids", ids)
+      .send<ProductDTO[], string[]>('fetch-products-by-ids', ids)
       .toPromise<ProductDTO[]>();
   }
   destroy(productId: string, id: string) {
     return new Promise((resolve, reject) => {
       this.client
-        .send<ProductDTO>("delete-product", {
+        .send<ProductDTO>('delete-product', {
           id: productId,
-          user_id: id
+          user_id: id,
         })
         .subscribe(
-          product => {
+          (product) => {
             redis.del(redisProductsKey);
             return resolve(product);
           },
-          error => reject(error)
+          (error) => reject(error),
         );
     });
   }

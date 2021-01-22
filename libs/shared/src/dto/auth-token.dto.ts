@@ -1,5 +1,5 @@
-import { ObjectID } from "typeorm";
+import { ObjectID } from 'typeorm';
 
 export interface AuthToken {
-    id: ObjectID;
+  id: ObjectID;
 }

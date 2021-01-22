@@ -57,8 +57,8 @@ export class CategoryService {
   }
   async show(id: string): Promise<CategoryEntity> {
     return this.categories.findOneOrFail(id).catch(() => {
-        throw new RpcException(new BadRequestException('Invalid category id'));
-      });
+      throw new RpcException(new BadRequestException('Invalid category id'));
+    });
   }
   async destroy(id: string, user_id: string): Promise<CategoryEntity> {
     const category = await this.categories.findOneOrFail(id);

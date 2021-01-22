@@ -1,7 +1,7 @@
-import { IsUUID, IsNotEmpty } from "class-validator";
+import { IsUUID, IsNotEmpty } from 'class-validator';
 
 export class UUID {
-    @IsUUID()
-    @IsNotEmpty()
-    id: string;
+  @IsUUID()
+  @IsNotEmpty()
+  id: string;
 }
