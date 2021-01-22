@@ -125,6 +125,11 @@ export class StockResolver {
     @Context('user') user: any,
     @Args('productId') productId: string,
   ) {
-    return this.productService.consumeStock(productId);
+    return this.productService.consumeStock(productId, user.id);
+  }
+  @Mutation((returns) => StockSchema)
+  @UseGuards(new AuthGuard(), new SellerGuard())
+  async deleteStock(@Context('user') user: any, @Args('id') id: string) {
+    return this.productService.destroyStock(id, user.id);
   }
 }

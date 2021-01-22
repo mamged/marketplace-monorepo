@@ -45,18 +45,41 @@ export class Stockservice {
       throw new RpcException(new BadRequestException(error.message));
     });
   }
+
+  /**
+   * 
+   * @param oldStock the stock item which needs to be updated
+   * @param newStock the payload which the stock item will be updated to
+   */
+  updateProductQuantityIfNeeded(oldStock: StockEntity, newStock: UpdateStockInput){
+    if (
+      oldStock.status === stockStatus.AVAILABLE &&
+      newStock.status !== stockStatus.AVAILABLE
+    ) {
+      oldStock.product.quantity = 1;
+      this.productService.decrementProductsStock([oldStock.product]);
+    } else if(
+      oldStock.status !== stockStatus.AVAILABLE &&
+      newStock.status === stockStatus.AVAILABLE
+    ){
+      oldStock.product.quantity = 1;
+      this.productService.incrementProductsStock([oldStock.product]);
+    }
+  }
   async update(
     id: string,
-    data: UpdateStockInput,
+    newStockData: UpdateStockInput,
     userId: string,
   ): Promise<StockEntity> {
-    const stock = await this.Stocks.findOneOrFail({ id });
-
-    if (stock.product.user_id === userId) {
-      const updated = { ...data };
-
-      await this.Stocks.update(id, updated);
-      return this.Stocks.findOneOrFail({ id });
+    const oldStock = await this.Stocks.findOneOrFail({ id });
+    if (oldStock.product.user_id === userId) {
+      await this.Stocks.update(id, newStockData);
+      // if there is update on status we need to make sure product quantity is up to date
+      if (newStockData.status) {
+        this.updateProductQuantityIfNeeded(oldStock, newStockData)
+      }
+      const newStock = await this.Stocks.findOneOrFail({ id });
+      return newStock;
     }
     throw new RpcException(
       new NotFoundException("You cannot update what you don't own..."),
@@ -69,14 +92,18 @@ export class Stockservice {
     return this.Stocks.findOneOrFail({ where: { id }, relations: ['product'] });
   }
   async destroy(id: string, user_id: string): Promise<StockEntity> {
-    const stock = await this.Stocks.findOneOrFail({ id });
-    // if (stock.user_id === user_id) {
-    await this.Stocks.delete({ id });
-    return stock;
-    // }
-    throw new RpcException(
-      new NotFoundException("You cannot update what you don't own..."),
-    );
+    try {
+      const stock = await this.update(
+        id,
+        { status: stockStatus.DELETED },
+        user_id,
+      );
+      return stock;
+    } catch (error) {
+      throw new RpcException(
+        new NotFoundException("You cannot update what you don't own..."),
+      );
+    }
   }
   async getStockByProductId(id: string) {
     return this.Stocks.find({
@@ -86,7 +113,7 @@ export class Stockservice {
       },
     });
   }
-  async consumeStock(productId: string) {
+  async consumeStock(productId: string, user_id: string) {
     let stock;
     try {
       stock = await this.Stocks.findOneOrFail({
@@ -101,11 +128,7 @@ export class Stockservice {
       );
     }
     stock.status = stockStatus.CONSUMED;
-    stock.save();
-    const product = new ProductEntity();
-    product.id = productId;
-    product.quantity = 1;
-    this.productService.decrementProductsStock([product]);
+    this.update(stock.id, stock, user_id)
     return stock;
   }
   async incrementStocksStock(Stocks) {

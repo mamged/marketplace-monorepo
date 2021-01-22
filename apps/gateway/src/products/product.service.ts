@@ -160,10 +160,10 @@ export class ProductService {
         );
     });
   }
-  consumeStock(productId: string): Promise<StockEntity> {
+  consumeStock(productId: string, user_id: string): Promise<StockEntity> {
     return new Promise((resolve, reject) => {
       ProductEntity;
-      this.client.send<StockSchema>('consume-stock', productId).subscribe(
+      this.client.send<StockSchema>('consume-stock', {productId, user_id}).subscribe(
         (product) => resolve(product),
         (error) => reject(error),
       );
@@ -185,6 +185,22 @@ export class ProductService {
           (product) => {
             redis.del(redisProductsKey);
             return resolve(product);
+          },
+          (error) => reject(error),
+        );
+    });
+  }
+  destroyStock(stockId: string, id: string) {
+    return new Promise((resolve, reject) => {
+      this.client
+        .send<ProductDTO>('delete-stock', {
+          id: stockId,
+          user_id: id,
+        })
+        .subscribe(
+          (stock) => {
+            redis.del(redisStocksKey);
+            return resolve(stock);
           },
           (error) => reject(error),
         );

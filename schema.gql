@@ -128,6 +128,7 @@ type Mutation {
   createStock(data: CreateStockInput!): StockSchema!
   updateStock(id: String!, data: UpdateStockInput!): StockSchema!
   consumeStock(productId: String!): StockSchema!
+  deleteStock(id: String!): StockSchema!
   createCategory(data: CreateCategoryInput!): CategoryEntity!
   updateCategory(id: Float!, data: CreateCategoryInput!): CategoryEntity!
   deleteCategory(id: String!): CategoryEntity!
