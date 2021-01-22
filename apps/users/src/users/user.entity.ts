@@ -12,27 +12,43 @@ import { AddressEntity } from "./address.entity";
 import { sign } from "jsonwebtoken";
 import { config } from "@commerce/shared";
 import { hash } from "bcryptjs";
+import { Field, ObjectType } from "@nestjs/graphql";
+@ObjectType()
 @Entity("users")
 export class UserEntity extends BaseEntity {
+    @Field()
     @PrimaryGeneratedColumn("uuid")
     id: string;
+    
+    @Field()
     @Column({ type: "boolean" })
     seller: boolean;
 
+    
+    @Field()
     @Column("text")
     name: string;
+    
+    @Field()
     @Column("text", { unique: true })
     email: string;
+    
+    @Field()
     @Column("text")
     password: string;
+    
+    @Field()
     @Column("text", { nullable: true })
     gateway_customer_id: string;
 
+    @Field()
     @CreateDateColumn()
     created_at: Date;
+    @Field()
     @UpdateDateColumn()
     updated_at: Date;
 
+    @Field(type=> AddressEntity)
     @OneToOne(() => AddressEntity, address => address.user)
     address: AddressEntity;
     @BeforeInsert()

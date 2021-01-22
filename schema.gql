@@ -2,6 +2,23 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type ProductEntity {
+  id: String!
+  price: Float!
+  user_id: String!
+  quantity: Float!
+  title: String!
+  description: String
+  image: [String!]!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type CategoryEntity {
   id: String!
   name: String!
@@ -9,15 +26,144 @@ type CategoryEntity {
   parent: CategoryEntity
 }
 
+type AddressEntity {
+  address_1: String!
+  address_2: String!
+  city: String!
+  state: String!
+  country: String!
+  zip: Float!
+}
+
+type UserEntity {
+  id: String!
+  seller: Boolean!
+  name: String!
+  email: String!
+  password: String!
+  gateway_customer_id: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  address: AddressEntity!
+}
+
+type UserSchema {
+  id: String!
+  seller: Boolean!
+  name: String!
+  email: String!
+  address: AddressEntity
+}
+
+type ProductSchema {
+  id: String!
+  price: Float!
+  user_id: String!
+  quantity: Float!
+  title: String!
+  description: String
+  image: [String!]!
+  created_at: DateTime!
+  updated_at: DateTime!
+  user: UserSchema!
+  product: StockSchema!
+}
+
+type StockSchema {
+  id: String!
+  product: ProductSchema!
+  status: StockStatus
+  quantity: Float!
+  title: String!
+  description: String
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+"""Show the status of stock item."""
+enum StockStatus {
+  """Means a user purchased this stock item."""
+  CONSUMED
+
+  """Stock item is available."""
+  AVAILABLE
+
+  """Stock item is disable by seller."""
+  DISABLED
+
+  """Stock item is deleted by seller."""
+  DELETED
+}
+
+type AuthTokenSchema {
+  id: String!
+  name: String!
+  token: String!
+}
+
+type RegisterUserSchema {
+  id: String!
+  seller: Boolean!
+  name: String!
+  email: String!
+}
+
 type Query {
+  users: UserEntity!
+  me: UserSchema!
+  products: [ProductSchema!]!
+  showProduct(id: String!): ProductSchema!
+  getProductStock(id: String!): [StockSchema!]!
+  showStock(id: String!): StockSchema!
   categories: [CategoryEntity!]!
   showCategory(id: String!): CategoryEntity!
 }
 
 type Mutation {
+  login(data: LoginUserInput!): AuthTokenSchema!
+  register(data: RegisterUserInput!): RegisterUserSchema!
+  createProduct(data: CreateProductInput!): ProductSchema!
+  updateProduct(id: String!, data: CreateProductInput!): ProductEntity!
+  deleteProduct(id: String!): ProductEntity!
+  createStock(data: CreateStockInput!): StockSchema!
+  updateStock(id: String!, data: UpdateStockInput!): StockSchema!
   createCategory(data: CreateCategoryInput!): CategoryEntity!
   updateCategory(id: Float!, data: CreateCategoryInput!): CategoryEntity!
   deleteCategory(id: String!): CategoryEntity!
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+input RegisterUserInput {
+  email: String!
+  password: String!
+  name: String!
+  password_confirmation: String!
+  seller: Boolean!
+}
+
+input CreateProductInput {
+  price: Float!
+  quantity: Float = 1
+  title: String!
+  description: String
+  image: [String!]!
+}
+
+input CreateStockInput {
+  status: StockStatus = AVAILABLE
+  title: String!
+  description: String
+  product: String!
+}
+
+input UpdateStockInput {
+  status: StockStatus = AVAILABLE
+  title: String
+  description: String
 }
 
 input CreateCategoryInput {

@@ -1,8 +1,9 @@
 import { IsNotEmpty, MinLength, MaxLength, IsBoolean } from "class-validator";
-import { LoginUser } from "./login-user.validation";
+import { LoginUserInput } from "./login-user.input";
 import { InputType, Field } from "@nestjs/graphql";
+import { AddressEntity } from "@commerce/users";
 @InputType()
-export class RegisterUser extends LoginUser {
+export class RegisterUserInput extends LoginUserInput {
     @MinLength(8)
     @MaxLength(32)
     @IsNotEmpty()

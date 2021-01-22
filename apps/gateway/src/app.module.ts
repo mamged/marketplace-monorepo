@@ -26,8 +26,8 @@ import { CategoriesModule } from "./categories/category.module";
         };
     },
     }),
-    // UsersModule,
-    // ProductsModule,
+    UsersModule,
+    ProductsModule,
     // OrdersModule,
     // PaymentCardsModule,
     CategoriesModule

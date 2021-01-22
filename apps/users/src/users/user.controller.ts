@@ -1,6 +1,6 @@
 import { Controller } from "@nestjs/common";
-import { LoginUser } from "@commerce/gateway";
-import { RegisterUser } from "@commerce/gateway";
+import { LoginUserInput } from "@commerce/gateway";
+import { RegisterUserInput } from "@commerce/gateway";
 import { MessagePattern, EventPattern } from "@nestjs/microservices";
 import { ObjectID } from "typeorm";
 import { UserService } from "./user.service";
@@ -13,11 +13,11 @@ export class UserController {
         return this.users.get();
     }
     @MessagePattern("login-user")
-    login(data: LoginUser) {
+    login(data: LoginUserInput) {
         return this.users.login(data);
     }
     @MessagePattern("register-user")
-    register(data: RegisterUser) {
+    register(data: RegisterUserInput) {
         return this.users.register(data);
     }
     @MessagePattern("current-loggedin-user")

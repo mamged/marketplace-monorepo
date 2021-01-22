@@ -19,11 +19,6 @@ export class CategoryService {
   async get(data: any = undefined): Promise<CategoryEntity[]> {
     const mgr = getManager();
     const trees = await mgr.getTreeRepository(CategoryEntity).findTrees();
-    const roots = await mgr.getTreeRepository(CategoryEntity).findRoots();
-    // const ancestorsTree  = await mgr.getTreeRepository(CategoryEntity).findAncestorsTree()
-    console.log('treestreestrees:', trees);
-    console.log('rootsrootsroots:', roots);
-
     return trees;
   }
   fetchCategoriesByIds(ids: Array<string>) {
@@ -33,13 +28,10 @@ export class CategoryService {
       .getMany();
   }
   async store(data: any): Promise<CategoryEntity> {
-    console.log('<<data>>', data, '<</data>>');
     if (data.parent) {
       const parent: CategoryEntity = await this.show(data.parent).catch(() => {
         throw new RpcException(new BadRequestException('Invalid parent id'));
       });
-      console.log('<<parent>>', parent, '<</parent>>');
-
       data.parent = parent;
     }
     if (data.children && data.children.length > 0) {
@@ -48,7 +40,6 @@ export class CategoryService {
       ).catch(() => {
         throw new RpcException(new BadRequestException('Invalid children ids'));
       });
-      console.log('<<children>>', children, '<</children>>');
       data.children = children;
     }
     return this.categories.save(data);

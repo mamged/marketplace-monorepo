@@ -19,11 +19,11 @@ type AuthToken {
     name: String!
     token: String!
 }
-input LoginUser {
+input LoginUserInput {
     email: String!
     password: String!
 }
-input RegisterUser {
+input RegisterUserInput {
     email: String!
     password: String!
     password_confirmation: String!
@@ -35,6 +35,6 @@ type Query {
     me: User!
 }
 type Mutation {
-    # login(data: LoginUser!): AuthToken!
-    register(data: RegisterUser!): User!
+    # login(data: LoginUserInput!): AuthToken!
+    register(data: RegisterUserInput!): User!
 }

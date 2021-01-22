@@ -1,5 +1,6 @@
 import { Controller } from "@nestjs/common";
 import { MessagePattern, EventPattern } from "@nestjs/microservices";
+import { StockEntity } from "../stocks/stock.entity";
 
 import { ProductEntity } from "./product.entity";
 import { ProductService } from "./product.service";
@@ -11,6 +12,10 @@ export class ProductController {
     @MessagePattern("products")
     index(data: any = undefined, arg2, arg3): Promise<ProductEntity[]> {
         return this.products.get(data);
+    }
+    @MessagePattern("get-product-stock")
+    getProductStock(id: string): Promise<StockEntity[]> {
+        return this.products.getProductStock(id);
     }
 
     @MessagePattern("create-product")
