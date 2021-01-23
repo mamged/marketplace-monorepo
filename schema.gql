@@ -127,6 +127,8 @@ type Mutation {
   deleteProduct(id: String!): ProductEntity!
   createStock(data: CreateStockInput!): StockSchema!
   updateStock(id: String!, data: UpdateStockInput!): StockSchema!
+  consumeStock(productId: String!): StockSchema!
+  deleteStock(id: String!): StockSchema!
   createCategory(data: CreateCategoryInput!): CategoryEntity!
   updateCategory(id: Float!, data: CreateCategoryInput!): CategoryEntity!
   deleteCategory(id: String!): CategoryEntity!
@@ -147,7 +149,6 @@ input RegisterUserInput {
 
 input CreateProductInput {
   price: Float!
-  quantity: Float = 1
   title: String!
   description: String
   image: [String!]!

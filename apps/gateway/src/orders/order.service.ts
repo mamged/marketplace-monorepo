@@ -1,25 +1,25 @@
-import { Client, ClientProxy, Transport } from "@nestjs/microservices";
-import { Injectable } from "@nestjs/common";
-import { UserDTO, ProductDTO, OrderDTO } from "@commerce/shared";
+import { Client, ClientProxy, Transport } from '@nestjs/microservices';
+import { Injectable } from '@nestjs/common';
+import { UserDTO, ProductDTO, OrderDTO } from '@commerce/shared';
 
-import { config } from "@commerce/shared";
-import { redis, redisProductsKey } from "../utils/redis";
-import { CreateProduct } from "../products/create-product.validation";
-import { OrderEntity } from "@commerce/orders";
+import { config } from '@commerce/shared';
+import { redis, redisProductsKey } from '../utils/redis';
+import { CreateProduct } from '../products/create-product.validation';
+import { OrderEntity } from '@commerce/orders';
 // import { Order } from "../schemas/graphql";
-import { Product } from "src/schemas/graphql";
+import { Product } from 'src/schemas/graphql';
 @Injectable()
 export class OrderService {
   @Client({
     transport: Transport.REDIS,
     options: {
-      url: `redis://${config.REDIS_URL}:${config.REDIS_PORT}`
-    }
+      url: `redis://${config.REDIS_URL}:${config.REDIS_PORT}`,
+    },
   })
   private client: ClientProxy;
   indexOrdersByUser(user_id: string): Promise<OrderDTO[]> {
     return new Promise((resolve, reject) => {
-      this.client.send("index-orders", user_id).subscribe(orders => {
+      this.client.send('index-orders', user_id).subscribe((orders) => {
         return resolve(orders);
       });
     });
@@ -27,14 +27,14 @@ export class OrderService {
   async destroyUserOrder(order_id: any, user_id): Promise<OrderDTO> {
     return new Promise((resolve, reject) => {
       this.client
-        .send("destroy-order-by-id", {
+        .send('destroy-order-by-id', {
           id: order_id,
-          user_id
+          user_id,
         })
-        .subscribe(async order => {
+        .subscribe(async (order) => {
           // fire an event that order is deleted to increase the product's quantity.
           this.client
-            .emit("order_deleted", order.products)
+            .emit('order_deleted', order.products)
             .subscribe(() => resolve(order));
         });
     });
@@ -42,28 +42,30 @@ export class OrderService {
   store(products: any, user_id, fetchedProducts): Promise<Product[]> {
     return new Promise((resolve, reject) => {
       const mappedProducts = fetchedProducts
-        .map(product => {
+        .map((product) => {
           // find the product which user passed, to retrieve the ordered quantity.
-          let p = products.find(p => p.id === product.id);
+          let p = products.find((p) => p.id === product.id);
           if (p) {
             return { ...product, ordered_quantity: p.quantity };
           }
           return product;
         })
-        .filter(product => !!product.ordered_quantity);
+        .filter((product) => !!product.ordered_quantity);
       this.client
-        .send("create_order", {
+        .send('create_order', {
           products: mappedProducts,
-          user_id
+          user_id,
         })
         .subscribe(
-          order => {
+          (order) => {
             // fire an event to reduce the quantity of the products.
-            this.client
-              .emit("order_created", products)
-              .subscribe(() => {}, () => {}, () => resolve(order)); // resolve on completion
+            this.client.emit('order_created', products).subscribe(
+              () => {},
+              () => {},
+              () => resolve(order),
+            ); // resolve on completion
           },
-          error => reject(error)
+          (error) => reject(error),
         );
     });
   }

@@ -3,18 +3,18 @@ import {
   Injectable,
   ArgumentMetadata,
   HttpException,
-  HttpStatus
-} from "@nestjs/common";
-import { validate } from "class-validator";
-import { plainToClass } from "class-transformer";
+  HttpStatus,
+} from '@nestjs/common';
+import { validate } from 'class-validator';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class ValidationPipe implements PipeTransform<any> {
   async transform(value: any, { metatype }: ArgumentMetadata) {
     if (value instanceof Object && this.isEmpty(value)) {
       throw new HttpException(
-        "Validation failed: No body submmited",
-        HttpStatus.UNPROCESSABLE_ENTITY
+        'Validation failed: No body submmited',
+        HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
     if (!metatype || !this.toValidate(metatype)) {
@@ -25,19 +25,19 @@ export class ValidationPipe implements PipeTransform<any> {
     if (errors.length > 0) {
       throw new HttpException(
         `Validation failed: ${this.formatErrors(errors)}`,
-        HttpStatus.UNPROCESSABLE_ENTITY
+        HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
     return value;
   }
   private formatErrors(errors: any[]) {
     return errors
-      .map(err => {
+      .map((err) => {
         for (let property in err.constraints) {
           return err.constraints[property];
         }
       })
-      .join(", ");
+      .join(', ');
   }
   private isEmpty(value: any) {
     return !(Object.keys(value).length > 0);
