@@ -47,7 +47,7 @@ export class Stockservice {
   }
 
   /**
-   * 
+   * a signle source of truth function to make stock updates
    * @param oldStock the stock item which needs to be updated
    * @param newStock the payload which the stock item will be updated to
    */
@@ -70,9 +70,10 @@ export class Stockservice {
     id: string,
     newStockData: UpdateStockInput,
     userId: string,
+    ignoreUserValidation = false
   ): Promise<StockEntity> {
     const oldStock = await this.Stocks.findOneOrFail({ where:{id}, relations:["product"] });
-    if (oldStock.product.user_id === userId) {
+    if(ignoreUserValidation === true || (oldStock.product.user_id === userId)){
       await this.Stocks.update(id, newStockData);
       // if there is update on status we need to make sure product quantity is up to date
       if (newStockData.status) {

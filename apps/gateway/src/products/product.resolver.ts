@@ -86,7 +86,6 @@ export class StockResolver {
   @ResolveField((returns) => ProductSchema)
   async product(@Parent() stock: StockSchema) {
     const _stock = await this.productService.getProductByStockId(stock.id);
-    console.log('stock:', _stock.product);
     return _stock.product;
   }
 
