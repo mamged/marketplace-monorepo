@@ -1,15 +1,11 @@
 import { Field, ObjectType, PickType } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { StockEntity } from '@commerce/products';
+import { VariantEntity } from '@commerce/products';
 import { IsNotEmpty } from 'class-validator';
 @InputType()
 @ObjectType()
-export class CreateStockInput extends PickType(
-  StockEntity,
-  ['title', 'status', 'description'],
-  InputType,
-) {
+export class CreateVariantInput extends VariantEntity{
   @IsNotEmpty()
   @Field()
-  product: string;
+  variant: string;
 }

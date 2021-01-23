@@ -1,8 +1,8 @@
-import { StockEntity } from '@commerce/products';
+import { VariantEntity } from '@commerce/variants';
 import { ObjectType, PartialType } from '@nestjs/graphql';
 
 @ObjectType()
-export class StockSchema extends StockEntity {
+export class VariantSchema extends VariantEntity {
   // @Field()
   // user: UserSchema
 }

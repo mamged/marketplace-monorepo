@@ -6,11 +6,11 @@ import {
   PickType,
 } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { StockEntity } from '@commerce/products';
+import { VariantEntity } from '@commerce/products';
 import { IsNotEmpty } from 'class-validator';
-import { CreateStockInput } from './create-stock.input';
+import { CreateVariantInput } from './create-variant.input';
 @InputType()
 @ObjectType()
-export class UpdateStockInput extends PartialType(
-  OmitType(CreateStockInput, ['product'] as const),
+export class UpdateVariantInput extends PartialType(
+  OmitType(CreateVariantInput, ['variant'] as const),
 ) {}
