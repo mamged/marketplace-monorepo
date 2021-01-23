@@ -10,7 +10,7 @@ import { getRepository, QueryFailedError, Repository } from 'typeorm';
 import { RpcException } from '@nestjs/microservices';
 
 import { VariantEntity, variantStatus } from './variant.entity';
-import { CreateVariantInput } from '@commerce/gateway/products/input/create-variant.input';
+import { CreateVariantInput } from '@commerce/gateway';
 import { ProductEntity } from '../products/product.entity';
 import { ProductService } from '../products/product.service';
 import { UpdateVariantInput } from '@commerce/gateway';
@@ -36,11 +36,10 @@ export class Variantservice {
     const newVariant = new VariantEntity();
     newVariant.title = variant.title;
     newVariant.description = variant.description;
-    newVariant.product = await this.productService.show(variant.product);
+    // newVariant.product = await this.productService.show(variant.product);
     const product = new ProductEntity();
-    product.id = variant.product;
+    // product.id = variant.product;
     product.quantity = 1;
-    this.productService.incrementProductsVariant([product]);
     return this.Variants.save(newVariant).catch((error) => {
       throw new RpcException(new BadRequestException(error.message));
     });
@@ -57,13 +56,13 @@ export class Variantservice {
       newVariant.status !== variantStatus.AVAILABLE
     ) {
       oldVariant.product.quantity = 1;
-      this.productService.decrementProductsVariant([oldVariant.product]);
+      // this.productService.decrementProductsVariant([oldVariant.product]);
     } else if(
       oldVariant.status !== variantStatus.AVAILABLE &&
       newVariant.status === variantStatus.AVAILABLE
     ){
       oldVariant.product.quantity = 1;
-      this.productService.incrementProductsVariant([oldVariant.product]);
+      // this.productService.incrementProductsVariant([oldVariant.product]);
     }
   }
   async update(
