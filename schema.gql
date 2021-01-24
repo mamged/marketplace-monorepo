@@ -4,6 +4,7 @@
 
 type ProductEntity {
   id: String!
+  published: Boolean!
   price: Float!
   user_id: String!
   quantity: Float!
@@ -57,6 +58,7 @@ type UserSchema {
 
 type ProductSchema {
   id: String!
+  published: Boolean!
   price: Float!
   user_id: String!
   quantity: Float!

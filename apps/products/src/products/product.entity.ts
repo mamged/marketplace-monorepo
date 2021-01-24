@@ -7,6 +7,7 @@ import {
   IsInt,
   IsArray,
   IsNumber,
+  IsBoolean,
 } from 'class-validator';
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import {
@@ -27,6 +28,11 @@ export class ProductEntity extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @IsBoolean()
+  @Field(()=> Boolean, {defaultValue: false})
+  @Column({type: "boolean"})
+  published: boolean;
 
   @Min(1)
   @Max(9999)
