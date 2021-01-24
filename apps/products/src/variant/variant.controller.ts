@@ -5,6 +5,7 @@ import { MessagePattern, EventPattern } from '@nestjs/microservices';
 
 import { VariantEntity } from './variant.entity';
 import { Variantservice } from './variant.service';
+import { ProductEntity } from '../products/product.entity';
 
 @Controller('Variants')
 export class VariantController {
@@ -30,7 +31,7 @@ export class VariantController {
     return this.Variants.show(id);
   }
   @MessagePattern('get-product-by-variant-id')
-  getVariantByProductId(id: string): Promise<VariantEntity> {
+  getVariantByProductId(id: string): Promise<ProductEntity> {
     return this.Variants.getProductByVariantId(id);
   }
   @MessagePattern('fetch-variants-by-ids')

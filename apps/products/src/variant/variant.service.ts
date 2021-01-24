@@ -50,11 +50,7 @@ export class Variantservice {
   ): Promise<VariantEntity> {
     const oldVariant = await this.Variants.findOneOrFail({ where:{id}, relations:["product"] });
     if(ignoreUserValidation === true || (oldVariant.product.user_id === userId)){
-      // await this.Variants.update(id, newVariantData);
-      // if there is update on status we need to make sure product quantity is up to date
-      // if (newVariantData.status) {
-        // this.updateProductQuantityIfNeeded(oldVariant, newVariantData)
-      // }
+      await this.Variants.update(id, newVariantData);
       const newVariant = await this.Variants.findOneOrFail({ id });
       return newVariant;
     }
@@ -65,8 +61,9 @@ export class Variantservice {
   async show(id: string): Promise<VariantEntity> {
     return this.Variants.findOneOrFail({ id });
   }
-  async getProductByVariantId(id: string): Promise<VariantEntity> {
-    return this.Variants.findOneOrFail({ where: { id }, relations: ['product'] });
+  async getProductByVariantId(id: string): Promise<ProductEntity> {
+    const variant = await this.Variants.findOneOrFail({ where: { id }, relations: ['product'] });
+    return variant.product;
   }
   async destroy(id: string, user_id: string): Promise<VariantEntity> {
     try {

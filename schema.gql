@@ -110,7 +110,7 @@ type RegisterUserSchema {
 
 type VariantSchema {
   id: String!
-  product: ProductEntity!
+  product: ProductSchema!
   quantity: Float!
   name: String!
   description: String

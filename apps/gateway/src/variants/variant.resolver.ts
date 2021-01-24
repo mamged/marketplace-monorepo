@@ -20,6 +20,8 @@ import { UserSchema } from '../users/schema/me.schema';
 import { VariantSchema } from './schema/variant.schema';
 import { CreateVariantInput } from './input/create-variant.input';
 import { UpdateVariantInput } from './input/update-variant.input';
+import { ProductSchema } from '../products/schema/product.schema';
+import { StockSchema } from '../products/schema/stock.schema';
 
 @Resolver(() => VariantSchema)
 export class VariantResolver {
@@ -29,17 +31,19 @@ export class VariantResolver {
     return this.variantService.showVariant(id);
   }
 
+  @ResolveField((returns) => ProductSchema)
+  async product(@Parent() variantParent: VariantSchema) {
+    return this.variantService.getVariantProduct(variantParent.id);
+  }
+  
   @Mutation((returns) => VariantSchema)
   @Roles('admin')
   @UseGuards(new AuthGuard(), new SellerGuard())
-  async createVariant(
+  createVariant(
     @Args('data') data: CreateVariantInput,
     @Context('user') user: any,
   ) {
-    const d = await this.variantService.createVariant(data, user.id);
-    console.log('d:',d);
-    
-    return d;
+    return this.variantService.createVariant(data, user.id);
   }
 
   @Mutation((returns) => VariantSchema)

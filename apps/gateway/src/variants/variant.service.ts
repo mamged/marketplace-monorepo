@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { config } from '@commerce/shared';
 import { redis, redisVariantsKey } from '../utils/redis';
 // import { VariantEntity } from "apps/variants/src";
-import { VariantEntity, } from '@commerce/products';
+import { ProductEntity, VariantEntity, } from '@commerce/products';
 import { CreateVariantInput } from './input/create-variant.input';
 import { VariantSchema } from './schema/variant.schema';
 import { UpdateVariantInput } from './input/update-variant.input';
@@ -26,19 +26,9 @@ export class VariantService {
       );
     });
   }
-  getVariantByVariantId(id: string): Promise<VariantEntity> {
+  async getVariantProduct(id: string): Promise<ProductEntity> {
     return new Promise((resolve, reject) => {
-      VariantEntity;
-      this.client.send<VariantEntity>('get-variant-by-variant-id', id).subscribe(
-        (variant) => resolve(variant),
-        (error) => reject(error),
-      );
-    });
-  }
-  async getVariantVariant(id: string): Promise<VariantSchema[]> {
-    return new Promise((resolve, reject) => {
-      VariantEntity;
-      this.client.send<VariantSchema[]>('get-variant-variant', id).subscribe(
+      this.client.send<ProductEntity>('get-product-by-variant-id', id).subscribe(
         (variant) => resolve(variant),
         (error) => reject(error),
       );
