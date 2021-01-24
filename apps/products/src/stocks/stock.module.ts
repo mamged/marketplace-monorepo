@@ -5,9 +5,12 @@ import { StockEntity } from './stock.entity';
 import { StockController } from './stock.controller';
 import { ProductsModule } from '../index';
 @Module({
-  imports: [forwardRef(() => ProductsModule), TypeOrmModule.forFeature([StockEntity]),],
+  imports: [
+    forwardRef(() => ProductsModule),
+    TypeOrmModule.forFeature([StockEntity]),
+  ],
   providers: [Stockservice],
   controllers: [StockController],
-  exports: [Stockservice]
+  exports: [Stockservice],
 })
 export class StocksModule {}

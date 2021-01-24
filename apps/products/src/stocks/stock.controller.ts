@@ -1,10 +1,11 @@
 import { CreateStockInput, UpdateStockInput } from '@commerce/gateway';
 import { ProductService } from '../products/product.service';
 import { Controller } from '@nestjs/common';
-import { MessagePattern, EventPattern } from '@nestjs/microservices';
+import { MessagePattern, EventPattern, Payload } from '@nestjs/microservices';
 
 import { StockEntity } from './stock.entity';
 import { Stockservice } from './stock.service';
+import { ProductEntity } from '../products/product.entity';
 
 @Controller('Stocks')
 export class StockController {
@@ -16,7 +17,7 @@ export class StockController {
   }
 
   @MessagePattern('create-stock')
-  store(stock: CreateStockInput): Promise<StockEntity> {
+  store(stock): Promise<StockEntity> {
     return this.Stocks.store(stock);
   }
 
@@ -31,7 +32,7 @@ export class StockController {
     return this.Stocks.show(id);
   }
   @MessagePattern('get-product-by-stock-id')
-  getStockByProductId(id: string): Promise<StockEntity> {
+  getStockByProductId(id: string): Promise<ProductEntity> {
     return this.Stocks.getProductByStockId(id);
   }
   @MessagePattern('fetch-stocks-by-ids')
@@ -39,7 +40,13 @@ export class StockController {
     return this.Stocks.fetchStocksByIds(ids);
   }
   @EventPattern('consume-stock')
-  async handleOrderDeleted({ productId, user_id }: { productId: string; user_id: string }) {
+  async handleOrderDeleted({
+    productId,
+    user_id,
+  }: {
+    productId: string;
+    user_id: string;
+  }) {
     return this.Stocks.consumeStock(productId, user_id);
   }
   @MessagePattern('delete-stock')

@@ -13,6 +13,7 @@ import { ProductsModule } from './products/products.module';
 import { UsersModule } from './users/users.module';
 import { RolesGuard } from './middlewares/roles.guard';
 import { CategoriesModule } from './categories/category.module';
+import { VariantsModule } from './variants/variant.module';
 @Module({
   imports: [
     GraphQLModule.forRoot({
@@ -28,6 +29,7 @@ import { CategoriesModule } from './categories/category.module';
     }),
     UsersModule,
     ProductsModule,
+    VariantsModule,
     // OrdersModule,
     // PaymentCardsModule,
     CategoriesModule,

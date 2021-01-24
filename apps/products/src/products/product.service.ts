@@ -13,6 +13,7 @@ import { ProductEntity } from './product.entity';
 import { Product, ProductInput } from 'src/schemas/graphql';
 import { StockEntity, stockStatus } from '../stocks/stock.entity';
 import { Stockservice } from '../stocks/stock.service';
+import { VariantEntity } from '../variant/variant.entity';
 
 @Injectable()
 export class ProductService {
@@ -44,17 +45,32 @@ export class ProductService {
       throw new RpcException(new BadRequestException(error.message));
     });
   }
-  async update(id: string, data: any, user_id?: string): Promise<ProductEntity> {
+  async update(
+    id: string,
+    data: any,
+    user_id?: string,
+  ): Promise<ProductEntity> {
     const product = await this.products.findOneOrFail({ id });
     // if (product.user_id === user_id) {
-      await this.products.update({ id }, data);
-      console.log('updating product with:', data);
-      
-      return this.products.findOneOrFail({ id });
+    await this.products.update({ id }, data);
+    console.log('updating product with:', data);
+
+    return this.products.findOneOrFail({ id });
     // }
     throw new RpcException(
       new NotFoundException("You cannot update what you don't own..."),
     );
+  }
+  async getVariants(productId: string): Promise<VariantEntity[]>{
+    const product = await this.products.findOneOrFail({
+      where: { id: productId},
+      relations: ["variants"]
+    }).catch(()=>{
+      throw new RpcException(
+        new NotFoundException("Cannot find product..."),
+      );
+    })
+    return product.variants.filter(variant=> variant.deletedAt === null);
   }
   async show(id: string): Promise<ProductEntity> {
     return this.products.findOneOrFail({ id });
@@ -77,7 +93,11 @@ export class ProductService {
   }
   async decrementProductsStock(products: ProductEntity[]) {
     products.forEach(async (product) => {
-        await this.products.decrement({ id: product.id }, 'quantity', product.quantity);
+      await this.products.decrement(
+        { id: product.id },
+        'quantity',
+        product.quantity,
+      );
     });
   }
   async incrementProductsStock(products: ProductEntity[]) {

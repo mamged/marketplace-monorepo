@@ -23,6 +23,7 @@ import { ProductSchema } from './schema/product.schema';
 import { StockSchema } from './schema/stock.schema';
 import { CreateStockInput } from './input/create-stock.input';
 import { UpdateStockInput } from './input/update-stock.input';
+import { VariantSchema } from '../variants/schema/variant.schema';
 
 @Resolver(() => ProductSchema)
 export class ProductResolver {
@@ -35,10 +36,12 @@ export class ProductResolver {
   user(@Parent() product: ProductSchema): Promise<UserSchema> {
     return this.usersDataLoader.load(product.user_id);
   }
-  @ResolveField((returns) => StockSchema)
-  product(@Parent() stock: StockSchema) {
-    // const stock = this.productService.showStock(stock.id);
-    console.log('stock:', stock);
+  @ResolveField((returns) => [VariantSchema])
+  async variant(@Parent() product: ProductSchema): Promise<VariantSchema[]> {
+    const a = await this.productService.getProductVariants(product.id);
+    console.log('aaa',a);
+    return a;
+    
   }
   @Query((returns) => [ProductSchema])
   products(): Promise<ProductEntity[]> {
@@ -85,8 +88,7 @@ export class StockResolver {
 
   @ResolveField((returns) => ProductSchema)
   async product(@Parent() stock: StockSchema) {
-    const _stock = await this.productService.getProductByStockId(stock.id);
-    return _stock.product;
+    return this.productService.getProductByStockId(stock.id);
   }
 
   @Query((returns) => StockSchema)
@@ -104,7 +106,6 @@ export class StockResolver {
     console.log('create stock', data);
 
     const p = await this.productService.createStock(data, user.id);
-    console.log('pp:', p);
     p.created_at = new Date(p.created_at);
     return p;
   }

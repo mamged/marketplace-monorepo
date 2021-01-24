@@ -41,6 +41,10 @@ export class ProductController {
   fetchProductsByIds(ids: Array<string>) {
     return this.products.fetchProductsByIds(ids);
   }
+  @MessagePattern('get-product-variants')
+  getProductVariants(productId: string) {
+    return this.products.getVariants(productId);
+  }
   @EventPattern('order_deleted')
   async handleOrderDeleted(products: Array<ProductEntity>) {
     this.products.incrementProductsStock(products);
