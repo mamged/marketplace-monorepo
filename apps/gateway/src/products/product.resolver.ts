@@ -85,8 +85,7 @@ export class StockResolver {
 
   @ResolveField((returns) => ProductSchema)
   async product(@Parent() stock: StockSchema) {
-    const _stock = await this.productService.getProductByStockId(stock.id);
-    return _stock.product;
+    return this.productService.getProductByStockId(stock.id);
   }
 
   @Query((returns) => StockSchema)
@@ -104,7 +103,6 @@ export class StockResolver {
     console.log('create stock', data);
 
     const p = await this.productService.createStock(data, user.id);
-    console.log('pp:', p);
     p.created_at = new Date(p.created_at);
     return p;
   }

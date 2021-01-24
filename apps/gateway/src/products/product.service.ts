@@ -38,10 +38,10 @@ export class ProductService {
       );
     });
   }
-  getProductByStockId(id: string): Promise<StockEntity> {
+  getProductByStockId(id: string): Promise<ProductEntity> {
     return new Promise((resolve, reject) => {
       ProductEntity;
-      this.client.send<StockEntity>('get-product-by-stock-id', id).subscribe(
+      this.client.send<ProductEntity>('get-product-by-stock-id', id).subscribe(
         (product) => resolve(product),
         (error) => reject(error),
       );

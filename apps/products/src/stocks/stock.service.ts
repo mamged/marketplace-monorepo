@@ -89,8 +89,9 @@ export class Stockservice {
   async show(id: string): Promise<StockEntity> {
     return this.Stocks.findOneOrFail({ id });
   }
-  async getProductByStockId(id: string): Promise<StockEntity> {
-    return this.Stocks.findOneOrFail({ where: { id }, relations: ['product'] });
+  async getProductByStockId(id: string): Promise<ProductEntity> {
+    const stock = await this.Stocks.findOneOrFail({ where: { id }, relations: ['product'] });
+    return stock.product;
   }
   async destroy(id: string, user_id: string): Promise<StockEntity> {
     try {

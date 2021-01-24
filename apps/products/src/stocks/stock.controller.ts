@@ -5,6 +5,7 @@ import { MessagePattern, EventPattern, Payload } from '@nestjs/microservices';
 
 import { StockEntity } from './stock.entity';
 import { Stockservice } from './stock.service';
+import { ProductEntity } from '../products/product.entity';
 
 @Controller('Stocks')
 export class StockController {
@@ -31,7 +32,7 @@ export class StockController {
     return this.Stocks.show(id);
   }
   @MessagePattern('get-product-by-stock-id')
-  getStockByProductId(id: string): Promise<StockEntity> {
+  getStockByProductId(id: string): Promise<ProductEntity> {
     return this.Stocks.getProductByStockId(id);
   }
   @MessagePattern('fetch-stocks-by-ids')
