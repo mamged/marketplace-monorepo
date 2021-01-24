@@ -96,14 +96,15 @@ enum StockStatus {
 }
 
 type VariantSchema {
-  id: String!
+  id: String
   product: ProductSchema!
-  quantity: Float!
-  name: String!
+  quantity: Float
+  name: String
   description: String
-  price: Float!
-  created_at: DateTime!
-  updated_at: DateTime!
+  price: Float
+  created_at: DateTime
+  updated_at: DateTime
+  deletedAt: DateTime
 }
 
 type AuthTokenSchema {

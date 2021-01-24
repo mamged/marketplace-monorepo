@@ -111,7 +111,6 @@ export class Variantservice {
     return this.Variants.find({
       where: {
         product: id,
-        // status: variantStatus.AVAILABLE,
       },
     });
   }

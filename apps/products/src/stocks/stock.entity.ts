@@ -22,8 +22,10 @@ import {
   UpdateDateColumn,
   PrimaryGeneratedColumn,
   ManyToOne,
+  ManyToMany,
 } from 'typeorm';
 import { ProductEntity } from '../products/product.entity';
+import { VariantEntity } from '..';
 
 export enum stockStatus {
   CONSUMED = 'consumed',

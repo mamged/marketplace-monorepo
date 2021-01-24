@@ -36,7 +36,7 @@ export class Stockservice {
     const newStock = new StockEntity();
     newStock.title = stock.title;
     newStock.description = stock.description;
-    newStock.product = await this.productService.show(stock.product);
+    // newStock.product = await this.productService.show(stock.product);
     const product = new ProductEntity();
     product.id = stock.product;
     product.quantity = 1;
@@ -55,19 +55,19 @@ export class Stockservice {
     oldStock: StockEntity,
     newStock: UpdateStockInput,
   ) {
-    if (
-      oldStock.status === stockStatus.AVAILABLE &&
-      newStock.status !== stockStatus.AVAILABLE
-    ) {
-      oldStock.product.quantity = 1;
-      this.productService.decrementProductsStock([oldStock.product]);
-    } else if (
-      oldStock.status !== stockStatus.AVAILABLE &&
-      newStock.status === stockStatus.AVAILABLE
-    ) {
-      oldStock.product.quantity = 1;
-      this.productService.incrementProductsStock([oldStock.product]);
-    }
+    // if (
+    //   oldStock.status === stockStatus.AVAILABLE &&
+    //   newStock.status !== stockStatus.AVAILABLE
+    // ) {
+    //   oldStock.product.quantity = 1;
+    //   this.productService.decrementProductsStock([oldStock.product]);
+    // } else if (
+    //   oldStock.status !== stockStatus.AVAILABLE &&
+    //   newStock.status === stockStatus.AVAILABLE
+    // ) {
+    //   oldStock.product.quantity = 1;
+    //   this.productService.incrementProductsStock([oldStock.product]);
+    // }
   }
   async update(
     id: string,
@@ -79,15 +79,15 @@ export class Stockservice {
       where: { id },
       relations: ['product'],
     });
-    if (ignoreUserValidation === true || oldStock.product.user_id === userId) {
-      await this.Stocks.update(id, newStockData);
-      // if there is update on status we need to make sure product quantity is up to date
-      if (newStockData.status) {
-        this.updateProductQuantityIfNeeded(oldStock, newStockData);
-      }
-      const newStock = await this.Stocks.findOneOrFail({ id });
-      return newStock;
-    }
+    // if (ignoreUserValidation === true || oldStock.product.user_id === userId) {
+    //   await this.Stocks.update(id, newStockData);
+    //   // if there is update on status we need to make sure product quantity is up to date
+    //   if (newStockData.status) {
+    //     this.updateProductQuantityIfNeeded(oldStock, newStockData);
+    //   }
+    //   const newStock = await this.Stocks.findOneOrFail({ id });
+    //   return newStock;
+    // }
     throw new RpcException(
       new NotFoundException("You cannot update what you don't own..."),
     );
@@ -95,12 +95,12 @@ export class Stockservice {
   async show(id: string): Promise<StockEntity> {
     return this.Stocks.findOneOrFail({ id });
   }
-  async getProductByStockId(id: string): Promise<ProductEntity> {
+  async getProductByStockId(id: string): Promise<any> {
     const stock = await this.Stocks.findOneOrFail({
       where: { id },
       relations: ['product'],
     });
-    return stock.product;
+    return stock;
   }
   async destroy(id: string, user_id: string): Promise<StockEntity> {
     try {

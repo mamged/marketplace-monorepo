@@ -16,12 +16,13 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   DeleteDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { ProductEntity } from '../products/product.entity';
+import { StockEntity } from '../stocks/stock.entity';
 
-@ObjectType()
-@InputType()
 @Entity('variants')
+@InputType()
 export class VariantEntity extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn('uuid')
@@ -65,6 +66,7 @@ export class VariantEntity extends BaseEntity {
   @UpdateDateColumn()
   updated_at: Date;
 
+  @Field()
   @DeleteDateColumn()
   deletedAt?: Date;
 }

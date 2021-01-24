@@ -38,10 +38,7 @@ export class ProductResolver {
   }
   @ResolveField((returns) => [VariantSchema])
   async variant(@Parent() product: ProductSchema): Promise<VariantSchema[]> {
-    const a = await this.productService.getProductVariants(product.id);
-    console.log('aaa',a);
-    return a;
-    
+    return this.productService.getProductVariants(product.id);
   }
   @Query((returns) => [ProductSchema])
   products(): Promise<ProductEntity[]> {
