@@ -6,7 +6,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { getRepository, QueryFailedError, Repository } from 'typeorm';
+import {
+  DeleteResult,
+  getRepository,
+  QueryFailedError,
+  Repository,
+} from 'typeorm';
 import { RpcException } from '@nestjs/microservices';
 
 import { VariantEntity } from './variant.entity';
@@ -46,10 +51,16 @@ export class Variantservice {
     id: string,
     newVariantData: UpdateVariantInput,
     userId: string,
-    ignoreUserValidation = false
+    ignoreUserValidation = false,
   ): Promise<VariantEntity> {
-    const oldVariant = await this.Variants.findOneOrFail({ where:{id}, relations:["product"] });
-    if(ignoreUserValidation === true || (oldVariant.product.user_id === userId)){
+    const oldVariant = await this.Variants.findOneOrFail({
+      where: { id },
+      relations: ['product'],
+    });
+    if (
+      ignoreUserValidation === true ||
+      oldVariant.product.user_id === userId
+    ) {
       await this.Variants.update(id, newVariantData);
       const newVariant = await this.Variants.findOneOrFail({ id });
       return newVariant;
@@ -58,27 +69,42 @@ export class Variantservice {
       new NotFoundException("You cannot update what you don't own..."),
     );
   }
-  async show(id: string): Promise<VariantEntity> {
-    return this.Variants.findOneOrFail({ id });
+  show(id: string): Promise<VariantEntity> {
+    return this.Variants.findOneOrFail({ id }).catch(() => {
+      throw new RpcException(
+        new NotFoundException('Variant cannot be found...'),
+      );
+    });
   }
   async getProductByVariantId(id: string): Promise<ProductEntity> {
-    const variant = await this.Variants.findOneOrFail({ where: { id }, relations: ['product'] });
+    const variant = await this.Variants.findOneOrFail({
+      where: { id },
+      relations: ['product'],
+    }).catch(()=>{
+      throw new RpcException(
+        new NotFoundException('Variant cannot be found...'),
+      );
+    });
     return variant.product;
   }
-  async destroy(id: string, user_id: string): Promise<VariantEntity> {
-    try {
-      // const variant = await this.update(
-      //   id,
-      //   { status: variantStatus.DELETED },
-      //   user_id,
-      // );
-      // return variant;
-      return new VariantEntity();
-    } catch (error) {
+  async destroy(id: string, user_id: string): Promise<any> {
+    const variant = await this.Variants.findOneOrFail({
+      where: { id },
+      relations: ['product']
+    }).catch(() => {
+      throw new RpcException(
+        new NotFoundException('Variant cannot be found...'),
+      );
+    });
+    if (variant.product.user_id !== user_id)
       throw new RpcException(
         new NotFoundException("You cannot update what you don't own..."),
       );
-    }
+    return this.Variants.softRemove({ id }).catch(() => {
+      throw new RpcException(
+        new NotFoundException('Variant cannot be update...'),
+      );
+    });
   }
   async getVariantByProductId(id: string) {
     return this.Variants.find({
@@ -103,7 +129,7 @@ export class Variantservice {
       );
     }
     // variant.status = variantStatus.CONSUMED;
-    this.update(variant.id, variant, user_id)
+    this.update(variant.id, variant, user_id);
     return variant;
   }
   async incrementVariantsVariant(Variants) {

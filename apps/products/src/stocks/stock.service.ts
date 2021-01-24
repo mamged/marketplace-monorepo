@@ -51,17 +51,20 @@ export class Stockservice {
    * @param oldStock the stock item which needs to be updated
    * @param newStock the payload which the stock item will be updated to
    */
-  updateProductQuantityIfNeeded(oldStock: StockEntity, newStock: UpdateStockInput){
+  updateProductQuantityIfNeeded(
+    oldStock: StockEntity,
+    newStock: UpdateStockInput,
+  ) {
     if (
       oldStock.status === stockStatus.AVAILABLE &&
       newStock.status !== stockStatus.AVAILABLE
     ) {
       oldStock.product.quantity = 1;
       this.productService.decrementProductsStock([oldStock.product]);
-    } else if(
+    } else if (
       oldStock.status !== stockStatus.AVAILABLE &&
       newStock.status === stockStatus.AVAILABLE
-    ){
+    ) {
       oldStock.product.quantity = 1;
       this.productService.incrementProductsStock([oldStock.product]);
     }
@@ -70,14 +73,17 @@ export class Stockservice {
     id: string,
     newStockData: UpdateStockInput,
     userId: string,
-    ignoreUserValidation = false
+    ignoreUserValidation = false,
   ): Promise<StockEntity> {
-    const oldStock = await this.Stocks.findOneOrFail({ where:{id}, relations:["product"] });
-    if(ignoreUserValidation === true || (oldStock.product.user_id === userId)){
+    const oldStock = await this.Stocks.findOneOrFail({
+      where: { id },
+      relations: ['product'],
+    });
+    if (ignoreUserValidation === true || oldStock.product.user_id === userId) {
       await this.Stocks.update(id, newStockData);
       // if there is update on status we need to make sure product quantity is up to date
       if (newStockData.status) {
-        this.updateProductQuantityIfNeeded(oldStock, newStockData)
+        this.updateProductQuantityIfNeeded(oldStock, newStockData);
       }
       const newStock = await this.Stocks.findOneOrFail({ id });
       return newStock;
@@ -90,7 +96,10 @@ export class Stockservice {
     return this.Stocks.findOneOrFail({ id });
   }
   async getProductByStockId(id: string): Promise<ProductEntity> {
-    const stock = await this.Stocks.findOneOrFail({ where: { id }, relations: ['product'] });
+    const stock = await this.Stocks.findOneOrFail({
+      where: { id },
+      relations: ['product'],
+    });
     return stock.product;
   }
   async destroy(id: string, user_id: string): Promise<StockEntity> {
@@ -130,7 +139,7 @@ export class Stockservice {
       );
     }
     stock.status = stockStatus.CONSUMED;
-    this.update(stock.id, stock, user_id)
+    this.update(stock.id, stock, user_id);
     return stock;
   }
   async incrementStocksStock(Stocks) {

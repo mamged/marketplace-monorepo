@@ -6,7 +6,7 @@ import {
   Max,
   IsNumber,
 } from 'class-validator';
-import { Field, InputType, ObjectType, } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   Entity,
@@ -15,9 +15,9 @@ import {
   UpdateDateColumn,
   PrimaryGeneratedColumn,
   ManyToOne,
+  DeleteDateColumn,
 } from 'typeorm';
 import { ProductEntity } from '../products/product.entity';
-
 
 @ObjectType()
 @InputType()
@@ -64,4 +64,7 @@ export class VariantEntity extends BaseEntity {
   @Field()
   @UpdateDateColumn()
   updated_at: Date;
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }

@@ -40,7 +40,13 @@ export class StockController {
     return this.Stocks.fetchStocksByIds(ids);
   }
   @EventPattern('consume-stock')
-  async handleOrderDeleted({ productId, user_id }: { productId: string; user_id: string }) {
+  async handleOrderDeleted({
+    productId,
+    user_id,
+  }: {
+    productId: string;
+    user_id: string;
+  }) {
     return this.Stocks.consumeStock(productId, user_id);
   }
   @MessagePattern('delete-stock')

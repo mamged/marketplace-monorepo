@@ -5,9 +5,12 @@ import { VariantEntity } from './variant.entity';
 import { VariantController } from './variant.controller';
 import { ProductsModule } from '../index';
 @Module({
-  imports: [forwardRef(() => ProductsModule), TypeOrmModule.forFeature([VariantEntity]),],
+  imports: [
+    forwardRef(() => ProductsModule),
+    TypeOrmModule.forFeature([VariantEntity]),
+  ],
   providers: [Variantservice],
   controllers: [VariantController],
-  exports: [Variantservice]
+  exports: [Variantservice],
 })
 export class VariantsModule {}

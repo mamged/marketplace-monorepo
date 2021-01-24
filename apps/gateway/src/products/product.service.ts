@@ -163,10 +163,12 @@ export class ProductService {
   consumeStock(productId: string, user_id: string): Promise<StockEntity> {
     return new Promise((resolve, reject) => {
       ProductEntity;
-      this.client.send<StockSchema>('consume-stock', {productId, user_id}).subscribe(
-        (product) => resolve(product),
-        (error) => reject(error),
-      );
+      this.client
+        .send<StockSchema>('consume-stock', { productId, user_id })
+        .subscribe(
+          (product) => resolve(product),
+          (error) => reject(error),
+        );
     });
   }
   async fetchProductsByIds(ids: string[]): Promise<ProductDTO[]> {

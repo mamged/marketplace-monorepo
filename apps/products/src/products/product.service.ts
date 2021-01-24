@@ -44,13 +44,17 @@ export class ProductService {
       throw new RpcException(new BadRequestException(error.message));
     });
   }
-  async update(id: string, data: any, user_id?: string): Promise<ProductEntity> {
+  async update(
+    id: string,
+    data: any,
+    user_id?: string,
+  ): Promise<ProductEntity> {
     const product = await this.products.findOneOrFail({ id });
     // if (product.user_id === user_id) {
-      await this.products.update({ id }, data);
-      console.log('updating product with:', data);
-      
-      return this.products.findOneOrFail({ id });
+    await this.products.update({ id }, data);
+    console.log('updating product with:', data);
+
+    return this.products.findOneOrFail({ id });
     // }
     throw new RpcException(
       new NotFoundException("You cannot update what you don't own..."),
@@ -77,7 +81,11 @@ export class ProductService {
   }
   async decrementProductsStock(products: ProductEntity[]) {
     products.forEach(async (product) => {
-        await this.products.decrement({ id: product.id }, 'quantity', product.quantity);
+      await this.products.decrement(
+        { id: product.id },
+        'quantity',
+        product.quantity,
+      );
     });
   }
   async incrementProductsStock(products: ProductEntity[]) {

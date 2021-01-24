@@ -39,7 +39,13 @@ export class VariantController {
     return this.Variants.fetchVariantsByIds(ids);
   }
   @EventPattern('consume-variant')
-  async handleOrderDeleted({ productId, user_id }: { productId: string; user_id: string }) {
+  async handleOrderDeleted({
+    productId,
+    user_id,
+  }: {
+    productId: string;
+    user_id: string;
+  }) {
     return this.Variants.consumeVariant(productId, user_id);
   }
   @MessagePattern('delete-variant')

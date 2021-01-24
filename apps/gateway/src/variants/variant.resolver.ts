@@ -1,5 +1,5 @@
 import { Client, ClientProxy, Transport } from '@nestjs/microservices';
-import {  UserDTO, config } from '@commerce/shared';
+import { UserDTO, config } from '@commerce/shared';
 import {
   Query,
   Resolver,
@@ -35,7 +35,7 @@ export class VariantResolver {
   async product(@Parent() variantParent: VariantSchema) {
     return this.variantService.getVariantProduct(variantParent.id);
   }
-  
+
   @Mutation((returns) => VariantSchema)
   @Roles('admin')
   @UseGuards(new AuthGuard(), new SellerGuard())

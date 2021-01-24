@@ -11,4 +11,4 @@ import { IsNotEmpty } from 'class-validator';
 import { CreateVariantInput } from './create-variant.input';
 @InputType()
 @ObjectType()
-export class UpdateVariantInput extends PartialType(CreateVariantInput){}
+export class UpdateVariantInput extends PartialType(CreateVariantInput) {}
