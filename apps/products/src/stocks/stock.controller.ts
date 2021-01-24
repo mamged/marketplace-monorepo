@@ -16,7 +16,7 @@ export class StockController {
   }
 
   @MessagePattern('create-stock')
-  store(stock: CreateStockInput): Promise<StockEntity> {
+  store(stock): Promise<StockEntity> {
     return this.Stocks.store(stock);
   }
 
