@@ -5,7 +5,7 @@ import { UserDTO, ProductDTO } from '@commerce/shared';
 import { config } from '@commerce/shared';
 import { redis, redisProductsKey, redisStocksKey } from '../utils/redis';
 // import { ProductEntity } from "apps/products/src";
-import { ProductEntity, StockEntity } from '@commerce/products';
+import { ProductEntity, StockEntity, VariantEntity } from '@commerce/products';
 import { CreateProductInput } from './input/create-product.input';
 import { ProductSchema } from './schema/product.schema';
 import { CreateStockInput } from './input/create-stock.input';
@@ -42,6 +42,14 @@ export class ProductService {
     return new Promise((resolve, reject) => {
       ProductEntity;
       this.client.send<ProductEntity>('get-product-by-stock-id', id).subscribe(
+        (product) => resolve(product),
+        (error) => reject(error),
+      );
+    });
+  }
+  getProductVariants(productId: string): Promise<VariantEntity[]> {
+    return new Promise((resolve, reject) => {
+      this.client.send<VariantEntity[]>('get-product-variants', productId).subscribe(
         (product) => resolve(product),
         (error) => reject(error),
       );

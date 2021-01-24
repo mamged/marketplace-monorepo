@@ -57,14 +57,6 @@ export class VariantResolver {
   }
   @Mutation((returns) => VariantSchema)
   @UseGuards(new AuthGuard(), new SellerGuard())
-  consumeVariant(
-    @Context('user') user: any,
-    @Args('variantId') variantId: string,
-  ) {
-    return this.variantService.consumeVariant(variantId, user.id);
-  }
-  @Mutation((returns) => VariantSchema)
-  @UseGuards(new AuthGuard(), new SellerGuard())
   async deleteVariant(@Context('user') user: any, @Args('id') id: string) {
     return this.variantService.destroyVariant(id, user.id);
   }

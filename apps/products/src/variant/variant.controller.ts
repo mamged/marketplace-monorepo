@@ -11,11 +11,6 @@ import { ProductEntity } from '../products/product.entity';
 export class VariantController {
   constructor(private readonly Variants: Variantservice) {}
 
-  @MessagePattern('Variants')
-  index(data: any = undefined, arg2, arg3): Promise<VariantEntity[]> {
-    return this.Variants.get(data);
-  }
-
   @MessagePattern('create-variant')
   store(variant: CreateVariantInput): Promise<VariantEntity> {
     return this.Variants.store(variant);
@@ -33,20 +28,6 @@ export class VariantController {
   @MessagePattern('get-product-by-variant-id')
   getVariantByProductId(id: string): Promise<ProductEntity> {
     return this.Variants.getProductByVariantId(id);
-  }
-  @MessagePattern('fetch-variants-by-ids')
-  fetchVariantsByIds(ids: Array<string>) {
-    return this.Variants.fetchVariantsByIds(ids);
-  }
-  @EventPattern('consume-variant')
-  async handleOrderDeleted({
-    productId,
-    user_id,
-  }: {
-    productId: string;
-    user_id: string;
-  }) {
-    return this.Variants.consumeVariant(productId, user_id);
   }
   @MessagePattern('delete-variant')
   destroy({ id, user_id }: { id: string; user_id: string }) {

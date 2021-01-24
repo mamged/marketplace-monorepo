@@ -23,6 +23,7 @@ import { ProductSchema } from './schema/product.schema';
 import { StockSchema } from './schema/stock.schema';
 import { CreateStockInput } from './input/create-stock.input';
 import { UpdateStockInput } from './input/update-stock.input';
+import { VariantSchema } from '../variants/schema/variant.schema';
 
 @Resolver(() => ProductSchema)
 export class ProductResolver {
@@ -35,10 +36,12 @@ export class ProductResolver {
   user(@Parent() product: ProductSchema): Promise<UserSchema> {
     return this.usersDataLoader.load(product.user_id);
   }
-  @ResolveField((returns) => StockSchema)
-  product(@Parent() stock: StockSchema) {
-    // const stock = this.productService.showStock(stock.id);
-    console.log('stock:', stock);
+  @ResolveField((returns) => [VariantSchema])
+  async variant(@Parent() product: ProductSchema): Promise<VariantSchema[]> {
+    const a = await this.productService.getProductVariants(product.id);
+    console.log('aaa',a);
+    return a;
+    
   }
   @Query((returns) => [ProductSchema])
   products(): Promise<ProductEntity[]> {

@@ -80,7 +80,7 @@ export class Variantservice {
     const variant = await this.Variants.findOneOrFail({
       where: { id },
       relations: ['product'],
-    }).catch(()=>{
+    }).catch(() => {
       throw new RpcException(
         new NotFoundException('Variant cannot be found...'),
       );
@@ -90,7 +90,7 @@ export class Variantservice {
   async destroy(id: string, user_id: string): Promise<any> {
     const variant = await this.Variants.findOneOrFail({
       where: { id },
-      relations: ['product']
+      relations: ['product'],
     }).catch(() => {
       throw new RpcException(
         new NotFoundException('Variant cannot be found...'),
@@ -100,11 +100,12 @@ export class Variantservice {
       throw new RpcException(
         new NotFoundException("You cannot update what you don't own..."),
       );
-    return this.Variants.softRemove({ id }).catch(() => {
+    this.Variants.softRemove({ id }).catch(() => {
       throw new RpcException(
         new NotFoundException('Variant cannot be update...'),
       );
     });
+    return variant;
   }
   async getVariantByProductId(id: string) {
     return this.Variants.find({

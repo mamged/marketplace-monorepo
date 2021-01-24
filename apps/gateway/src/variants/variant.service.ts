@@ -36,30 +36,6 @@ export class VariantService {
         );
     });
   }
-  async get(): Promise<VariantEntity[]> {
-    return new Promise((resolve, reject) => {
-      // get variants through cache.
-      redis.get(redisVariantsKey, (err, variants) => {
-        // if variants don't persist, retrieve them, and store in redis.
-        if (!variants) {
-          this.client.send<VariantEntity[]>('variants', []).subscribe(
-            (variants: VariantEntity[]) => {
-              redis.set(
-                redisVariantsKey,
-                JSON.stringify(variants),
-                'EX',
-                60 * 60 * 30, // 30 mins until expiration
-              );
-              return resolve(variants);
-            },
-            (error) => reject(error),
-          );
-        }
-        // return the parsed variants from cache.
-        resolve(JSON.parse(variants));
-      });
-    });
-  }
 
   createVariant(data: CreateVariantInput, id: string): Promise<VariantSchema> {
     // TODO: handle the failure create produc
@@ -90,17 +66,6 @@ export class VariantService {
             redis.del(redisVariantsKey);
             return resolve(variant);
           },
-          (error) => reject(error),
-        );
-    });
-  }
-  consumeVariant(variantId: string, user_id: string): Promise<VariantSchema> {
-    return new Promise((resolve, reject) => {
-      VariantEntity;
-      this.client
-        .send<VariantSchema>('consume-variant', { variantId, user_id })
-        .subscribe(
-          (variant) => resolve(variant),
           (error) => reject(error),
         );
     });
