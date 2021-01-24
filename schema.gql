@@ -71,13 +71,13 @@ type ProductSchema {
 
 type StockSchema {
   id: String!
-  product: ProductSchema!
   status: StockStatus
   quantity: Float!
   title: String!
   description: String
   created_at: DateTime!
   updated_at: DateTime!
+  product: ProductSchema!
 }
 
 """Show the status of stock item."""

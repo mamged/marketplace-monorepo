@@ -70,9 +70,6 @@ export class ProductEntity extends BaseEntity {
   })
   image: string[];
 
-  @OneToMany((type) => StockEntity, (stock) => stock.product)
-  stock: StockEntity[];
-
   @OneToMany((type) => VariantEntity, (varient) => varient.product)
   variants: VariantEntity[];
 

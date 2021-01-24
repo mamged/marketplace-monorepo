@@ -58,10 +58,6 @@ export class StockEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field((returns) => ProductEntity)
-  @ManyToOne((type) => ProductEntity, (product) => product.stock)
-  product: ProductEntity;
-
   @Field((returns) => stockStatus, {
     defaultValue: stockStatus.AVAILABLE,
     nullable: true,
