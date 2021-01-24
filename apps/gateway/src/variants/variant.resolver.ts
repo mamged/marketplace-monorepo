@@ -36,10 +36,10 @@ export class VariantResolver {
     @Args('data') data: CreateVariantInput,
     @Context('user') user: any,
   ) {
-    console.log('create variant', data);
-
-    const p = await this.variantService.createVariant(data, user.id);
-    return p;
+    const d = await this.variantService.createVariant(data, user.id);
+    console.log('d:',d);
+    
+    return d;
   }
 
   @Mutation((returns) => VariantSchema)

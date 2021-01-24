@@ -9,7 +9,7 @@ import {
 import { getRepository, QueryFailedError, Repository } from 'typeorm';
 import { RpcException } from '@nestjs/microservices';
 
-import { VariantEntity, variantStatus } from './variant.entity';
+import { VariantEntity } from './variant.entity';
 import { CreateVariantInput } from '@commerce/gateway';
 import { ProductEntity } from '../products/product.entity';
 import { ProductService } from '../products/product.service';
@@ -32,39 +32,16 @@ export class Variantservice {
       .getMany();
   }
   async store(variant: CreateVariantInput): Promise<any> {
-    // variant.product = this.productService.show(variant.product.to)
     const newVariant = new VariantEntity();
-    newVariant.title = variant.title;
+    newVariant.name = variant.name;
+    newVariant.price = variant.price;
     newVariant.description = variant.description;
-    // newVariant.product = await this.productService.show(variant.product);
-    const product = new ProductEntity();
-    // product.id = variant.product;
-    product.quantity = 1;
+    newVariant.product = await this.productService.show(variant.productId);
     return this.Variants.save(newVariant).catch((error) => {
       throw new RpcException(new BadRequestException(error.message));
     });
   }
 
-  /**
-   * a signle source of truth function to make variant updates
-   * @param oldVariant the variant item which needs to be updated
-   * @param newVariant the payload which the variant item will be updated to
-   */
-  updateProductQuantityIfNeeded(oldVariant: VariantEntity, newVariant: UpdateVariantInput){
-    if (
-      oldVariant.status === variantStatus.AVAILABLE &&
-      newVariant.status !== variantStatus.AVAILABLE
-    ) {
-      oldVariant.product.quantity = 1;
-      // this.productService.decrementProductsVariant([oldVariant.product]);
-    } else if(
-      oldVariant.status !== variantStatus.AVAILABLE &&
-      newVariant.status === variantStatus.AVAILABLE
-    ){
-      oldVariant.product.quantity = 1;
-      // this.productService.incrementProductsVariant([oldVariant.product]);
-    }
-  }
   async update(
     id: string,
     newVariantData: UpdateVariantInput,
@@ -73,11 +50,11 @@ export class Variantservice {
   ): Promise<VariantEntity> {
     const oldVariant = await this.Variants.findOneOrFail({ where:{id}, relations:["product"] });
     if(ignoreUserValidation === true || (oldVariant.product.user_id === userId)){
-      await this.Variants.update(id, newVariantData);
+      // await this.Variants.update(id, newVariantData);
       // if there is update on status we need to make sure product quantity is up to date
-      if (newVariantData.status) {
-        this.updateProductQuantityIfNeeded(oldVariant, newVariantData)
-      }
+      // if (newVariantData.status) {
+        // this.updateProductQuantityIfNeeded(oldVariant, newVariantData)
+      // }
       const newVariant = await this.Variants.findOneOrFail({ id });
       return newVariant;
     }
@@ -93,12 +70,13 @@ export class Variantservice {
   }
   async destroy(id: string, user_id: string): Promise<VariantEntity> {
     try {
-      const variant = await this.update(
-        id,
-        { status: variantStatus.DELETED },
-        user_id,
-      );
-      return variant;
+      // const variant = await this.update(
+      //   id,
+      //   { status: variantStatus.DELETED },
+      //   user_id,
+      // );
+      // return variant;
+      return new VariantEntity();
     } catch (error) {
       throw new RpcException(
         new NotFoundException("You cannot update what you don't own..."),
@@ -109,7 +87,7 @@ export class Variantservice {
     return this.Variants.find({
       where: {
         product: id,
-        status: variantStatus.AVAILABLE,
+        // status: variantStatus.AVAILABLE,
       },
     });
   }
@@ -119,7 +97,7 @@ export class Variantservice {
       variant = await this.Variants.findOneOrFail({
         where: {
           product: productId,
-          status: variantStatus.AVAILABLE,
+          // status: variantStatus.AVAILABLE,
         },
       });
     } catch (error) {
@@ -127,7 +105,7 @@ export class Variantservice {
         new NotFoundException('cannot find available variant'),
       );
     }
-    variant.status = variantStatus.CONSUMED;
+    // variant.status = variantStatus.CONSUMED;
     this.update(variant.id, variant, user_id)
     return variant;
   }

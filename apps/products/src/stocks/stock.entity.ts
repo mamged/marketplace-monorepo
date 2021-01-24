@@ -8,7 +8,7 @@ import {
   IsArray,
   IsNumber,
 } from 'class-validator';
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType, registerEnumType } from '@nestjs/graphql';
 import {
   Column,
   Entity,

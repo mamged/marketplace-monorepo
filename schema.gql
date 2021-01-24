@@ -108,6 +108,17 @@ type RegisterUserSchema {
   email: String!
 }
 
+type VariantSchema {
+  id: String!
+  product: ProductEntity!
+  quantity: Float!
+  name: String!
+  description: String
+  price: Float!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
 type Query {
   users: UserEntity!
   me: UserSchema!
@@ -115,6 +126,7 @@ type Query {
   showProduct(id: String!): ProductSchema!
   getProductStock(id: String!): [StockSchema!]!
   showStock(id: String!): StockSchema!
+  showVariant(id: String!): VariantSchema!
   categories: [CategoryEntity!]!
   showCategory(id: String!): CategoryEntity!
 }
@@ -129,6 +141,10 @@ type Mutation {
   updateStock(id: String!, data: UpdateStockInput!): StockSchema!
   consumeStock(productId: String!): StockSchema!
   deleteStock(id: String!): StockSchema!
+  createVariant(data: CreateVariantInput!): VariantSchema!
+  updateVariant(id: String!, data: UpdateVariantInput!): VariantSchema!
+  consumeVariant(variantId: String!): VariantSchema!
+  deleteVariant(id: String!): VariantSchema!
   createCategory(data: CreateCategoryInput!): CategoryEntity!
   updateCategory(id: Float!, data: CreateCategoryInput!): CategoryEntity!
   deleteCategory(id: String!): CategoryEntity!
@@ -149,6 +165,7 @@ input RegisterUserInput {
 
 input CreateProductInput {
   price: Float!
+  quantity: Float = 0
   title: String!
   description: String
   image: [String!]!
@@ -165,6 +182,24 @@ input UpdateStockInput {
   status: StockStatus = AVAILABLE
   title: String
   description: String
+}
+
+input CreateVariantInput {
+  name: String!
+  description: String
+  price: Float!
+
+  """product id"""
+  productId: String!
+}
+
+input UpdateVariantInput {
+  name: String
+  description: String
+  price: Float
+
+  """product id"""
+  productId: String
 }
 
 input CreateCategoryInput {

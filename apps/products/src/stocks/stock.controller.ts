@@ -1,7 +1,7 @@
 import { CreateStockInput, UpdateStockInput } from '@commerce/gateway';
 import { ProductService } from '../products/product.service';
 import { Controller } from '@nestjs/common';
-import { MessagePattern, EventPattern } from '@nestjs/microservices';
+import { MessagePattern, EventPattern, Payload } from '@nestjs/microservices';
 
 import { StockEntity } from './stock.entity';
 import { Stockservice } from './stock.service';

@@ -1,4 +1,4 @@
-import { VariantEntity } from '@commerce/variants';
+import { VariantEntity } from '@commerce/products';
 import { ObjectType, PartialType } from '@nestjs/graphql';
 
 @ObjectType()
