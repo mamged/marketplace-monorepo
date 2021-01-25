@@ -51,8 +51,10 @@ registerEnumType(stockStatus, {
     },
   },
 });
-@Entity('stocks')
-@ObjectType()
+
+@ObjectType('stockEntitySchema')
+@InputType('stockEntityInput')
+@Entity('stock')
 export class StockEntity extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn('uuid')
@@ -69,6 +71,11 @@ export class StockEntity extends BaseEntity {
   })
   status: stockStatus;
 
+  @Field(of => VariantEntity)
+  @Column()
+  @ManyToOne(type=> VariantEntity, variant=> variant.stock)
+  variant: VariantEntity;
+  
   @Field({ defaultValue: 1 })
   @Column('integer', { default: 1 })
   quantity: number;

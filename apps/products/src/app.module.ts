@@ -8,7 +8,10 @@ const ormconfig = require('../ormconfig.json');
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(ormconfig[0]),
+    TypeOrmModule.forRoot({...ormconfig[0], toRetry:(err)=>{
+      console.log('eeeee',err);
+      
+    }}),
     ProductsModule,
     VariantsModule,
     StocksModule,

@@ -20,16 +20,14 @@ export class ProductService {
   constructor(
     @InjectRepository(ProductEntity)
     private readonly products: Repository<ProductEntity>,
-    @Inject(forwardRef(() => Stockservice))
-    private stock: Stockservice,
   ) {}
   get(data: any = undefined): Promise<ProductEntity[]> {
     return this.products.find(data);
   }
-  async getProductStock(id: string): Promise<StockEntity[]> {
+  async getProductStock(id: string): Promise<any> {
     try {
-      const stock = await this.stock.getStockByProductId(id);
-      return stock;
+      // const stock = await this.stock.getStockByProductId(id);
+      // return stock;
     } catch (error) {
       throw new NotFoundException(error);
     }

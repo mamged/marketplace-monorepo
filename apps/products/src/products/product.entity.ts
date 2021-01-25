@@ -31,7 +31,8 @@ export class ProductEntity extends BaseEntity {
 
   @IsBoolean()
   @Field(()=> Boolean, {defaultValue: false})
-  @Column({type: "boolean"})
+  // TODO: remove nullable: true
+  @Column({type: "boolean", nullable: true})
   published: boolean;
 
   @Min(1)
@@ -76,6 +77,8 @@ export class ProductEntity extends BaseEntity {
   })
   image: string[];
 
+  // @Field(()=> [VariantEntity])
+  // @Column()
   @OneToMany((type) => VariantEntity, (varient) => varient.product)
   variants: VariantEntity[];
 

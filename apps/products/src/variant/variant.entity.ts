@@ -22,19 +22,25 @@ import { ProductEntity } from '../products/product.entity';
 import { StockEntity } from '../stocks/stock.entity';
 
 @Entity('variants')
-@InputType()
+@InputType('variantEntityInput')
+@ObjectType('variantEntitySchema')
 export class VariantEntity extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field((returns) => ProductEntity)
+  // @Field((returns) => ProductEntity)
   @ManyToOne((type) => ProductEntity, (product) => product.variants)
   product: ProductEntity;
 
   @Field({ defaultValue: 1 })
   @Column('integer', { default: 1 })
   quantity: number;
+
+  @Field(of => [StockEntity])
+  @Column()
+  @OneToMany(type=> StockEntity, stock=> stock.variant)
+  stock: StockEntity[];
 
   @MinLength(8)
   @MaxLength(32)

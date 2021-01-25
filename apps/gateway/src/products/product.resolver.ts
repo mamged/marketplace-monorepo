@@ -83,11 +83,6 @@ export class ProductResolver {
 export class StockResolver {
   constructor(private readonly productService: ProductService) {}
 
-  @ResolveField((returns) => ProductSchema)
-  async product(@Parent() stock: StockSchema) {
-    return this.productService.getProductByStockId(stock.id);
-  }
-
   @Query((returns) => StockSchema)
   showStock(@Args('id') id: string) {
     return this.productService.showStock(id);

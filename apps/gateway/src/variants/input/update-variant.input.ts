@@ -6,7 +6,6 @@ import {
   PickType,
 } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { VariantEntity } from '@commerce/products';
 import { IsNotEmpty } from 'class-validator';
 import { CreateVariantInput } from './create-variant.input';
 @InputType()
