@@ -38,7 +38,6 @@ export class VariantEntity extends BaseEntity {
   quantity: number;
 
   @Field(of => [StockEntity])
-  @Column()
   @OneToMany(type=> StockEntity, stock=> stock.variant)
   stock: StockEntity[];
 

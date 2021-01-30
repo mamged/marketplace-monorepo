@@ -19,7 +19,6 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
 } from 'typeorm';
-import { StockEntity } from '../stocks/stock.entity';
 import { VariantEntity } from '../variant/variant.entity';
 
 @Entity('products')
