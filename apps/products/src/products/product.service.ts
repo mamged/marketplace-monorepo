@@ -14,6 +14,7 @@ import { Product, ProductInput } from 'src/schemas/graphql';
 import { StockEntity, stockStatus } from '../stocks/stock.entity';
 import { Stockservice } from '../stocks/stock.service';
 import { VariantEntity } from '../variant/variant.entity';
+import { CreateProductInput } from '@commerce/gateway';
 
 @Injectable()
 export class ProductService {
@@ -38,8 +39,8 @@ export class ProductService {
       .where(`products.id IN (:...ids)`, { ids })
       .getMany();
   }
-  async store(product: ProductInput): Promise<any> {
-    return this.products.save(product).catch((error) => {
+  async store(product: CreateProductInput): Promise<any> {
+    return this.products.save(product).catch((error) => {      
       throw new RpcException(new BadRequestException(error.message));
     });
   }

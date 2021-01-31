@@ -1,3 +1,4 @@
+import { CreateProductInput } from '@commerce/gateway';
 import { Controller } from '@nestjs/common';
 import { MessagePattern, EventPattern } from '@nestjs/microservices';
 import { StockEntity } from '../stocks/stock.entity';
@@ -19,7 +20,7 @@ export class ProductController {
   }
 
   @MessagePattern('create-product')
-  store(product: ProductEntity): Promise<ProductEntity> {
+  store(product: CreateProductInput): Promise<ProductEntity> {
     return this.products.store(product);
   }
 
