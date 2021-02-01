@@ -48,11 +48,11 @@ export class ProductController {
   }
   @EventPattern('order_deleted')
   async handleOrderDeleted(products: Array<ProductEntity>) {
-    this.products.incrementProductsStock(products);
+    products.forEach(p=>this.products.updateProductQuantity(p.id));
   }
   @EventPattern('order_created')
   async handleOrderCreated(products: Array<ProductEntity>) {
-    this.products.decrementProductsStock(products);
+    products.forEach(p=>this.products.updateProductQuantity(p.id));
   }
 
   @MessagePattern('delete-product')

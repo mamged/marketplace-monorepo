@@ -9,6 +9,7 @@ import { VariantsModule } from '../variant/variant.module';
 @Module({
   imports: [
     forwardRef(() => VariantsModule),
+    forwardRef(() => StocksModule),
     TypeOrmModule.forFeature([ProductEntity]),
   ],
   providers: [ProductService],

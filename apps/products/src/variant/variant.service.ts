@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import {
   DeleteResult,
+  FindManyOptions,
   getRepository,
   QueryFailedError,
   Repository,
@@ -28,7 +29,7 @@ export class Variantservice {
     @Inject(forwardRef(() => ProductService))
     private productService: ProductService,
   ) {}
-  get(data: any = undefined): Promise<VariantEntity[]> {
+  get(data: FindManyOptions = undefined): Promise<VariantEntity[]> {
     return this.Variants.find(data);
   }
   fetchVariantsByIds(ids: Array<string>) {
@@ -42,7 +43,10 @@ export class Variantservice {
     newVariant.price = variant.price;
     newVariant.description = variant.description;
     newVariant.product = await this.productService.show(variant.productId);
-    return this.Variants.save(newVariant).catch((error) => {
+    return this.Variants.save(newVariant).then(async v=>{
+      await this.productService.updateProductQuantity(variant.productId);
+      return v;
+    }).catch((error) => {
       throw new RpcException(new BadRequestException(error.message));
     });
   }
@@ -62,8 +66,8 @@ export class Variantservice {
       oldVariant.product.user_id === userId
     ) {
       await this.Variants.update(id, newVariantData);
-      const newVariant = await this.Variants.findOneOrFail({ id });
-      return newVariant;
+      await this.productService.updateProductQuantity(oldVariant.product.id);
+      return this.Variants.findOneOrFail({ id });
     }
     throw new RpcException(
       new NotFoundException("You cannot update what you don't own..."),

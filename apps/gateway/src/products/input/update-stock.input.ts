@@ -12,5 +12,5 @@ import { CreateStockInput } from './create-stock.input';
 @InputType()
 @ObjectType()
 export class UpdateStockInput extends PartialType(
-  OmitType(CreateStockInput, ['product'] as const),
+  CreateStockInput,
 ) {}

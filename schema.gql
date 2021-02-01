@@ -6,7 +6,6 @@ type stockEntitySchema {
   id: String!
   status: StockStatus
   variant: variantEntitySchema!
-  quantity: Float!
   title: String!
   description: String
   created_at: DateTime!
@@ -95,16 +94,16 @@ type UserSchema {
 }
 
 type ProductSchema {
-  id: String!
-  published: Boolean!
-  price: Float!
-  user_id: String!
-  quantity: Float!
-  title: String!
+  id: String
+  published: Boolean
+  price: Float
+  user_id: String
+  quantity: Float
+  title: String
   description: String
-  image: [String!]!
-  created_at: DateTime!
-  updated_at: DateTime!
+  image: [String!]
+  created_at: DateTime
+  updated_at: DateTime
   user: UserSchema!
   variant: [VariantSchema!]!
 }
@@ -113,7 +112,6 @@ type StockSchema {
   id: String!
   status: StockStatus
   variant: variantEntitySchema!
-  quantity: Float!
   title: String!
   description: String
   created_at: DateTime!
@@ -150,7 +148,6 @@ input stockEntityInput {
   id: String!
   status: StockStatus = AVAILABLE
   variant: variantEntityInput!
-  quantity: Float = 1
   title: String!
   description: String
   created_at: DateTime!
@@ -221,17 +218,17 @@ input CreateProductInput {
 }
 
 input CreateStockInput {
-  product: String!
+  status: StockStatus = AVAILABLE
+  title: String
+  description: String
+  variantId: String!
 }
 
 input UpdateStockInput {
   status: StockStatus = AVAILABLE
-  variant: variantEntityInput
-  quantity: Float = 1
   title: String
   description: String
-  created_at: DateTime
-  updated_at: DateTime
+  variantId: String
 }
 
 input CreateVariantInput {

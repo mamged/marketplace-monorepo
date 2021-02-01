@@ -21,6 +21,8 @@ export class ProductService {
   constructor(
     @InjectRepository(ProductEntity)
     private readonly products: Repository<ProductEntity>,
+    @Inject(forwardRef(() => Stockservice))
+    private stockService: Stockservice,
   ) {}
   get(data: any = undefined): Promise<ProductEntity[]> {
     return this.products.find(data);
@@ -53,12 +55,11 @@ export class ProductService {
     // if (product.user_id === user_id) {
     await this.products.update({ id }, data);
     console.log('updating product with:', data);
-
     return this.products.findOneOrFail({ id });
-    // }
-    throw new RpcException(
-      new NotFoundException("You cannot update what you don't own..."),
-    );
+  }
+  async updateProductQuantity(productId:string) {
+    const productStock = await this.stockService.countAvailableProductStock(productId);
+    return this.products.update(productId,{quantity: productStock});
   }
   async getVariants(productId: string): Promise<VariantEntity[]>{
     const product = await this.products.findOneOrFail({
@@ -92,16 +93,12 @@ export class ProductService {
   }
   async decrementProductsStock(products: ProductEntity[]) {
     products.forEach(async (product) => {
-      await this.products.decrement(
-        { id: product.id },
-        'quantity',
-        product.quantity,
-      );
+      this.updateProductQuantity(product.id);
     });
   }
   async incrementProductsStock(products: ProductEntity[]) {
     products.forEach((product) => {
-      this.products.increment({ id: product.id }, 'quantity', product.quantity);
+      this.updateProductQuantity(product.id);
     });
   }
 }

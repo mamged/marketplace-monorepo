@@ -25,6 +25,7 @@ import {
   ManyToMany,
 } from 'typeorm';
 import { VariantEntity } from '../variant/variant.entity';
+import { ProductEntity } from '../products/product.entity';
 
 export enum stockStatus {
   CONSUMED = 'consumed',
@@ -73,10 +74,10 @@ export class StockEntity extends BaseEntity {
   @Field(of => VariantEntity)
   @ManyToOne(type=> VariantEntity, variant=> variant.stock)
   variant: VariantEntity;
-  
-  @Field({ defaultValue: 1 })
-  @Column('integer', { default: 1 })
-  quantity: number;
+
+
+  @ManyToOne(type=> ProductEntity, variant=> variant.stock)
+  product: ProductEntity;
 
   @MinLength(8)
   @MaxLength(32)

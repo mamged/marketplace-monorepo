@@ -20,6 +20,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { VariantEntity } from '../variant/variant.entity';
+import { StockEntity } from '../stocks/stock.entity';
 
 @Entity('products')
 @ObjectType()
@@ -80,6 +81,8 @@ export class ProductEntity extends BaseEntity {
   // @Column()
   @OneToMany((type) => VariantEntity, (varient) => varient.product)
   variants: VariantEntity[];
+  @OneToMany((type) => StockEntity, (stock) => stock)
+  stock: StockEntity[];
 
   @Field()
   @CreateDateColumn()
