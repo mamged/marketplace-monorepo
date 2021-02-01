@@ -20,6 +20,7 @@ import { CreateVariantInput } from '@commerce/gateway';
 import { ProductEntity } from '../products/product.entity';
 import { ProductService } from '../products/product.service';
 import { UpdateVariantInput } from '@commerce/gateway';
+import { Stockservice } from '../stocks/stock.service';
 
 @Injectable()
 export class Variantservice {
@@ -28,6 +29,8 @@ export class Variantservice {
     private readonly Variants: Repository<VariantEntity>,
     @Inject(forwardRef(() => ProductService))
     private productService: ProductService,
+    @Inject(forwardRef(() => Stockservice))
+    private stockservice: Stockservice,
   ) {}
   get(data: FindManyOptions = undefined): Promise<VariantEntity[]> {
     return this.Variants.find(data);
@@ -80,6 +83,9 @@ export class Variantservice {
         new NotFoundException('Variant cannot be found...'),
       );
     });
+  }
+  showVariantStock(id: string){
+    return this.stockservice.getStockByVariantId(id);
   }
   async getProductByVariantId(id: string): Promise<ProductEntity> {
     const variant = await this.Variants.findOneOrFail({

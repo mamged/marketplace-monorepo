@@ -121,7 +121,7 @@ type StockSchema {
 type VariantSchema {
   id: String
   quantity: Float
-  stock: [stockEntitySchema!]
+  stock: [StockSchema!]!
   name: String
   description: String
   price: Float

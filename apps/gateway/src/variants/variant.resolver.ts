@@ -35,6 +35,10 @@ export class VariantResolver {
   async product(@Parent() variantParent: VariantSchema) {
     return this.variantService.getVariantProduct(variantParent.id);
   }
+  @ResolveField((returns) => [StockSchema])
+  async stock(@Parent() variantParent: VariantSchema) {
+    return this.variantService.getVariantStock(variantParent.id);
+  }
 
   @Mutation((returns) => VariantSchema)
   @Roles('admin')

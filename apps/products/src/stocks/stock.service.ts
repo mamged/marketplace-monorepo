@@ -49,10 +49,7 @@ export class Stockservice {
     if(variant.length === 0) throw new RpcException(new NotFoundException());
     const { product } = variant[0];
     newStock.variant = variant[0];
-    const  p = new ProductEntity();
-    p.id = product.id,
-    p.user_id = product.user_id;
-    newStock.product = p;
+    newStock.product = product;
     return this.Stocks.save(newStock).then(async s=>{
       await this.productService.updateProductQuantity(product.id);
       return s;
@@ -63,6 +60,13 @@ export class Stockservice {
     });
   }
 
+  getStockByVariantId(variantId:string) {
+    return this.Stocks.find({
+      where: {
+        variant: variantId
+      }
+    });
+  }
   async update(
     id: string,
     newStockData: UpdateStockInput,
@@ -87,7 +91,6 @@ export class Stockservice {
     );
   }
   async show(id: string): Promise<StockEntity> {
-    this.countAvailableProductStock(id);
     return this.Stocks.findOneOrFail({ 
       where:{id},
       relations:["product", "variant"]
