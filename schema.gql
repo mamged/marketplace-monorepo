@@ -46,9 +46,9 @@ type variantEntitySchema {
 
 type ProductEntity {
   id: String!
+  user_id: String!
   published: Boolean!
   price: Float!
-  user_id: String!
   quantity: Float!
   title: String!
   description: String
@@ -95,9 +95,9 @@ type UserSchema {
 
 type ProductSchema {
   id: String
+  user_id: String
   published: Boolean
   price: Float
-  user_id: String
   quantity: Float
   title: String
   description: String

@@ -18,16 +18,23 @@ import {
   UpdateDateColumn,
   PrimaryGeneratedColumn,
   OneToMany,
+  PrimaryColumn,
+  Index,
 } from 'typeorm';
 import { VariantEntity } from '../variant/variant.entity';
 import { StockEntity } from '../stocks/stock.entity';
 
 @Entity('products')
 @ObjectType()
+@Index((relation: ProductEntity ) => [relation.user_id, relation.id], { unique: true })
 export class ProductEntity extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Field()
+  @Column()
+  user_id: string;
 
   @IsBoolean()
   @Field(()=> Boolean, {defaultValue: false})
@@ -42,10 +49,6 @@ export class ProductEntity extends BaseEntity {
   @Field()
   @Column('float')
   price: number;
-
-  @Field()
-  @PrimaryGeneratedColumn('uuid')
-  user_id: string;
 
   @Field({ defaultValue: 0 })
   @Column('integer', { default: 0 })

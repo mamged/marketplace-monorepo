@@ -46,14 +46,19 @@ export class Stockservice {
       },
       relations: ["product"]
     })
-    if(variant.length === 0) throw new RpcException(new BadRequestException());
+    if(variant.length === 0) throw new RpcException(new NotFoundException());
     const { product } = variant[0];
     newStock.variant = variant[0];
-    newStock.product = product;
+    const  p = new ProductEntity();
+    p.id = product.id,
+    p.user_id = product.user_id;
+    newStock.product = p;
     return this.Stocks.save(newStock).then(async s=>{
       await this.productService.updateProductQuantity(product.id);
       return s;
     }).catch((error) => {
+      console.log(error);
+      
       throw new RpcException(new BadRequestException(error.message));
     });
   }

@@ -42,7 +42,8 @@ export class Variantservice {
     newVariant.name = variant.name;
     newVariant.price = variant.price;
     newVariant.description = variant.description;
-    newVariant.product = await this.productService.show(variant.productId);
+    const product = await this.productService.show(variant.productId);
+    newVariant.product = product; 
     return this.Variants.save(newVariant).then(async v=>{
       await this.productService.updateProductQuantity(variant.productId);
       return v;
