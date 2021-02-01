@@ -5,8 +5,10 @@ import { ProductEntity } from './product.entity';
 import { ProductController } from './product.controller';
 import { Stockservice } from '../stocks/stock.service';
 import { StocksModule } from '../stocks/stock.module';
+import { VariantsModule } from '../variant/variant.module';
 @Module({
   imports: [
+    forwardRef(() => VariantsModule),
     forwardRef(() => StocksModule),
     TypeOrmModule.forFeature([ProductEntity]),
   ],

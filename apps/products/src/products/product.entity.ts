@@ -7,8 +7,9 @@ import {
   IsInt,
   IsArray,
   IsNumber,
+  IsBoolean,
 } from 'class-validator';
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   Entity,
@@ -17,16 +18,29 @@ import {
   UpdateDateColumn,
   PrimaryGeneratedColumn,
   OneToMany,
+  PrimaryColumn,
+  Index,
 } from 'typeorm';
-import { StockEntity } from '../stocks/stock.entity';
 import { VariantEntity } from '../variant/variant.entity';
+import { StockEntity } from '../stocks/stock.entity';
 
 @Entity('products')
 @ObjectType()
+@Index((relation: ProductEntity ) => [relation.user_id, relation.id], { unique: true })
 export class ProductEntity extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Field()
+  @Column()
+  user_id: string;
+
+  @IsBoolean()
+  @Field(()=> Boolean, {defaultValue: false})
+  // TODO: remove nullable: true
+  @Column({type: "boolean", nullable: true})
+  published: boolean;
 
   @Min(1)
   @Max(9999)
@@ -35,10 +49,6 @@ export class ProductEntity extends BaseEntity {
   @Field()
   @Column('float')
   price: number;
-
-  @Field()
-  @PrimaryGeneratedColumn('uuid')
-  user_id: string;
 
   @Field({ defaultValue: 0 })
   @Column('integer', { default: 0 })
@@ -70,11 +80,12 @@ export class ProductEntity extends BaseEntity {
   })
   image: string[];
 
-  @OneToMany((type) => StockEntity, (stock) => stock.product)
-  stock: StockEntity[];
-
+  // @Field(()=> [VariantEntity])
+  // @Column()
   @OneToMany((type) => VariantEntity, (varient) => varient.product)
   variants: VariantEntity[];
+  @OneToMany((type) => StockEntity, (stock) => stock)
+  stock: StockEntity[];
 
   @Field()
   @CreateDateColumn()

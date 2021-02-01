@@ -1,6 +1,6 @@
 export const config = {
   JWT_TOKEN: process.env.JWT_TOKEN || 'ondoqnwdonqdwq',
-  JWT_TOKEN_EXPIRATION: process.env.JWT_TOKEN_EXPIRATION || '7d',
+  JWT_TOKEN_EXPIRATION: process.env.JWT_TOKEN_EXPIRATION || '70d',
   GATEWAY_PORT: process.env.GATEWAY_PORT || 8000,
   GATEWAY_HOST: process.env.GATEWAY_HOST || '127.0.0.1',
   APP_ENV: process.env.APP_ENV || 'development',

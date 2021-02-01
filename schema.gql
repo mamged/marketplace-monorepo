@@ -2,10 +2,53 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type stockEntitySchema {
+  id: String!
+  status: StockStatus
+  variant: variantEntitySchema!
+  title: String!
+  description: String
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+"""Show the status of stock item."""
+enum StockStatus {
+  """Means a user purchased this stock item."""
+  CONSUMED
+
+  """Stock item is available."""
+  AVAILABLE
+
+  """Stock item is disable by seller."""
+  DISABLED
+
+  """Stock item is deleted by seller."""
+  DELETED
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type variantEntitySchema {
+  id: String!
+  quantity: Float!
+  stock: [stockEntitySchema!]!
+  name: String!
+  description: String
+  price: Float!
+  created_at: DateTime!
+  updated_at: DateTime!
+  deletedAt: DateTime!
+}
+
 type ProductEntity {
   id: String!
-  price: Float!
   user_id: String!
+  published: Boolean!
+  price: Float!
   quantity: Float!
   title: String!
   description: String
@@ -13,11 +56,6 @@ type ProductEntity {
   created_at: DateTime!
   updated_at: DateTime!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type CategoryEntity {
   id: String!
@@ -56,54 +94,41 @@ type UserSchema {
 }
 
 type ProductSchema {
-  id: String!
-  price: Float!
-  user_id: String!
-  quantity: Float!
-  title: String!
+  id: String
+  user_id: String
+  published: Boolean
+  price: Float
+  quantity: Float
+  title: String
   description: String
-  image: [String!]!
-  created_at: DateTime!
-  updated_at: DateTime!
+  image: [String!]
+  created_at: DateTime
+  updated_at: DateTime
   user: UserSchema!
   variant: [VariantSchema!]!
 }
 
 type StockSchema {
   id: String!
-  product: ProductSchema!
   status: StockStatus
-  quantity: Float!
+  variant: variantEntitySchema!
   title: String!
   description: String
   created_at: DateTime!
   updated_at: DateTime!
 }
 
-"""Show the status of stock item."""
-enum StockStatus {
-  """Means a user purchased this stock item."""
-  CONSUMED
-
-  """Stock item is available."""
-  AVAILABLE
-
-  """Stock item is disable by seller."""
-  DISABLED
-
-  """Stock item is deleted by seller."""
-  DELETED
-}
-
 type VariantSchema {
-  id: String!
-  product: ProductSchema!
-  quantity: Float!
-  name: String!
+  id: String
+  quantity: Float
+  stock: [StockSchema!]!
+  name: String
   description: String
-  price: Float!
-  created_at: DateTime!
-  updated_at: DateTime!
+  price: Float
+  created_at: DateTime
+  updated_at: DateTime
+  deletedAt: DateTime
+  product: ProductSchema!
 }
 
 type AuthTokenSchema {
@@ -117,6 +142,28 @@ type RegisterUserSchema {
   seller: Boolean!
   name: String!
   email: String!
+}
+
+input stockEntityInput {
+  id: String!
+  status: StockStatus = AVAILABLE
+  variant: variantEntityInput!
+  title: String!
+  description: String
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+input variantEntityInput {
+  id: String!
+  quantity: Float = 1
+  stock: [stockEntityInput!]!
+  name: String!
+  description: String
+  price: Float!
+  created_at: DateTime!
+  updated_at: DateTime!
+  deletedAt: DateTime!
 }
 
 type Query {
@@ -172,15 +219,16 @@ input CreateProductInput {
 
 input CreateStockInput {
   status: StockStatus = AVAILABLE
-  title: String!
+  title: String
   description: String
-  product: String!
+  variantId: String!
 }
 
 input UpdateStockInput {
   status: StockStatus = AVAILABLE
   title: String
   description: String
+  variantId: String
 }
 
 input CreateVariantInput {

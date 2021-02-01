@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import {
   DeleteResult,
+  FindManyOptions,
   getRepository,
   QueryFailedError,
   Repository,
@@ -19,6 +20,7 @@ import { CreateVariantInput } from '@commerce/gateway';
 import { ProductEntity } from '../products/product.entity';
 import { ProductService } from '../products/product.service';
 import { UpdateVariantInput } from '@commerce/gateway';
+import { Stockservice } from '../stocks/stock.service';
 
 @Injectable()
 export class Variantservice {
@@ -27,8 +29,10 @@ export class Variantservice {
     private readonly Variants: Repository<VariantEntity>,
     @Inject(forwardRef(() => ProductService))
     private productService: ProductService,
+    @Inject(forwardRef(() => Stockservice))
+    private stockservice: Stockservice,
   ) {}
-  get(data: any = undefined): Promise<VariantEntity[]> {
+  get(data: FindManyOptions = undefined): Promise<VariantEntity[]> {
     return this.Variants.find(data);
   }
   fetchVariantsByIds(ids: Array<string>) {
@@ -41,8 +45,12 @@ export class Variantservice {
     newVariant.name = variant.name;
     newVariant.price = variant.price;
     newVariant.description = variant.description;
-    newVariant.product = await this.productService.show(variant.productId);
-    return this.Variants.save(newVariant).catch((error) => {
+    const product = await this.productService.show(variant.productId);
+    newVariant.product = product; 
+    return this.Variants.save(newVariant).then(async v=>{
+      await this.productService.updateProductQuantity(variant.productId);
+      return v;
+    }).catch((error) => {
       throw new RpcException(new BadRequestException(error.message));
     });
   }
@@ -62,8 +70,8 @@ export class Variantservice {
       oldVariant.product.user_id === userId
     ) {
       await this.Variants.update(id, newVariantData);
-      const newVariant = await this.Variants.findOneOrFail({ id });
-      return newVariant;
+      await this.productService.updateProductQuantity(oldVariant.product.id);
+      return this.Variants.findOneOrFail({ id });
     }
     throw new RpcException(
       new NotFoundException("You cannot update what you don't own..."),
@@ -75,6 +83,9 @@ export class Variantservice {
         new NotFoundException('Variant cannot be found...'),
       );
     });
+  }
+  showVariantStock(id: string){
+    return this.stockservice.getStockByVariantId(id);
   }
   async getProductByVariantId(id: string): Promise<ProductEntity> {
     const variant = await this.Variants.findOneOrFail({
@@ -111,7 +122,6 @@ export class Variantservice {
     return this.Variants.find({
       where: {
         product: id,
-        // status: variantStatus.AVAILABLE,
       },
     });
   }

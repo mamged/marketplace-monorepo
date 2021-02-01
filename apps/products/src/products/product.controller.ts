@@ -1,3 +1,4 @@
+import { CreateProductInput } from '@commerce/gateway';
 import { Controller } from '@nestjs/common';
 import { MessagePattern, EventPattern } from '@nestjs/microservices';
 import { StockEntity } from '../stocks/stock.entity';
@@ -19,7 +20,7 @@ export class ProductController {
   }
 
   @MessagePattern('create-product')
-  store(product: ProductEntity): Promise<ProductEntity> {
+  store(product: CreateProductInput): Promise<ProductEntity> {
     return this.products.store(product);
   }
 
@@ -47,11 +48,11 @@ export class ProductController {
   }
   @EventPattern('order_deleted')
   async handleOrderDeleted(products: Array<ProductEntity>) {
-    this.products.incrementProductsStock(products);
+    products.forEach(p=>this.products.updateProductQuantity(p.id));
   }
   @EventPattern('order_created')
   async handleOrderCreated(products: Array<ProductEntity>) {
-    this.products.decrementProductsStock(products);
+    products.forEach(p=>this.products.updateProductQuantity(p.id));
   }
 
   @MessagePattern('delete-product')

@@ -14,6 +14,7 @@ import { Product, ProductInput } from 'src/schemas/graphql';
 import { StockEntity, stockStatus } from '../stocks/stock.entity';
 import { Stockservice } from '../stocks/stock.service';
 import { VariantEntity } from '../variant/variant.entity';
+import { CreateProductInput } from '@commerce/gateway';
 
 @Injectable()
 export class ProductService {
@@ -21,15 +22,15 @@ export class ProductService {
     @InjectRepository(ProductEntity)
     private readonly products: Repository<ProductEntity>,
     @Inject(forwardRef(() => Stockservice))
-    private stock: Stockservice,
+    private stockService: Stockservice,
   ) {}
   get(data: any = undefined): Promise<ProductEntity[]> {
     return this.products.find(data);
   }
-  async getProductStock(id: string): Promise<StockEntity[]> {
+  async getProductStock(id: string): Promise<any> {
     try {
-      const stock = await this.stock.getStockByProductId(id);
-      return stock;
+      // const stock = await this.stock.getStockByProductId(id);
+      // return stock;
     } catch (error) {
       throw new NotFoundException(error);
     }
@@ -40,8 +41,8 @@ export class ProductService {
       .where(`products.id IN (:...ids)`, { ids })
       .getMany();
   }
-  async store(product: ProductInput): Promise<any> {
-    return this.products.save(product).catch((error) => {
+  async store(product: CreateProductInput): Promise<any> {
+    return this.products.save(product).catch((error) => {      
       throw new RpcException(new BadRequestException(error.message));
     });
   }
@@ -54,12 +55,11 @@ export class ProductService {
     // if (product.user_id === user_id) {
     await this.products.update({ id }, data);
     console.log('updating product with:', data);
-
     return this.products.findOneOrFail({ id });
-    // }
-    throw new RpcException(
-      new NotFoundException("You cannot update what you don't own..."),
-    );
+  }
+  async updateProductQuantity(productId:string) {
+    const productStock = await this.stockService.countAvailableProductStock(productId);
+    return this.products.update(productId,{quantity: productStock});
   }
   async getVariants(productId: string): Promise<VariantEntity[]>{
     const product = await this.products.findOneOrFail({
@@ -93,16 +93,12 @@ export class ProductService {
   }
   async decrementProductsStock(products: ProductEntity[]) {
     products.forEach(async (product) => {
-      await this.products.decrement(
-        { id: product.id },
-        'quantity',
-        product.quantity,
-      );
+      this.updateProductQuantity(product.id);
     });
   }
   async incrementProductsStock(products: ProductEntity[]) {
     products.forEach((product) => {
-      this.products.increment({ id: product.id }, 'quantity', product.quantity);
+      this.updateProductQuantity(product.id);
     });
   }
 }

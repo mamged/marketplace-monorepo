@@ -22,7 +22,9 @@ import {
   UpdateDateColumn,
   PrimaryGeneratedColumn,
   ManyToOne,
+  ManyToMany,
 } from 'typeorm';
+import { VariantEntity } from '../variant/variant.entity';
 import { ProductEntity } from '../products/product.entity';
 
 export enum stockStatus {
@@ -49,16 +51,14 @@ registerEnumType(stockStatus, {
     },
   },
 });
-@Entity('stocks')
-@ObjectType()
+
+@ObjectType('stockEntitySchema')
+@InputType('stockEntityInput')
+@Entity('stock')
 export class StockEntity extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Field((returns) => ProductEntity)
-  @ManyToOne((type) => ProductEntity, (product) => product.stock)
-  product: ProductEntity;
 
   @Field((returns) => stockStatus, {
     defaultValue: stockStatus.AVAILABLE,
@@ -71,9 +71,13 @@ export class StockEntity extends BaseEntity {
   })
   status: stockStatus;
 
-  @Field({ defaultValue: 1 })
-  @Column('integer', { default: 1 })
-  quantity: number;
+  @Field(of => VariantEntity)
+  @ManyToOne(type=> VariantEntity, variant=> variant.stock)
+  variant: VariantEntity;
+
+
+  @ManyToOne(type=> ProductEntity, variant=> variant.stock)
+  product: ProductEntity;
 
   @MinLength(8)
   @MaxLength(32)
