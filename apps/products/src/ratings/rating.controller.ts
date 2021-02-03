@@ -21,26 +21,8 @@ export class RatingController {
     return this.Ratings.store(rating, userId);
   }
 
-  @MessagePattern('update-rating')
-  update({ ratingId, rating, userId }){
-    // const { title, description, status } = rating;
-    // return this.Ratings.update(ratingId, rating, userId);
-  }
-
   @MessagePattern('show-rating')
   rating(id: string): Promise<RatingEntity> {
     return this.Ratings.show(id);
-  }
-  @MessagePattern('get-product-by-rating-id')
-  getRatingByProductId(id: string): Promise<ProductEntity> {
-    return this.Ratings.getProductByRatingId(id);
-  }
-  @MessagePattern('fetch-ratings-by-ids')
-  fetchRatingsByIds(ids: Array<string>) {
-    return this.Ratings.fetchRatingsByIds(ids);
-  }
-  @MessagePattern('delete-rating')
-  destroy({ id, user_id }: { id: string; user_id: string }) {
-    return this.Ratings.destroy(id, user_id);
   }
 }
