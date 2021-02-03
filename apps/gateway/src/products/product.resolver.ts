@@ -96,11 +96,9 @@ export class StockResolver {
     @Args('data') data: CreateStockInput,
     @Context('user') user: any,
   ) {
-    console.log('create stock', data);
-
-    const p = await this.productService.createStock(data, user.id);
-    p.created_at = new Date(p.created_at);
-    return p;
+    const stockItem = await this.productService.createStock(data, user.id);
+    stockItem.created_at = new Date(stockItem.created_at);
+    return stockItem;
   }
 
   @Mutation(returns => StockSchema)
