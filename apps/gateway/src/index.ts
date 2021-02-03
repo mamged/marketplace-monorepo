@@ -6,3 +6,5 @@ export * from './products/input/update-product.input';
 export * from './products/input/update-stock.input';
 export * from './variants/input/create-variant.input';
 export * from './variants/input/update-variant.input';
+export * from './ratings/input/create-rating.input';
+export * from './ratings/input/update-rating.input';

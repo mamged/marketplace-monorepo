@@ -23,6 +23,7 @@ import {
 } from 'typeorm';
 import { VariantEntity } from '../variant/variant.entity';
 import { StockEntity } from '../stocks/stock.entity';
+import { RatingEntity } from '../ratings/rating.entity';
 
 @Entity('products')
 @ObjectType()
@@ -84,8 +85,11 @@ export class ProductEntity extends BaseEntity {
   // @Column()
   @OneToMany((type) => VariantEntity, (varient) => varient.product)
   variants: VariantEntity[];
-  @OneToMany((type) => StockEntity, (stock) => stock)
+  @OneToMany((type) => StockEntity, (stock) => stock.product)
   stock: StockEntity[];
+  
+  @OneToMany((type) => RatingEntity, (rating) => rating.product)
+  rating: RatingEntity[];
 
   @Field()
   @CreateDateColumn()

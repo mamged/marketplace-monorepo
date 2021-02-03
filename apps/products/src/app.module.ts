@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoriesModule } from './categories/category.module';
 import { StocksModule } from './stocks/stock.module';
 import { VariantsModule } from './variant/variant.module';
+import { RatingsModule } from './ratings/rating.module';
 const ormconfig = require('../ormconfig.json');
 
 @Module({
@@ -12,6 +13,7 @@ const ormconfig = require('../ormconfig.json');
     ProductsModule,
     VariantsModule,
     StocksModule,
+    RatingsModule,
     CategoriesModule,
   ],
 })
