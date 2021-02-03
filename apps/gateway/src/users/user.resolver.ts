@@ -24,12 +24,12 @@ import { UserSchema } from './schema/me.schema';
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
-  @Query((returns) => UserEntity)
+  @Query(returns => UserEntity)
   users(): Promise<UserDTO[]> {
     return this.userService.get();
   }
 
-  @Mutation((returns) => AuthTokenSchema)
+  @Mutation(returns => AuthTokenSchema)
   login(@Args('data') data: LoginUserInput): Promise<void | UserLoginDTO> {
     return this.userService
       .login(data)
@@ -38,12 +38,12 @@ export class UserResolver {
         console.log('login mutation', err);
       });
   }
-  @Mutation((returns) => RegisterUserSchema)
+  @Mutation(returns => RegisterUserSchema)
   register(@Args('data') data: RegisterUserInput): Promise<UserDTO> {
     return this.userService.register(data);
   }
 
-  @Query((returns) => UserSchema)
+  @Query(returns => UserSchema)
   @UseGuards(new AuthGuard())
   @Roles('adminx')
   me(@Context('user') user: any) {

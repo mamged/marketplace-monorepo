@@ -29,7 +29,7 @@ export class VariantEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // @Field((returns) => ProductEntity)
+  // @Field(returns => ProductEntity)
   @ManyToOne((type) => ProductEntity, (product) => product.variants)
   product: ProductEntity;
 

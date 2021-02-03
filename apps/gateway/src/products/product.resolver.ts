@@ -33,28 +33,28 @@ export class ProductResolver {
     private readonly usersDataLoader: UserDataLoader,
   ) {}
 
-  @ResolveField((returns) => UserSchema)
+  @ResolveField(returns => UserSchema)
   user(@Parent() product: ProductSchema): Promise<UserSchema> {
     return this.usersDataLoader.load(product.user_id);
   }
-  @ResolveField((returns) => [VariantSchema])
+  @ResolveField(returns => [VariantSchema])
   async variant(@Parent() product: ProductSchema): Promise<VariantSchema[]> {
     return this.productService.getProductVariants(product.id);
   }
-  @Query((returns) => [ProductSchema])
+  @Query(returns => [ProductSchema])
   products(): Promise<ProductEntity[]> {
     return this.productService.get();
   }
-  @Query((returns) => ProductSchema)
+  @Query(returns => ProductSchema)
   showProduct(@Args('id') id: string) {
     return this.productService.show(id);
   }
-  @Query((returns) => [StockSchema])
+  @Query(returns => [StockSchema])
   getProductStock(@Args('id') id: string) {
     return this.productService.getProductStock(id);
   }
 
-  @Mutation((returns) => ProductSchema)
+  @Mutation(returns => ProductSchema)
   @Roles('admin')
   @UseGuards(new AuthGuard(), new SellerGuard())
   async createProduct(
@@ -64,7 +64,7 @@ export class ProductResolver {
     return this.productService.store(data, user.id);
   }
 
-  @Mutation((returns) => ProductEntity)
+  @Mutation(returns => ProductEntity)
   @UseGuards(new AuthGuard(), new SellerGuard())
   updateProduct(
     @Args('data') data: UpdateProductInput,
@@ -73,7 +73,7 @@ export class ProductResolver {
   ) {
     return this.productService.update(productId, data, user.id);
   }
-  @Mutation((returns) => ProductEntity)
+  @Mutation(returns => ProductEntity)
   @UseGuards(new AuthGuard(), new SellerGuard())
   async deleteProduct(@Context('user') user: any, @Args('id') id: string) {
     return this.productService.destroy(id, user.id);
@@ -84,12 +84,12 @@ export class ProductResolver {
 export class StockResolver {
   constructor(private readonly productService: ProductService) {}
 
-  @Query((returns) => StockSchema)
+  @Query(returns => StockSchema)
   showStock(@Args('id') id: string) {
     return this.productService.showStock(id);
   }
 
-  @Mutation((returns) => StockSchema)
+  @Mutation(returns => StockSchema)
   @Roles('admin')
   @UseGuards(new AuthGuard(), new SellerGuard())
   async createStock(
@@ -103,7 +103,7 @@ export class StockResolver {
     return p;
   }
 
-  @Mutation((returns) => StockSchema)
+  @Mutation(returns => StockSchema)
   @UseGuards(new AuthGuard(), new SellerGuard())
   updateStock(
     @Args('data') data: UpdateStockInput,
@@ -112,7 +112,7 @@ export class StockResolver {
   ) {
     return this.productService.updateStock(stockId, data, user.id);
   }
-  @Mutation((returns) => StockSchema)
+  @Mutation(returns => StockSchema)
   @UseGuards(new AuthGuard(), new SellerGuard())
   consumeStock(
     @Context('user') user: any,
@@ -120,7 +120,7 @@ export class StockResolver {
   ) {
     return this.productService.consumeStock(productId, user.id);
   }
-  @Mutation((returns) => StockSchema)
+  @Mutation(returns => StockSchema)
   @UseGuards(new AuthGuard(), new SellerGuard())
   async deleteStock(@Context('user') user: any, @Args('id') id: string) {
     return this.productService.destroyStock(id, user.id);

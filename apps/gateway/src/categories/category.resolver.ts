@@ -24,11 +24,11 @@ import { CategoryService } from './category.service';
 export class CategoryResolver {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Query((returns) => [CategoryEntity])
+  @Query(returns => [CategoryEntity])
   async categories(): Promise<CategoryEntity[]> {
     return await this.categoryService.get();
   }
-  @ResolveField((returns) => CategoryEntity)
+  @ResolveField(returns => CategoryEntity)
   async parent(@Parent() category: CategoryRelationsInput) {
     const { parent: parentId } = category;
     if (!parentId) return;
@@ -41,7 +41,7 @@ export class CategoryResolver {
         return;
     }
   }
-  @ResolveField((returns) => [CategoryEntity])
+  @ResolveField(returns => [CategoryEntity])
   children(@Parent() category: CreateCategoryInput) {
     const { children: childrenIds } = category;
     if (!childrenIds) return;
@@ -54,23 +54,23 @@ export class CategoryResolver {
         return;
     }
   }
-  @Query((returns) => CategoryEntity)
+  @Query(returns => CategoryEntity)
   showCategory(@Args('id') id: string) {
     return this.categoryService.show(id);
   }
 
-  @Mutation((returns) => CategoryEntity)
+  @Mutation(returns => CategoryEntity)
   createCategory(@Args('data') data: CreateCategoryInput) {
     return this.categoryService.store(data);
   }
-  @Mutation((returns) => CategoryEntity)
+  @Mutation(returns => CategoryEntity)
   updateCategory(
     @Args('data') data: CreateCategoryInput,
     @Args('id') id: number,
   ) {
     return this.categoryService.update(data, id);
   }
-  @Mutation((returns) => CategoryEntity)
+  @Mutation(returns => CategoryEntity)
   deleteCategory(@Context('user') user: any, @Args('id') id: string) {
     return this.categoryService.destroy(id, user.id);
   }
