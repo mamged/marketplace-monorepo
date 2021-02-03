@@ -1,5 +1,3 @@
-import { Client, ClientProxy, Transport } from '@nestjs/microservices';
-import { UserDTO, config } from '@commerce/shared';
 import {
   Query,
   Resolver,
@@ -19,27 +17,26 @@ import { Roles } from '../decorators/roles.decorator';
 import { UserSchema } from '../users/schema/me.schema';
 import { RatingSchema } from './schema/rating.schema';
 import { CreateRatingInput } from './input/create-rating.input';
-import { UpdateRatingInput } from './input/update-rating.input';
 import { ProductSchema } from '../products/schema/product.schema';
 import { StockSchema } from '../products/schema/stock.schema';
+import { PublicUserSchema } from '@commerce/shared';
+import { UserService } from '../users/user.service';
+import { UserResolver } from '../users/user.resolver';
 
 @Resolver(() => RatingSchema)
 export class RatingResolver {
-  constructor(private readonly ratingService: RatingService) {}
+  constructor(
+    private readonly ratingService: RatingService,
+    private readonly userService: UserService,
+    ) {}
   @Query(returns => RatingSchema)
   showRating(@Args('id') id: string) {
     return this.ratingService.showRating(id);
   }
-
-  @ResolveField(returns => ProductSchema)
-  async product(@Parent() ratingParent: RatingSchema) {
-    return this.ratingService.getRatingProduct(ratingParent.id);
+  @ResolveField(returns => PublicUserSchema)
+  async user(@Parent() ratingParent: RatingSchema) {
+    return this.userService.me(ratingParent.userId)
   }
-  @ResolveField(returns => [StockSchema])
-  async stock(@Parent() ratingParent: RatingSchema) {
-    return this.ratingService.getRatingStock(ratingParent.id);
-  }
-
   @Mutation(returns => RatingSchema)
   @Roles('admin')
   @UseGuards(new AuthGuard(), new SellerGuard())
@@ -48,20 +45,5 @@ export class RatingResolver {
     @Context('user') user: any,
   ) {
     return this.ratingService.createRating(data, user.id);
-  }
-
-  @Mutation(returns => RatingSchema)
-  @UseGuards(new AuthGuard(), new SellerGuard())
-  updateRating(
-    @Args('data') data: UpdateRatingInput,
-    @Context('user') user: any,
-    @Args('id') ratingId: string,
-  ) {
-    return this.ratingService.updateRating(ratingId, data, user.id);
-  }
-  @Mutation(returns => RatingSchema)
-  @UseGuards(new AuthGuard(), new SellerGuard())
-  async deleteRating(@Context('user') user: any, @Args('id') id: string) {
-    return this.ratingService.destroyRating(id, user.id);
   }
 }

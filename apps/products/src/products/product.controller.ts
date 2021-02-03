@@ -47,6 +47,10 @@ export class ProductController {
   getProductVariants(productId: string) {
     return this.products.getVariants(productId);
   }
+  @MessagePattern('get-product-ratings')
+  getProductRatings(productId: string) {
+    return this.products.getRatings(productId);
+  }
   @EventPattern('order_deleted')
   async handleOrderDeleted(products: Array<ProductEntity>) {
     products.forEach(p=>this.products.updateProductQuantity(p.id));

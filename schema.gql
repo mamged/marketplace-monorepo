@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type PublicUserSchema {
+  id: String!
+  name: String!
+}
+
 type stockEntitySchema {
   id: String!
   status: StockStatus
@@ -44,6 +49,14 @@ type variantEntitySchema {
   deletedAt: DateTime!
 }
 
+type ratingEntitySchema {
+  id: String!
+  value: Float!
+  userId: String!
+  description: String
+  created_at: DateTime!
+}
+
 type ProductEntity {
   id: String!
   user_id: String!
@@ -53,6 +66,7 @@ type ProductEntity {
   title: String!
   description: String!
   image: [String!]!
+  ratings: [ratingEntitySchema!]!
   created_at: DateTime!
   updated_at: DateTime!
 }
@@ -102,6 +116,7 @@ type ProductSchema {
   title: String
   description: String
   image: [String!]
+  ratings: [RatingSchema!]!
   created_at: DateTime
   updated_at: DateTime
   user: UserSchema!
@@ -129,6 +144,15 @@ type VariantSchema {
   updated_at: DateTime
   deletedAt: DateTime
   product: ProductSchema!
+}
+
+type RatingSchema {
+  id: String
+  value: Float
+  userId: String
+  description: String
+  created_at: DateTime
+  user: PublicUserSchema
 }
 
 type AuthTokenSchema {
@@ -166,6 +190,14 @@ input variantEntityInput {
   deletedAt: DateTime!
 }
 
+input ratingEntityInput {
+  id: String!
+  value: Float!
+  userId: String!
+  description: String
+  created_at: DateTime!
+}
+
 type Query {
   users: UserEntity!
   me: UserSchema!
@@ -174,6 +206,7 @@ type Query {
   getProductStock(id: String!): [StockSchema!]!
   showStock(id: String!): StockSchema!
   showVariant(id: String!): VariantSchema!
+  showRating(id: String!): RatingSchema!
   categories: [CategoryEntity!]!
   showCategory(id: String!): CategoryEntity!
 }
@@ -191,6 +224,7 @@ type Mutation {
   createVariant(data: CreateVariantInput!): VariantSchema!
   updateVariant(id: String!, data: UpdateVariantInput!): VariantSchema!
   deleteVariant(id: String!): VariantSchema!
+  createRating(data: CreateRatingInput!): RatingSchema!
   createCategory(data: CreateCategoryInput!): CategoryEntity!
   updateCategory(id: Float!, data: CreateCategoryInput!): CategoryEntity!
   deleteCategory(id: String!): CategoryEntity!
@@ -211,7 +245,6 @@ input RegisterUserInput {
 
 input CreateProductInput {
   price: Float!
-  quantity: Float!
   title: String!
   description: String!
   image: [String!]!
@@ -254,6 +287,14 @@ input UpdateVariantInput {
 
   """product id"""
   productId: String
+}
+
+input CreateRatingInput {
+  value: Float!
+  description: String
+
+  """product id"""
+  productId: String!
 }
 
 input CreateCategoryInput {

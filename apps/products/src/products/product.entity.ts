@@ -24,6 +24,8 @@ import {
 import { VariantEntity } from '../variant/variant.entity';
 import { StockEntity } from '../stocks/stock.entity';
 import { RatingEntity } from '../ratings/rating.entity';
+import { RatingResolver } from '@commerce/gateway/ratings/rating.resolver';
+import { RatingSchema } from '@commerce/gateway';
 
 @Entity('products')
 @ObjectType()
@@ -88,8 +90,9 @@ export class ProductEntity extends BaseEntity {
   @OneToMany((type) => StockEntity, (stock) => stock.product)
   stock: StockEntity[];
   
+  @Field(of=> [RatingEntity])
   @OneToMany((type) => RatingEntity, (rating) => rating.product)
-  rating: RatingEntity[];
+  ratings: RatingEntity[];
 
   @Field()
   @CreateDateColumn()

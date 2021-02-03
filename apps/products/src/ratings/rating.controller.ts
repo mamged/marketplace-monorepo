@@ -16,8 +16,9 @@ export class RatingController {
   }
 
   @MessagePattern('create-rating')
-  store(rating): Promise<RatingEntity> {
-    return this.Ratings.store(rating);
+  store(@Payload() data): Promise<RatingEntity> {
+    const {userId, ...rating} = data;
+    return this.Ratings.store(rating, userId);
   }
 
   @MessagePattern('update-rating')
@@ -27,7 +28,7 @@ export class RatingController {
   }
 
   @MessagePattern('show-rating')
-  show(id: string): Promise<RatingEntity> {
+  rating(id: string): Promise<RatingEntity> {
     return this.Ratings.show(id);
   }
   @MessagePattern('get-product-by-rating-id')
@@ -37,16 +38,6 @@ export class RatingController {
   @MessagePattern('fetch-ratings-by-ids')
   fetchRatingsByIds(ids: Array<string>) {
     return this.Ratings.fetchRatingsByIds(ids);
-  }
-  @EventPattern('consume-rating')
-  async handleOrderDeleted({
-    productId,
-    user_id,
-  }: {
-    productId: string;
-    user_id: string;
-  }) {
-    return this.Ratings.consumeRating(productId, user_id);
   }
   @MessagePattern('delete-rating')
   destroy({ id, user_id }: { id: string; user_id: string }) {

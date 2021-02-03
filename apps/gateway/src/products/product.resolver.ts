@@ -25,6 +25,7 @@ import { CreateStockInput } from './input/create-stock.input';
 import { UpdateStockInput } from './input/update-stock.input';
 import { VariantSchema } from '../variants/schema/variant.schema';
 import { UpdateProductInput } from './input/update-product.input';
+import { RatingSchema } from '../ratings/schema/rating.schema';
 
 @Resolver(() => ProductSchema)
 export class ProductResolver {
@@ -36,6 +37,10 @@ export class ProductResolver {
   @ResolveField(returns => UserSchema)
   user(@Parent() product: ProductSchema): Promise<UserSchema> {
     return this.usersDataLoader.load(product.user_id);
+  }
+  @ResolveField(returns => [RatingSchema])
+  async ratings(@Parent() product: ProductSchema): Promise<RatingSchema[]> {
+    return this.productService.getProductRatings(product.id);
   }
   @ResolveField(returns => [VariantSchema])
   async variant(@Parent() product: ProductSchema): Promise<VariantSchema[]> {

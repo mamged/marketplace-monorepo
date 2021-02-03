@@ -38,7 +38,7 @@ export class UserService {
       .toPromise();
     return user;
   }
-  me(id: ObjectID) {
+  me(id: string) {
     return new Promise((resolve, reject) => {
       this.client.send<UserDTO>('current-loggedin-user', id).subscribe(
         (response) => {

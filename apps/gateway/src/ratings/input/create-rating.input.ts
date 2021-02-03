@@ -6,7 +6,7 @@ import { IsNotEmpty } from 'class-validator';
 @ObjectType()
 export class CreateRatingInput extends PickType(
   RatingEntity,
-  ['description'],
+  ["value", "description"],
   InputType,
 ) {
   @IsNotEmpty()

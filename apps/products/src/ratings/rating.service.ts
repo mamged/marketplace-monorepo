@@ -9,11 +9,10 @@ import {
 import { getRepository, QueryFailedError, Repository } from 'typeorm';
 import { RpcException } from '@nestjs/microservices';
 
-import { RatingEntity, ratingStatus } from './rating.entity';
+import { RatingEntity } from './rating.entity';
 import { CreateRatingInput } from '@commerce/gateway';
 import { ProductEntity } from '../products/product.entity';
 import { ProductService } from '../products/product.service';
-import { UpdateRatingInput } from '@commerce/gateway';
 import { Variantservice } from '../variant/variant.service';
 
 @Injectable()
@@ -34,30 +33,19 @@ export class Ratingservice {
       .where(`Ratings.id IN (:...ids)`, { ids })
       .getMany();
   }
-  async store(rating: CreateRatingInput): Promise<any> {
-    // rating.product = this.productService.show(rating.product.to)
-    // const newRating = new RatingEntity();
-    // newRating.title = rating.title;
-    // newRating.description = rating.description;
-    // // newRating.product = await this.productService.show(rating.product);
-    // const variant = await this.variantservice.get({
-    //   where:{
-    //     id: rating.variantId
-    //   },
-    //   relations: ["product"]
-    // })
-    // if(variant.length === 0) throw new RpcException(new NotFoundException());
-    // const { product } = variant[0];
-    // newRating.variant = variant[0];
-    // newRating.product = product;
-    // return this.Ratings.save(newRating).then(async s=>{
-    //   await this.productService.updateProductQuantity(product.id);
-    //   return s;
-    // }).catch((error) => {
-    //   console.log(error);
-      
-    //   throw new RpcException(new BadRequestException(error.message));
-    // });
+  async store(rating: CreateRatingInput, userId: string): Promise<any> {
+    const product = this.productService.show(rating.productId).catch(()=>{
+      throw new RpcException(
+        new NotFoundException("product not found"),
+      );
+    });
+    const newRating = new RatingEntity();
+    newRating.value = rating.value;
+    newRating.userId = userId;
+    newRating.product = await this.productService.show(rating.productId);
+    return this.Ratings.save(newRating).catch((error) => {
+      throw new RpcException(new BadRequestException(error.message));
+    });
   }
 
   getRatingByVariantId(variantId:string) {
@@ -67,33 +55,10 @@ export class Ratingservice {
       }
     });
   }
-  async update(
-    id: string,
-    newRatingData: UpdateRatingInput,
-    userId: string,
-    ignoreUserValidation = false,
-  ){
-    // const oldRating = await this.Ratings.findOneOrFail({
-    //   where: { id },
-    //   relations: ['product'],
-    // });
-    // if (ignoreUserValidation === true || oldRating.product.user_id === userId) {
-    //   await this.Ratings.update(id, newRatingData);
-    //   // if there is update on status we need to make sure product quantity is up to date
-    //   if (newRatingData.status) {
-    //     await this.productService.updateProductQuantity(oldRating.product.id);
-    //   }
-    //   const newRating = await this.Ratings.findOneOrFail({ id });
-    //   return newRating;
-    // }
-    // throw new RpcException(
-    //   new NotFoundException("You cannot update what you don't own..."),
-    // );
-  }
   async show(id: string): Promise<RatingEntity> {
     return this.Ratings.findOneOrFail({ 
       where:{id},
-      relations:["product", "variant"]
+      relations:["product"]
     }).catch(()=>{
       throw new RpcException(
         new NotFoundException("You cannot update what you don't own..."),
@@ -104,7 +69,7 @@ export class Ratingservice {
     return this.Ratings.count({
       where:{
         product,
-        status: ratingStatus.AVAILABLE
+        // status: ratingStatus.AVAILABLE
       }
     });
   }
@@ -133,26 +98,8 @@ export class Ratingservice {
     return this.Ratings.find({
       where: {
         product: id,
-        status: ratingStatus.AVAILABLE,
+        // status: ratingStatus.AVAILABLE,
       },
     });
-  }
-  async consumeRating(productId: string, user_id: string) {
-    let rating;
-    try {
-      rating = await this.Ratings.findOneOrFail({
-        where: {
-          product: productId,
-          status: ratingStatus.AVAILABLE,
-        },
-      });
-    } catch (error) {
-      return new RpcException(
-        new NotFoundException('cannot find available rating'),
-      );
-    }
-    rating.status = ratingStatus.CONSUMED;
-    this.update(rating.id, rating, user_id);
-    return rating;
   }
 }

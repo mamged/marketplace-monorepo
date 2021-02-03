@@ -16,6 +16,7 @@ import { StockEntity, stockStatus } from '../stocks/stock.entity';
 import { Stockservice } from '../stocks/stock.service';
 import { VariantEntity } from '../variant/variant.entity';
 import { CreateProductInput, UpdateProductInput } from '@commerce/gateway';
+import { RatingEntity } from '../ratings/rating.entity';
 
 @Injectable()
 export class ProductService {
@@ -53,7 +54,9 @@ export class ProductService {
     user_id?: string,
   ): Promise<ProductEntity> {
     console.log('updating product with:', data);
-    const product = await this.products.findOneOrFail({ id });
+    const product = await this.products.findOneOrFail({ id }).catch(()=>{
+      throw new RpcException(new NotFoundException());
+    });
     console.log(product.user_id, '>>>', user_id);
     
     if (product.user_id !== user_id) throw new RpcException(new UnauthorizedException());
@@ -74,6 +77,17 @@ export class ProductService {
       );
     })
     return product.variants.filter(variant=> variant.deletedAt === null);
+  }
+  async getRatings(productId: string): Promise<RatingEntity[]>{
+    const product = await this.products.findOneOrFail({
+      where: { id: productId},
+      relations: ["ratings"]
+    }).catch(()=>{
+      throw new RpcException(
+        new NotFoundException("Cannot find product..."),
+      );
+    })
+    return product.ratings;
   }
   async show(id: string): Promise<ProductEntity> {
     return this.products.findOneOrFail({ id });
