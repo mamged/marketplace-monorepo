@@ -94,6 +94,10 @@ export class Stockservice {
     return this.Stocks.findOneOrFail({ 
       where:{id},
       relations:["product", "variant"]
+    }).catch(()=>{
+      throw new RpcException(
+        new NotFoundException("You cannot update what you don't own..."),
+      );
     });
   }
   async countAvailableProductStock(product: string): Promise<number> {

@@ -50,7 +50,7 @@ export class ProductEntity extends BaseEntity {
   @Column('float')
   price: number;
 
-  @Field({ defaultValue: 0 })
+  @Field()
   @Column('integer', { default: 0 })
   quantity: number;
 
@@ -65,7 +65,7 @@ export class ProductEntity extends BaseEntity {
   @MinLength(32)
   @MaxLength(1255)
   @IsNotEmpty()
-  @Field({ nullable: true })
+  @Field()
   @Column('text')
   description: string;
 

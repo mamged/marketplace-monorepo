@@ -1,4 +1,5 @@
 import { CreateProductInput } from '@commerce/gateway';
+import { UpdateProductInput } from '@commerce/gateway';
 import { Controller } from '@nestjs/common';
 import { MessagePattern, EventPattern } from '@nestjs/microservices';
 import { StockEntity } from '../stocks/stock.entity';
@@ -25,11 +26,11 @@ export class ProductController {
   }
 
   @MessagePattern('update-product')
-  update(product: ProductEntity): Promise<ProductEntity> {
-    const { id, title, description, image, price, user_id } = product;
+  update(product: UpdateProductInput): Promise<ProductEntity> {
+    const { id, user_id, ...data } = product;
     return this.products.update(
       id,
-      { title, description, image, price },
+      data,
       user_id,
     );
   }

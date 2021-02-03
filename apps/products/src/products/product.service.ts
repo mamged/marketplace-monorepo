@@ -5,6 +5,7 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { QueryFailedError, Repository } from 'typeorm';
 import { RpcException } from '@nestjs/microservices';
@@ -14,7 +15,7 @@ import { Product, ProductInput } from 'src/schemas/graphql';
 import { StockEntity, stockStatus } from '../stocks/stock.entity';
 import { Stockservice } from '../stocks/stock.service';
 import { VariantEntity } from '../variant/variant.entity';
-import { CreateProductInput } from '@commerce/gateway';
+import { CreateProductInput, UpdateProductInput } from '@commerce/gateway';
 
 @Injectable()
 export class ProductService {
@@ -48,13 +49,15 @@ export class ProductService {
   }
   async update(
     id: string,
-    data: any,
+    data: UpdateProductInput,
     user_id?: string,
   ): Promise<ProductEntity> {
-    const product = await this.products.findOneOrFail({ id });
-    // if (product.user_id === user_id) {
-    await this.products.update({ id }, data);
     console.log('updating product with:', data);
+    const product = await this.products.findOneOrFail({ id });
+    console.log(product.user_id, '>>>', user_id);
+    
+    if (product.user_id !== user_id) throw new RpcException(new UnauthorizedException());
+    await this.products.update({ id }, data);
     return this.products.findOneOrFail({ id });
   }
   async updateProductQuantity(productId:string) {

@@ -51,7 +51,7 @@ type ProductEntity {
   price: Float!
   quantity: Float!
   title: String!
-  description: String
+  description: String!
   image: [String!]!
   created_at: DateTime!
   updated_at: DateTime!
@@ -182,7 +182,7 @@ type Mutation {
   login(data: LoginUserInput!): AuthTokenSchema!
   register(data: RegisterUserInput!): RegisterUserSchema!
   createProduct(data: CreateProductInput!): ProductSchema!
-  updateProduct(id: String!, data: CreateProductInput!): ProductEntity!
+  updateProduct(id: String!, data: UpdateProductInput!): ProductEntity!
   deleteProduct(id: String!): ProductEntity!
   createStock(data: CreateStockInput!): StockSchema!
   updateStock(id: String!, data: UpdateStockInput!): StockSchema!
@@ -211,10 +211,17 @@ input RegisterUserInput {
 
 input CreateProductInput {
   price: Float!
-  quantity: Float = 0
+  quantity: Float!
   title: String!
-  description: String
+  description: String!
   image: [String!]!
+}
+
+input UpdateProductInput {
+  price: Float
+  title: String
+  description: String
+  image: [String!]
 }
 
 input CreateStockInput {

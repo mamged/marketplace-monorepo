@@ -11,6 +11,7 @@ import { ProductSchema } from './schema/product.schema';
 import { CreateStockInput } from './input/create-stock.input';
 import { StockSchema } from './schema/stock.schema';
 import { UpdateStockInput } from './input/update-stock.input';
+import { UpdateProductInput } from './input/update-product.input';
 @Injectable()
 export class ProductService {
   @Client({
@@ -131,12 +132,12 @@ export class ProductService {
 
   update(
     productId: string,
-    data: CreateProductInput,
+    data: UpdateProductInput,
     id: string,
-  ): Promise<ProductDTO> {
+  ): Promise<ProductEntity> {
     return new Promise((resolve, reject) => {
       this.client
-        .send<ProductDTO>('update-product', {
+        .send<ProductEntity>('update-product', {
           ...data,
           id: productId,
           user_id: id,

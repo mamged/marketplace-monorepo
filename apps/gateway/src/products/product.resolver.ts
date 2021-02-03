@@ -24,6 +24,7 @@ import { StockSchema } from './schema/stock.schema';
 import { CreateStockInput } from './input/create-stock.input';
 import { UpdateStockInput } from './input/update-stock.input';
 import { VariantSchema } from '../variants/schema/variant.schema';
+import { UpdateProductInput } from './input/update-product.input';
 
 @Resolver(() => ProductSchema)
 export class ProductResolver {
@@ -66,7 +67,7 @@ export class ProductResolver {
   @Mutation((returns) => ProductEntity)
   @UseGuards(new AuthGuard(), new SellerGuard())
   updateProduct(
-    @Args('data') data: CreateProductInput,
+    @Args('data') data: UpdateProductInput,
     @Context('user') user: any,
     @Args('id') productId: string,
   ) {
