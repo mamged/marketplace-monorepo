@@ -17,6 +17,7 @@ import { Stockservice } from '../stocks/stock.service';
 import { VariantEntity } from '../variant/variant.entity';
 import { CreateProductInput, UpdateProductInput } from '@commerce/gateway';
 import { RatingEntity } from '../ratings/rating.entity';
+import { isUrlArray } from '@commerce/shared';
 
 @Injectable()
 export class ProductService {
@@ -44,6 +45,8 @@ export class ProductService {
       .getMany();
   }
   async store(product: CreateProductInput): Promise<any> {
+    product.hasOwnProperty('image') && isUrlArray(product.image);
+
     return this.products.save(product).catch((error) => {      
       throw new RpcException(new BadRequestException(error.message));
     });
@@ -53,12 +56,10 @@ export class ProductService {
     data: UpdateProductInput,
     user_id?: string,
   ): Promise<ProductEntity> {
-    console.log('updating product with:', data);
+    data.hasOwnProperty('image') && isUrlArray(data.image);
     const product = await this.products.findOneOrFail({ id }).catch(()=>{
       throw new RpcException(new NotFoundException());
     });
-    console.log(product.user_id, '>>>', user_id);
-    
     if (product.user_id !== user_id) throw new RpcException(new UnauthorizedException());
     await this.products.update({ id }, data);
     return this.products.findOneOrFail({ id });

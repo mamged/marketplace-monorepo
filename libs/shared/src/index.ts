@@ -7,3 +7,4 @@ export * from './dto/product.dto';
 export * from './dto/order.dto';
 export * from './dto';
 export { config } from './config';
+export * from "./utils"

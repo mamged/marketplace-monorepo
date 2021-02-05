@@ -1,4 +1,4 @@
-import { ObjectType, PickType } from '@nestjs/graphql';
+import { Field, ObjectType, PickType } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { ProductEntity } from '@commerce/products';
 @InputType()

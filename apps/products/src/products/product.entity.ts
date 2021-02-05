@@ -8,6 +8,8 @@ import {
   IsArray,
   IsNumber,
   IsBoolean,
+  isURL,
+  validateOrReject,
 } from 'class-validator';
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import {
@@ -20,6 +22,8 @@ import {
   OneToMany,
   PrimaryColumn,
   Index,
+  BeforeUpdate,
+  BeforeInsert,
 } from 'typeorm';
 import { VariantEntity } from '../variant/variant.entity';
 import { StockEntity } from '../stocks/stock.entity';
