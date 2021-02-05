@@ -3,7 +3,7 @@ import { RpcException } from "@nestjs/microservices";
 import { isURL } from "class-validator";
 
 export const isValidUrl = str => isURL(str, {
-  protocols: ["https", "http"],
+  protocols: ["https"],
   require_tld: true,
   require_protocol: true,
 });
