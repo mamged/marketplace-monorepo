@@ -146,17 +146,13 @@ type StockSchema {
 }
 
 type VariantSchema {
-  id: String
-  stock: [StockSchema!]!
-  quantity: Float
-  type: VariantType
-  name: String
+  id: String!
+  type: VariantType!
+  name: String!
   description: String
-  price: Float
-  created_at: DateTime
-  updated_at: DateTime
-  deletedAt: DateTime
+  price: Float!
   product: ProductSchema!
+  stock: [StockSchema!]!
 }
 
 type RatingSchema {
@@ -297,12 +293,9 @@ input CreateVariantInput {
 
 input UpdateVariantInput {
   type: VariantType = INSTANT
-  name: String
+  name: String!
   description: String
-  price: Float
-
-  """product id"""
-  productId: String
+  price: Float!
 }
 
 input CreateRatingInput {
