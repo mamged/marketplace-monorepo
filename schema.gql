@@ -39,14 +39,26 @@ scalar DateTime
 
 type variantEntitySchema {
   id: String!
-  quantity: Float!
   stock: [stockEntitySchema!]!
+  quantity: Float!
+  type: VariantType!
   name: String!
   description: String
   price: Float!
   created_at: DateTime!
   updated_at: DateTime!
   deletedAt: DateTime!
+}
+
+"""Show the status of stock item."""
+enum VariantType {
+  """
+  The product is already stocked and will be sent to the user instantly after payment approval
+  """
+  INSTANT
+
+  """The seller will send the product later to the user via his dashboard"""
+  ON_DEMAND
 }
 
 type ratingEntitySchema {
@@ -135,8 +147,9 @@ type StockSchema {
 
 type VariantSchema {
   id: String
-  quantity: Float
   stock: [StockSchema!]!
+  quantity: Float
+  type: VariantType
   name: String
   description: String
   price: Float
@@ -180,8 +193,9 @@ input stockEntityInput {
 
 input variantEntityInput {
   id: String!
-  quantity: Float = 1
   stock: [stockEntityInput!]!
+  quantity: Float = 1
+  type: VariantType = INSTANT
   name: String!
   description: String
   price: Float!
@@ -272,6 +286,7 @@ input UpdateStockInput {
 }
 
 input CreateVariantInput {
+  type: VariantType = INSTANT
   name: String!
   description: String
   price: Float!
@@ -281,6 +296,7 @@ input CreateVariantInput {
 }
 
 input UpdateVariantInput {
+  type: VariantType = INSTANT
   name: String
   description: String
   price: Float

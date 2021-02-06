@@ -6,7 +6,7 @@ import { IsNotEmpty } from 'class-validator';
 @ObjectType()
 export class CreateVariantInput extends PickType(
   VariantEntity,
-  ['price', 'name', 'description'],
+  ['price', 'name', 'description', "type"],
   InputType,
 ) {
   @IsNotEmpty()
