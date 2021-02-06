@@ -87,11 +87,16 @@ export class ProductService {
       throw new RpcException(
         new NotFoundException("Cannot find product..."),
       );
-    })
+    });
     return product.ratings;
   }
   async show(id: string): Promise<ProductEntity> {
-    return this.products.findOneOrFail({ id });
+    console.log('id', id);
+    
+    const a = await this.products.findOneOrFail({ id });
+    console.log('aaaaa',a);
+    
+    return a;
   }
   async destroy(id: string, user_id: string): Promise<ProductEntity> {
     return this.products.findOne({

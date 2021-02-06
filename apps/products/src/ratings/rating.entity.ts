@@ -41,13 +41,14 @@ export class RatingEntity extends BaseEntity {
   @Min(1)
   @Max(5)
   @IsNotEmpty()
+  @IsNumber()
   @Field()
-  @Column(()=> Number)
+  @Column()
   value: number;
 
   @IsNotEmpty()
   @Field()
-  @Column('text')
+  @Column()
   userId: string;
 
   @Field({nullable: true})
