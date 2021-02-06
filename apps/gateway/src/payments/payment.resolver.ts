@@ -16,7 +16,7 @@ import { PaymentCardService } from './payment.service';
 import { UserDataLoader } from '../loaders/user.loader';
 import { PaymentCardDTO } from '@commerce/shared';
 import { OrderEntity } from '@commerce/orders';
-import { CreateOrder } from '../orders/create-order.validation';
+import { CreateOrder } from '../orders/input/create-order.input';
 import { PaymentEntity } from '@commerce/payments';
 
 @Resolver(() => CreatePaymentCard)

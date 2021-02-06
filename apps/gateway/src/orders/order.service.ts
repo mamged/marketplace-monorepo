@@ -7,6 +7,7 @@ import { redis, redisProductsKey } from '../utils/redis';
 import { OrderEntity } from '@commerce/orders';
 // import { Order } from "../schemas/graphql";
 import { Product } from 'src/schemas/graphql';
+import { OrderSchema } from './schema/order.schema';
 @Injectable()
 export class OrderService {
   @Client({
@@ -16,14 +17,14 @@ export class OrderService {
     },
   })
   private client: ClientProxy;
-  indexOrdersByUser(user_id: string): Promise<OrderDTO[]> {
+  indexOrdersByUser(user_id: string): Promise<OrderSchema[]> {
     return new Promise((resolve, reject) => {
       this.client.send('index-orders', user_id).subscribe((orders) => {
         return resolve(orders);
       });
     });
   }
-  async destroyUserOrder(order_id: any, user_id): Promise<OrderDTO> {
+  async destroyUserOrder(order_id: any, user_id): Promise<OrderSchema> {
     return new Promise((resolve, reject) => {
       this.client
         .send('destroy-order-by-id', {

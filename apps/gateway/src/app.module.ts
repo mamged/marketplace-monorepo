@@ -32,7 +32,7 @@ import { RatingsModule } from './ratings/rating.module';
     ProductsModule,
     VariantsModule,
     RatingsModule,
-    // OrdersModule,
+    OrdersModule,
     // PaymentCardsModule,
     CategoriesModule,
   ],

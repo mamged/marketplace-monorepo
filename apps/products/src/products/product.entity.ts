@@ -33,6 +33,7 @@ import { RatingSchema } from '@commerce/gateway';
 
 @Entity('products')
 @ObjectType()
+@InputType("ProductEntityInput")
 @Index((relation: ProductEntity ) => [relation.user_id, relation.id], { unique: true })
 export class ProductEntity extends BaseEntity {
   @Field()

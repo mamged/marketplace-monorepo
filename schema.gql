@@ -2,11 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type PublicUserSchema {
-  id: String!
-  name: String!
-}
-
 type stockEntitySchema {
   id: String!
   status: StockStatus
@@ -90,6 +85,22 @@ type CategoryEntity {
   parent: CategoryEntity
 }
 
+type ProductSchemaObject {
+  id: String
+  user_id: String
+  published: Boolean
+  price: Float
+  quantity: Float
+  title: String
+  description: String
+  image: [String!]
+  ratings: [RatingSchema!]!
+  created_at: DateTime
+  updated_at: DateTime
+  user: UserSchema!
+  variant: [VariantSchema!]!
+}
+
 type AddressEntity {
   address_1: String!
   address_2: String!
@@ -119,20 +130,30 @@ type UserSchema {
   address: AddressEntity
 }
 
-type ProductSchema {
-  id: String
-  user_id: String
-  published: Boolean
-  price: Float
-  quantity: Float
-  title: String
-  description: String
-  image: [String!]
-  ratings: [RatingSchema!]!
-  created_at: DateTime
-  updated_at: DateTime
-  user: UserSchema!
-  variant: [VariantSchema!]!
+type ProductOrderObject {
+  product: ProductSchemaObject!
+  quantity: Float!
+}
+
+type PublicUserSchema {
+  id: String!
+  name: String!
+}
+
+type OrderSchema {
+  id: String!
+  user_id: String!
+  total_price: Float!
+  products: [ProductOrderObject!]!
+  status: OrderStatus!
+  user: UserEntity!
+}
+
+"""Show the status of stock item."""
+enum OrderStatus {
+  PENDING
+  FAILED
+  SUCCEEDED
 }
 
 type StockSchema {
@@ -151,7 +172,7 @@ type VariantSchema {
   name: String!
   description: String
   price: Float!
-  product: ProductSchema!
+  product: ProductSchemaObject!
   stock: [StockSchema!]!
 }
 
@@ -208,15 +229,30 @@ input ratingEntityInput {
   created_at: DateTime!
 }
 
+input ProductEntityInput {
+  id: String!
+  user_id: String!
+  published: Boolean = false
+  price: Float!
+  quantity: Float!
+  title: String!
+  description: String!
+  image: [String!]!
+  ratings: [ratingEntityInput!]!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
 type Query {
   users: UserEntity!
   me: UserSchema!
-  products: [ProductSchema!]!
-  showProduct(id: String!): ProductSchema!
+  products: [ProductSchemaObject!]!
+  showProduct(id: String!): ProductSchemaObject!
   getProductStock(id: String!): [StockSchema!]!
   showStock(id: String!): StockSchema!
   showVariant(id: String!): VariantSchema!
   showRating(id: String!): RatingSchema!
+  orders: OrderSchema!
   categories: [CategoryEntity!]!
   showCategory(id: String!): CategoryEntity!
 }
@@ -224,7 +260,7 @@ type Query {
 type Mutation {
   login(data: LoginUserInput!): AuthTokenSchema!
   register(data: RegisterUserInput!): RegisterUserSchema!
-  createProduct(data: CreateProductInput!): ProductSchema!
+  createProduct(data: CreateProductInput!): ProductSchemaObject!
   updateProduct(id: String!, data: UpdateProductInput!): ProductEntity!
   deleteProduct(id: String!): ProductEntity!
   createStock(data: CreateStockInput!): StockSchema!
@@ -235,6 +271,8 @@ type Mutation {
   updateVariant(id: String!, data: UpdateVariantInput!): VariantSchema!
   deleteVariant(id: String!): VariantSchema!
   createRating(data: CreateRatingInput!): RatingSchema!
+  deleteOrder(id: String!): OrderSchema!
+  createOrder(products: [ProductEntityInput!]!, id: Float!): [OrderSchema!]!
   createCategory(data: CreateCategoryInput!): CategoryEntity!
   updateCategory(id: Float!, data: CreateCategoryInput!): CategoryEntity!
   deleteCategory(id: String!): CategoryEntity!
