@@ -20,7 +20,7 @@ import { UserEntity } from '@commerce/users';
 import { ProductEntity } from '@commerce/products';
 import { OrderEntity } from '@commerce/orders';
 import { AuthGuard } from '../middlewares/auth.guard';
-import { CreateOrder } from './input/create-order.input';
+import { CreateOrderInput } from './input/create-order.input';
 import { OrderProductDataLoader } from '../loaders/order-product.loader';
 import { OrderService } from './order.service';
 import { UUID } from '../shared/validation/uuid.validation';
@@ -49,10 +49,12 @@ export class OrderResolver {
   async user(@Parent() order: OrderSchema): Promise<UserDTO> {
     return this.usersDataLoader.load(order.user_id);
   }
-  // @ResolveField(() => [ProductSchema])
-  // async products(@Parent() order: OrderEntity): Promise<ProductDTO[]> {
-  //   return this.orderProductLoader.loadMany(order.products);
-  // }
+  @ResolveField(() => [ProductSchema])
+  async products(@Parent() order: OrderEntity): Promise<ProductDTO[]> {
+    console.log('producQQQ',order.products);
+    
+    return this.orderProductLoader.loadMany(order.products);
+  }
   @Query(returns => OrderSchema)
   @UseGuards(new AuthGuard())
   orders(@Context('user') user: any): Promise<OrderSchema[]> {
@@ -63,41 +65,13 @@ export class OrderResolver {
   deleteOrder(@Args('id') id: string, @Context('user') user: any) {
     return this.orderService.destroyUserOrder(id, user.id);
   }
-  @Mutation(returns => [OrderSchema])
+  @Mutation(returns => OrderSchema)
   @UseGuards(new AuthGuard())
   createOrder(
-    @Args('id') id: number,
-    @Args('products', { type: () => [ProductEntity] })
-    products: ProductEntity[],
+    @Args('products', { type: () => [CreateOrderInput] })
+    products: CreateOrderInput[],
     @Context('user') user: any,
   ): Promise<Product[]> {
-    return new Promise((resolve, reject) => {
-      // fetch products user is trying to purchase to check on the quantity.
-      this.client
-        .send<ProductOrder[]>(
-          'fetch-products-by-ids',
-          products.map((product) => product.id),
-        )
-        .subscribe(
-          async (fetchedProducts) => {
-            const filteredProducts = products.filter((product) => {
-              const p: ProductOrder = fetchedProducts.find(
-                (p) => p.product.id === product.id,
-              );
-              return p.quantity >= product.quantity;
-            });
-            // there is something wrong with the quantity of passed products.
-            if (filteredProducts.length != products.length) {
-              return reject(
-                'Products are out of stock at the moment, try with lower stock.',
-              );
-            }
-            return resolve(
-              await this.orderService.store(products, user.id, fetchedProducts),
-            );
-          },
-          (error) => reject(error),
-        );
-    });
+    return this.orderService.createOrder(products, user);
   }
 }

@@ -1,6 +1,6 @@
 import { Client, ClientProxy, Transport } from '@nestjs/microservices';
 import { Injectable } from '@nestjs/common';
-import { UserDTO, ProductDTO, OrderDTO } from '@commerce/shared';
+import { UserDTO, ProductDTO, OrderDTO, ProductOrder } from '@commerce/shared';
 
 import { config } from '@commerce/shared';
 import { redis, redisProductsKey } from '../utils/redis';
@@ -8,6 +8,7 @@ import { OrderEntity } from '@commerce/orders';
 // import { Order } from "../schemas/graphql";
 import { Product } from 'src/schemas/graphql';
 import { OrderSchema } from './schema/order.schema';
+import { ProductSchema } from '../products/schema/product.schema';
 @Injectable()
 export class OrderService {
   @Client({
@@ -64,6 +65,42 @@ export class OrderService {
               () => {},
               () => resolve(order),
             ); // resolve on completion
+          },
+          (error) => reject(error),
+        );
+    });
+  }
+  createOrder(products: any, user): Promise<Product[]> {
+    return new Promise((resolve, reject) => {
+      // fetch products user is trying to purchase to check on the quantity.
+      this.client
+        .send<ProductSchema[]>(
+          'fetch-products-by-ids',
+          products.map((product) => product.id),
+        )
+        .subscribe(
+          async (fetchedProducts) => {
+            console.log('fetchedProducts>!!',fetchedProducts)
+            const filteredProducts = products.filter((product) => {
+              const pp: ProductSchema = fetchedProducts.find(
+                (p) => p.id === product.id,
+              );
+              return pp.quantity >= product.quantity;
+            });
+            console.log('filteredProducts:',filteredProducts);
+            
+            // there is something wrong with the quantity of passed products.
+            if (filteredProducts.length != products.length) {
+              return reject(
+                'Products are out of stock at the moment, try with lower stock.',
+              );
+            }
+            const a = await this.store(products, user.id, fetchedProducts);
+            console.log('A',a);
+            
+            return resolve(
+              a
+            );
           },
           (error) => reject(error),
         );

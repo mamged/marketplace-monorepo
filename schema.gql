@@ -144,7 +144,7 @@ type OrderSchema {
   id: String!
   user_id: String!
   total_price: Float!
-  products: [ProductOrderObject!]!
+  products: [ProductSchemaObject!]!
   status: OrderStatus!
   user: UserEntity!
 }
@@ -272,7 +272,7 @@ type Mutation {
   deleteVariant(id: String!): VariantSchema!
   createRating(data: CreateRatingInput!): RatingSchema!
   deleteOrder(id: String!): OrderSchema!
-  createOrder(products: [ProductEntityInput!]!, id: Float!): [OrderSchema!]!
+  createOrder(products: [CreateOrderInput!]!): OrderSchema!
   createCategory(data: CreateCategoryInput!): CategoryEntity!
   updateCategory(id: Float!, data: CreateCategoryInput!): CategoryEntity!
   deleteCategory(id: String!): CategoryEntity!
@@ -342,6 +342,11 @@ input CreateRatingInput {
 
   """product id"""
   productId: String!
+}
+
+input CreateOrderInput {
+  quantity: Float!
+  id: String!
 }
 
 input CreateCategoryInput {
