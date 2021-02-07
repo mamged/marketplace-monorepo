@@ -9,6 +9,8 @@ import { OrderEntity } from '@commerce/orders';
 import { Product } from 'src/schemas/graphql';
 import { OrderSchema } from './schema/order.schema';
 import { ProductSchema } from '../products/schema/product.schema';
+import { CreateProductInput } from '../products/input/create-product.input';
+import { CreateOrderInput } from './input/create-order.input';
 @Injectable()
 export class OrderService {
   @Client({
@@ -45,9 +47,9 @@ export class OrderService {
       const mappedProducts = fetchedProducts
         .map((product) => {
           // find the product which user passed, to retrieve the ordered quantity.
-          let p = products.find((p) => p.id === product.id);
-          if (p) {
-            return { ...product, ordered_quantity: p.quantity };
+          let orederedProduct = products.find((p) => p.id === product.id);
+          if (orederedProduct) {
+            return { ...product, ordered_quantity: orederedProduct.quantity };
           }
           return product;
         })
@@ -70,36 +72,29 @@ export class OrderService {
         );
     });
   }
-  createOrder(products: any, user): Promise<Product[]> {
+  createOrder(orderProducts: CreateOrderInput[], user): Promise<Product[]> {
     return new Promise((resolve, reject) => {
       // fetch products user is trying to purchase to check on the quantity.
       this.client
         .send<ProductSchema[]>(
           'fetch-products-by-ids',
-          products.map((product) => product.id),
+          orderProducts.map((product) => product.id),
         )
         .subscribe(
           async (fetchedProducts) => {
-            console.log('fetchedProducts>!!',fetchedProducts)
-            const filteredProducts = products.filter((product) => {
-              const pp: ProductSchema = fetchedProducts.find(
-                (p) => p.id === product.id,
-              );
+            const filteredProducts = orderProducts.filter((product) => {
+              const pp: ProductSchema = fetchedProducts.find((p) => p.id === product.id);
               return pp.quantity >= product.quantity;
             });
-            console.log('filteredProducts:',filteredProducts);
-            
             // there is something wrong with the quantity of passed products.
-            if (filteredProducts.length != products.length) {
+            if (filteredProducts.length != orderProducts.length) {
               return reject(
                 'Products are out of stock at the moment, try with lower stock.',
               );
             }
-            const a = await this.store(products, user.id, fetchedProducts);
-            console.log('A',a);
-            
+            console.log('$$products$$',orderProducts);
             return resolve(
-              a
+              await this.store(orderProducts, user.id, fetchedProducts)
             );
           },
           (error) => reject(error),

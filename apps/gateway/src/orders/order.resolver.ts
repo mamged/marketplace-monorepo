@@ -51,8 +51,6 @@ export class OrderResolver {
   }
   @ResolveField(() => [ProductSchema])
   async products(@Parent() order: OrderEntity): Promise<ProductDTO[]> {
-    console.log('producQQQ',order.products);
-    
     return this.orderProductLoader.loadMany(order.products);
   }
   @Query(returns => OrderSchema)

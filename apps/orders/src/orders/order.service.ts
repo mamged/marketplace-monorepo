@@ -29,7 +29,8 @@ export class OrderService {
       INITIAL_VALUE,
     );
     const databaseProducts = products.map((product) => {
-      return { id: product.id, quantity: product.ordered_quantity };
+      //add price to the order to avoid price changes by seller in the future after order placed
+      return { id: product.id, quantity: product.ordered_quantity, price: product.price };
     });
     const actualProducts = products.map((product) => {
       product.quantity = product.quantity - product.ordered_quantity;
