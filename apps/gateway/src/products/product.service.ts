@@ -11,6 +11,8 @@ import { ProductSchema } from './schema/product.schema';
 import { CreateStockInput } from './input/create-stock.input';
 import { StockSchema } from './schema/stock.schema';
 import { UpdateStockInput } from './input/update-stock.input';
+import { UpdateProductInput } from './input/update-product.input';
+import { RatingSchema } from '../ratings/schema/rating.schema';
 @Injectable()
 export class ProductService {
   @Client({
@@ -50,6 +52,14 @@ export class ProductService {
   getProductVariants(productId: string): Promise<VariantEntity[]> {
     return new Promise((resolve, reject) => {
       this.client.send<VariantEntity[]>('get-product-variants', productId).subscribe(
+        (product) => resolve(product),
+        (error) => reject(error),
+      );
+    });
+  }
+  getProductRatings(productId: string): Promise<RatingSchema[]> {
+    return new Promise((resolve, reject) => {
+      this.client.send<RatingSchema[]>('get-product-ratings', productId).subscribe(
         (product) => resolve(product),
         (error) => reject(error),
       );
@@ -131,12 +141,12 @@ export class ProductService {
 
   update(
     productId: string,
-    data: CreateProductInput,
+    data: UpdateProductInput,
     id: string,
-  ): Promise<ProductDTO> {
+  ): Promise<ProductEntity> {
     return new Promise((resolve, reject) => {
       this.client
-        .send<ProductDTO>('update-product', {
+        .send<ProductEntity>('update-product', {
           ...data,
           id: productId,
           user_id: id,

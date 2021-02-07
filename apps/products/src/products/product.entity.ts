@@ -8,6 +8,8 @@ import {
   IsArray,
   IsNumber,
   IsBoolean,
+  isURL,
+  validateOrReject,
 } from 'class-validator';
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import {
@@ -20,12 +22,18 @@ import {
   OneToMany,
   PrimaryColumn,
   Index,
+  BeforeUpdate,
+  BeforeInsert,
 } from 'typeorm';
 import { VariantEntity } from '../variant/variant.entity';
 import { StockEntity } from '../stocks/stock.entity';
+import { RatingEntity } from '../ratings/rating.entity';
+import { RatingResolver } from '@commerce/gateway/ratings/rating.resolver';
+import { RatingSchema } from '@commerce/gateway';
 
 @Entity('products')
 @ObjectType()
+@InputType("ProductEntityInput")
 @Index((relation: ProductEntity ) => [relation.user_id, relation.id], { unique: true })
 export class ProductEntity extends BaseEntity {
   @Field()
@@ -50,7 +58,7 @@ export class ProductEntity extends BaseEntity {
   @Column('float')
   price: number;
 
-  @Field({ defaultValue: 0 })
+  @Field()
   @Column('integer', { default: 0 })
   quantity: number;
 
@@ -65,7 +73,7 @@ export class ProductEntity extends BaseEntity {
   @MinLength(32)
   @MaxLength(1255)
   @IsNotEmpty()
-  @Field({ nullable: true })
+  @Field()
   @Column('text')
   description: string;
 
@@ -84,8 +92,12 @@ export class ProductEntity extends BaseEntity {
   // @Column()
   @OneToMany((type) => VariantEntity, (varient) => varient.product)
   variants: VariantEntity[];
-  @OneToMany((type) => StockEntity, (stock) => stock)
+  @OneToMany((type) => StockEntity, (stock) => stock.product)
   stock: StockEntity[];
+  
+  @Field(of=> [RatingEntity])
+  @OneToMany((type) => RatingEntity, (rating) => rating.product)
+  ratings: RatingEntity[];
 
   @Field()
   @CreateDateColumn()

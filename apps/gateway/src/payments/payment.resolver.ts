@@ -16,7 +16,7 @@ import { PaymentCardService } from './payment.service';
 import { UserDataLoader } from '../loaders/user.loader';
 import { PaymentCardDTO } from '@commerce/shared';
 import { OrderEntity } from '@commerce/orders';
-import { CreateOrder } from '../orders/create-order.validation';
+import { CreateOrderInput } from '../orders/input/create-order.input';
 import { PaymentEntity } from '@commerce/payments';
 
 @Resolver(() => CreatePaymentCard)
@@ -30,23 +30,23 @@ export class PaymentCardResolver {
   private client: ClientProxy;
 
   constructor(private readonly paymentCardsService: PaymentCardService) {}
-  @Query((returns) => [CreatePaymentCard])
+  @Query(returns => [CreatePaymentCard])
   @UseGuards(new AuthGuard())
   async indexUserPaymentCards(@Context('user') user: any) {
     return this.paymentCardsService.get(user.id);
   }
-  @Query((returns) => CreatePaymentCard)
+  @Query(returns => CreatePaymentCard)
   @UseGuards(new AuthGuard())
   async showPaymentCard(@Args('id') id: string, @Context('user') user: any) {
     return this.paymentCardsService.show(id, user.id);
   }
-  @Mutation((returns) => CreatePaymentCard)
+  @Mutation(returns => CreatePaymentCard)
   @UseGuards(new AuthGuard())
   async deletePaymentCard(@Args('id') id: string, @Context('user') user: any) {
     return this.paymentCardsService.destroy(id, user.id);
   }
   // @Mutation()
-  @Mutation((returns) => CreatePaymentCard)
+  @Mutation(returns => CreatePaymentCard)
   @UseGuards(new AuthGuard())
   async createPaymentCard(
     @Args('data') data: CreatePaymentCard,
@@ -56,7 +56,7 @@ export class PaymentCardResolver {
     return this.paymentCardsService.store(data, user);
   }
   // @Mutation()
-  @Mutation((returns) => OrderEntity)
+  @Mutation(returns => OrderEntity)
   @UseGuards(new AuthGuard())
   async createChargeForUser(
     @Args('orderId') orderId: string,

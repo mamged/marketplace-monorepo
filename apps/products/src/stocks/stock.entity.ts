@@ -60,7 +60,7 @@ export class StockEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field((returns) => stockStatus, {
+  @Field(returns => stockStatus, {
     defaultValue: stockStatus.AVAILABLE,
     nullable: true,
   })

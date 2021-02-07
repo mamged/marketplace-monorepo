@@ -5,6 +5,7 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { QueryFailedError, Repository } from 'typeorm';
 import { RpcException } from '@nestjs/microservices';
@@ -14,7 +15,9 @@ import { Product, ProductInput } from 'src/schemas/graphql';
 import { StockEntity, stockStatus } from '../stocks/stock.entity';
 import { Stockservice } from '../stocks/stock.service';
 import { VariantEntity } from '../variant/variant.entity';
-import { CreateProductInput } from '@commerce/gateway';
+import { CreateProductInput, UpdateProductInput } from '@commerce/gateway';
+import { RatingEntity } from '../ratings/rating.entity';
+import { isUrlArray } from '@commerce/shared';
 
 @Injectable()
 export class ProductService {
@@ -42,19 +45,23 @@ export class ProductService {
       .getMany();
   }
   async store(product: CreateProductInput): Promise<any> {
+    product.hasOwnProperty('image') && isUrlArray(product.image);
+
     return this.products.save(product).catch((error) => {      
       throw new RpcException(new BadRequestException(error.message));
     });
   }
   async update(
     id: string,
-    data: any,
+    data: UpdateProductInput,
     user_id?: string,
   ): Promise<ProductEntity> {
-    const product = await this.products.findOneOrFail({ id });
-    // if (product.user_id === user_id) {
+    data.hasOwnProperty('image') && isUrlArray(data.image);
+    const product = await this.products.findOneOrFail({ id }).catch(()=>{
+      throw new RpcException(new NotFoundException());
+    });
+    if (product.user_id !== user_id) throw new RpcException(new UnauthorizedException());
     await this.products.update({ id }, data);
-    console.log('updating product with:', data);
     return this.products.findOneOrFail({ id });
   }
   async updateProductQuantity(productId:string) {
@@ -71,6 +78,17 @@ export class ProductService {
       );
     })
     return product.variants.filter(variant=> variant.deletedAt === null);
+  }
+  async getRatings(productId: string): Promise<RatingEntity[]>{
+    const product = await this.products.findOneOrFail({
+      where: { id: productId},
+      relations: ["ratings"]
+    }).catch(()=>{
+      throw new RpcException(
+        new NotFoundException("Cannot find product..."),
+      );
+    });
+    return product.ratings;
   }
   async show(id: string): Promise<ProductEntity> {
     return this.products.findOneOrFail({ id });

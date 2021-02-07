@@ -1,53 +1,53 @@
+# # type Query {
+# #   getCats: [Cat]
+# #   cat(id: ID!): Cat
+# # }
+
+# # type Mutation {
+# #   createCat(createCatInput: CreateCatInput): Cat
+# # }
+
+# type Subscription {
+#   catCreated: Cat
+# }
+
+# type Cat {
+#   id: Int
+#   name: String
+#   age: Int
+# }
+
+# input CreateCatInput {
+#   name: String
+#   age: Int
+# }
+
+
+# scalar DateTime
+# type ProductWithQuantity {
+#     product: Product!
+#     quantity_ordered: Float!
+# }
+# input UUID {
+#     id: String!
+# }
+# input ProductInput {
+#     quantity: Float!
+#     id: String!
+# }
+
+# type Order {
+#     id: String!
+#     user: User!
+#     total_price: Float!
+#     products: [ProductWithQuantity!]!
+# }
 # type Query {
-#   getCats: [Cat]
-#   cat(id: ID!): Cat
+#     orders: [Order!]!
+#     showOrder(id: String!): Order
 # }
-
 # type Mutation {
-#   createCat(createCatInput: CreateCatInput): Cat
+#     createOrder(products: [ProductInput!]!): Order!
+#     deleteOrder(order: UUID!): Order!
+#     # user(order: Order!): User!
 # }
-
-type Subscription {
-  catCreated: Cat
-}
-
-type Cat {
-  id: Int
-  name: String
-  age: Int
-}
-
-input CreateCatInput {
-  name: String
-  age: Int
-}
-
-
-scalar DateTime
-type ProductWithQuantity {
-    product: Product!
-    quantity_ordered: Float!
-}
-input UUID {
-    id: String!
-}
-input ProductInput {
-    quantity: Float!
-    id: String!
-}
-
-type Order {
-    id: String!
-    user: User!
-    total_price: Float!
-    products: [ProductWithQuantity!]!
-}
-type Query {
-    orders: [Order!]!
-    showOrder(id: String!): Order
-}
-type Mutation {
-    createOrder(products: [ProductInput!]!): Order!
-    deleteOrder(order: UUID!): Order!
-    # user(order: Order!): User!
-}

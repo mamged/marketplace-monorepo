@@ -26,21 +26,21 @@ import { StockSchema } from '../products/schema/stock.schema';
 @Resolver(() => VariantSchema)
 export class VariantResolver {
   constructor(private readonly variantService: VariantService) {}
-  @Query((returns) => VariantSchema)
+  @Query(returns => VariantSchema)
   showVariant(@Args('id') id: string) {
     return this.variantService.showVariant(id);
   }
 
-  @ResolveField((returns) => ProductSchema)
+  @ResolveField(returns => ProductSchema)
   async product(@Parent() variantParent: VariantSchema) {
     return this.variantService.getVariantProduct(variantParent.id);
   }
-  @ResolveField((returns) => [StockSchema])
+  @ResolveField(returns => [StockSchema])
   async stock(@Parent() variantParent: VariantSchema) {
     return this.variantService.getVariantStock(variantParent.id);
   }
 
-  @Mutation((returns) => VariantSchema)
+  @Mutation(returns => VariantSchema)
   @Roles('admin')
   @UseGuards(new AuthGuard(), new SellerGuard())
   createVariant(
@@ -50,7 +50,7 @@ export class VariantResolver {
     return this.variantService.createVariant(data, user.id);
   }
 
-  @Mutation((returns) => VariantSchema)
+  @Mutation(returns => VariantSchema)
   @UseGuards(new AuthGuard(), new SellerGuard())
   updateVariant(
     @Args('data') data: UpdateVariantInput,
@@ -59,7 +59,7 @@ export class VariantResolver {
   ) {
     return this.variantService.updateVariant(variantId, data, user.id);
   }
-  @Mutation((returns) => VariantSchema)
+  @Mutation(returns => VariantSchema)
   @UseGuards(new AuthGuard(), new SellerGuard())
   async deleteVariant(@Context('user') user: any, @Args('id') id: string) {
     return this.variantService.destroyVariant(id, user.id);

@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { IsNotEmpty, Min, IsInt, IsUUID, Validate } from 'class-validator';
 
 @InputType()
-export class CreateOrder {
+export class CreateOrderInput {
   @Min(1)
   @IsNotEmpty()
   @IsInt()
@@ -10,5 +10,6 @@ export class CreateOrder {
   quantity: number;
   @IsUUID()
   @IsNotEmpty()
+  @Field()
   id: string;
 }

@@ -40,15 +40,16 @@ export class Variantservice {
       .where(`Variants.id IN (:...ids)`, { ids })
       .getMany();
   }
-  async store(variant: CreateVariantInput): Promise<any> {
-    const newVariant = new VariantEntity();
-    newVariant.name = variant.name;
-    newVariant.price = variant.price;
-    newVariant.description = variant.description;
-    const product = await this.productService.show(variant.productId);
-    newVariant.product = product; 
-    return this.Variants.save(newVariant).then(async v=>{
-      await this.productService.updateProductQuantity(variant.productId);
+  async store(variantPayload: CreateVariantInput): Promise<any> {
+    const variant = new VariantEntity();
+    variant.name = variantPayload.name;
+    variant.price = variantPayload.price;
+    variant.description = variantPayload.description;
+    variant.type = variantPayload.type;
+    const product = await this.productService.show(variantPayload.productId);
+    variant.product = product; 
+    return this.Variants.save(variant).then(async v=>{
+      await this.productService.updateProductQuantity(variantPayload.productId);
       return v;
     }).catch((error) => {
       throw new RpcException(new BadRequestException(error.message));

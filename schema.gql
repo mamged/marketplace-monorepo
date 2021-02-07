@@ -34,14 +34,34 @@ scalar DateTime
 
 type variantEntitySchema {
   id: String!
-  quantity: Float!
   stock: [stockEntitySchema!]!
+  quantity: Float!
+  type: VariantType!
   name: String!
   description: String
   price: Float!
   created_at: DateTime!
   updated_at: DateTime!
   deletedAt: DateTime!
+}
+
+"""Show the status of stock item."""
+enum VariantType {
+  """
+  The product is already stocked and will be sent to the user instantly after payment approval
+  """
+  INSTANT
+
+  """The seller will send the product later to the user via his dashboard"""
+  ON_DEMAND
+}
+
+type ratingEntitySchema {
+  id: String!
+  value: Float!
+  userId: String!
+  description: String
+  created_at: DateTime!
 }
 
 type ProductEntity {
@@ -51,8 +71,9 @@ type ProductEntity {
   price: Float!
   quantity: Float!
   title: String!
-  description: String
+  description: String!
   image: [String!]!
+  ratings: [ratingEntitySchema!]!
   created_at: DateTime!
   updated_at: DateTime!
 }
@@ -62,6 +83,22 @@ type CategoryEntity {
   name: String!
   children: [CategoryEntity!]
   parent: CategoryEntity
+}
+
+type ProductSchemaObject {
+  id: String
+  user_id: String
+  published: Boolean
+  price: Float
+  quantity: Float
+  title: String
+  description: String
+  image: [String!]
+  ratings: [RatingSchema!]!
+  created_at: DateTime
+  updated_at: DateTime
+  user: UserSchema!
+  variant: [VariantSchema!]!
 }
 
 type AddressEntity {
@@ -93,19 +130,30 @@ type UserSchema {
   address: AddressEntity
 }
 
-type ProductSchema {
-  id: String
-  user_id: String
-  published: Boolean
-  price: Float
-  quantity: Float
-  title: String
-  description: String
-  image: [String!]
-  created_at: DateTime
-  updated_at: DateTime
-  user: UserSchema!
-  variant: [VariantSchema!]!
+type ProductOrderObject {
+  product: ProductSchemaObject!
+  quantity: Float!
+}
+
+type PublicUserSchema {
+  id: String!
+  name: String!
+}
+
+type OrderSchema {
+  id: String!
+  user_id: String!
+  total_price: Float!
+  products: [ProductSchemaObject!]!
+  status: OrderStatus!
+  user: UserEntity!
+}
+
+"""Show the status of stock item."""
+enum OrderStatus {
+  PENDING
+  FAILED
+  SUCCEEDED
 }
 
 type StockSchema {
@@ -119,16 +167,22 @@ type StockSchema {
 }
 
 type VariantSchema {
-  id: String
-  quantity: Float
-  stock: [StockSchema!]!
-  name: String
+  id: String!
+  type: VariantType!
+  name: String!
   description: String
-  price: Float
+  price: Float!
+  product: ProductSchemaObject!
+  stock: [StockSchema!]!
+}
+
+type RatingSchema {
+  id: String
+  value: Float
+  userId: String
+  description: String
   created_at: DateTime
-  updated_at: DateTime
-  deletedAt: DateTime
-  product: ProductSchema!
+  user: PublicUserSchema
 }
 
 type AuthTokenSchema {
@@ -156,8 +210,9 @@ input stockEntityInput {
 
 input variantEntityInput {
   id: String!
-  quantity: Float = 1
   stock: [stockEntityInput!]!
+  quantity: Float = 1
+  type: VariantType = INSTANT
   name: String!
   description: String
   price: Float!
@@ -166,14 +221,38 @@ input variantEntityInput {
   deletedAt: DateTime!
 }
 
+input ratingEntityInput {
+  id: String!
+  value: Float!
+  userId: String!
+  description: String
+  created_at: DateTime!
+}
+
+input ProductEntityInput {
+  id: String!
+  user_id: String!
+  published: Boolean = false
+  price: Float!
+  quantity: Float!
+  title: String!
+  description: String!
+  image: [String!]!
+  ratings: [ratingEntityInput!]!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
 type Query {
   users: UserEntity!
   me: UserSchema!
-  products: [ProductSchema!]!
-  showProduct(id: String!): ProductSchema!
+  products: [ProductSchemaObject!]!
+  showProduct(id: String!): ProductSchemaObject!
   getProductStock(id: String!): [StockSchema!]!
   showStock(id: String!): StockSchema!
   showVariant(id: String!): VariantSchema!
+  showRating(id: String!): RatingSchema!
+  orders: OrderSchema!
   categories: [CategoryEntity!]!
   showCategory(id: String!): CategoryEntity!
 }
@@ -181,8 +260,8 @@ type Query {
 type Mutation {
   login(data: LoginUserInput!): AuthTokenSchema!
   register(data: RegisterUserInput!): RegisterUserSchema!
-  createProduct(data: CreateProductInput!): ProductSchema!
-  updateProduct(id: String!, data: CreateProductInput!): ProductEntity!
+  createProduct(data: CreateProductInput!): ProductSchemaObject!
+  updateProduct(id: String!, data: UpdateProductInput!): ProductEntity!
   deleteProduct(id: String!): ProductEntity!
   createStock(data: CreateStockInput!): StockSchema!
   updateStock(id: String!, data: UpdateStockInput!): StockSchema!
@@ -191,6 +270,9 @@ type Mutation {
   createVariant(data: CreateVariantInput!): VariantSchema!
   updateVariant(id: String!, data: UpdateVariantInput!): VariantSchema!
   deleteVariant(id: String!): VariantSchema!
+  createRating(data: CreateRatingInput!): RatingSchema!
+  deleteOrder(id: String!): OrderSchema!
+  createOrder(products: [CreateOrderInput!]!): OrderSchema!
   createCategory(data: CreateCategoryInput!): CategoryEntity!
   updateCategory(id: Float!, data: CreateCategoryInput!): CategoryEntity!
   deleteCategory(id: String!): CategoryEntity!
@@ -211,10 +293,16 @@ input RegisterUserInput {
 
 input CreateProductInput {
   price: Float!
-  quantity: Float = 0
   title: String!
-  description: String
+  description: String!
   image: [String!]!
+}
+
+input UpdateProductInput {
+  price: Float
+  title: String
+  description: String
+  image: [String!]
 }
 
 input CreateStockInput {
@@ -232,6 +320,7 @@ input UpdateStockInput {
 }
 
 input CreateVariantInput {
+  type: VariantType = INSTANT
   name: String!
   description: String
   price: Float!
@@ -241,12 +330,23 @@ input CreateVariantInput {
 }
 
 input UpdateVariantInput {
-  name: String
+  type: VariantType = INSTANT
+  name: String!
   description: String
-  price: Float
+  price: Float!
+}
+
+input CreateRatingInput {
+  value: Float!
+  description: String
 
   """product id"""
-  productId: String
+  productId: String!
+}
+
+input CreateOrderInput {
+  quantity: Float!
+  id: String!
 }
 
 input CreateCategoryInput {
