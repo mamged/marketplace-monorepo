@@ -101,6 +101,16 @@ type ProductSchemaObject {
   variant: [VariantSchema!]!
 }
 
+type ProductOrderObject {
+  product: ProductSchemaObject!
+  quantity: Float!
+}
+
+type PublicUserSchema {
+  id: String!
+  name: String!
+}
+
 type AddressEntity {
   address_1: String!
   address_2: String!
@@ -122,29 +132,11 @@ type UserEntity {
   address: AddressEntity!
 }
 
-type UserSchema {
-  id: String!
-  seller: Boolean!
-  name: String!
-  email: String!
-  address: AddressEntity
-}
-
-type ProductOrderObject {
-  product: ProductSchemaObject!
-  quantity: Float!
-}
-
-type PublicUserSchema {
-  id: String!
-  name: String!
-}
-
 type OrderSchema {
   id: String!
   user_id: String!
   total_price: Float!
-  products: [ProductSchemaObject!]!
+  products: [ProductOrderObject!]!
   status: OrderStatus!
   user: UserEntity!
 }
@@ -154,6 +146,15 @@ enum OrderStatus {
   PENDING
   FAILED
   SUCCEEDED
+  CANCELLED
+}
+
+type UserSchema {
+  id: String!
+  seller: Boolean!
+  name: String!
+  email: String!
+  address: AddressEntity
 }
 
 type StockSchema {
@@ -346,6 +347,8 @@ input CreateRatingInput {
 
 input CreateOrderInput {
   quantity: Float!
+
+  """this suppose to be variant Id"""
   id: String!
 }
 

@@ -85,6 +85,15 @@ export class Variantservice {
       );
     });
   }
+  getVariantWithProduct(ids: string[]): Promise<VariantEntity[]> {
+    return this.Variants.findByIds(ids,{
+      relations: ['product']
+    }).catch(() => {
+      throw new RpcException(
+        new NotFoundException('Variant cannot be found...'),
+      );
+    });
+  }
   showVariantStock(id: string){
     return this.stockservice.getStockByVariantId(id);
   }

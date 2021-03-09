@@ -13,6 +13,7 @@ export enum OrderStatus {
   PENDING = 'PENDING',
   FAILED = 'FAILED',
   SUCCEEDED = 'SUCCEEDED',
+  CANCELLED = 'CANCELLED',
 }
 
 registerEnumType(OrderStatus, {
@@ -21,7 +22,8 @@ registerEnumType(OrderStatus, {
   valuesMap: {
     PENDING: {},
     FAILED: {},
-    SUCCEEDED: {}
+    SUCCEEDED: {},
+    CANCELLED: {},
   },
 });
 
@@ -53,6 +55,7 @@ export class OrderEntity extends BaseEntity {
     default: OrderStatus.PENDING,
   })
   status: string;
+
   @CreateDateColumn()
   created_at: Date;
   @UpdateDateColumn()

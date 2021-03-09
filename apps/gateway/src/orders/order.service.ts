@@ -1,6 +1,6 @@
 import { Client, ClientProxy, Transport } from '@nestjs/microservices';
 import { Injectable } from '@nestjs/common';
-import { UserDTO, ProductDTO, OrderDTO, ProductOrder } from '@commerce/shared';
+import { UserDTO, ProductDTO, ProductOrder } from '@commerce/shared';
 
 import { config } from '@commerce/shared';
 import { redis, redisProductsKey } from '../utils/redis';
@@ -11,6 +11,7 @@ import { OrderSchema } from './schema/order.schema';
 import { ProductSchema } from '../products/schema/product.schema';
 import { CreateProductInput } from '../products/input/create-product.input';
 import { CreateOrderInput } from './input/create-order.input';
+import { ProductEntity } from '@commerce/products';
 @Injectable()
 export class OrderService {
   @Client({
@@ -42,18 +43,22 @@ export class OrderService {
         });
     });
   }
-  store(products: any, user_id, fetchedProducts): Promise<Product[]> {
+  store(
+    products: CreateOrderInput[],
+    user_id,
+    fetchedProducts,
+  ): Promise<ProductEntity[]> {
     return new Promise((resolve, reject) => {
       const mappedProducts = fetchedProducts
         .map((product) => {
           // find the product which user passed, to retrieve the ordered quantity.
           let orederedProduct = products.find((p) => p.id === product.id);
           if (orederedProduct) {
-            return { ...product, ordered_quantity: orederedProduct.quantity };
+            return { product, quantity: orederedProduct.quantity };
           }
           return product;
         })
-        .filter((product) => !!product.ordered_quantity);
+        .filter((product) => !!product.quantity);
       this.client
         .send('create_order', {
           products: mappedProducts,
@@ -72,18 +77,23 @@ export class OrderService {
         );
     });
   }
-  createOrder(orderProducts: CreateOrderInput[], user): Promise<Product[]> {
+  createOrder(
+    orderProducts: CreateOrderInput[],
+    user,
+  ): Promise<ProductEntity[]> {
     return new Promise((resolve, reject) => {
       // fetch products user is trying to purchase to check on the quantity.
       this.client
         .send<ProductSchema[]>(
-          'fetch-products-by-ids',
+          'get-variants-with-product',
           orderProducts.map((product) => product.id),
         )
         .subscribe(
           async (fetchedProducts) => {
             const filteredProducts = orderProducts.filter((product) => {
-              const pp: ProductSchema = fetchedProducts.find((p) => p.id === product.id);
+              const pp: ProductSchema = fetchedProducts.find(
+                (p) => p.id === product.id,
+              );
               return pp.quantity >= product.quantity;
             });
             // there is something wrong with the quantity of passed products.
@@ -92,9 +102,8 @@ export class OrderService {
                 'Products are out of stock at the moment, try with lower stock.',
               );
             }
-            console.log('$$products$$',orderProducts);
             return resolve(
-              await this.store(orderProducts, user.id, fetchedProducts)
+              await this.store(orderProducts, user.id, fetchedProducts),
             );
           },
           (error) => reject(error),

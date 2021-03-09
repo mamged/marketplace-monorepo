@@ -34,6 +34,10 @@ export class VariantController {
   getVariantByProductId(id: string): Promise<ProductEntity> {
     return this.Variants.getProductByVariantId(id);
   }
+  @MessagePattern('get-variants-with-product')
+  getVariantWithProduct(ids: string[]): Promise<VariantEntity[]> {
+    return this.Variants.getVariantWithProduct(ids);
+  }
   @MessagePattern('delete-variant')
   destroy({ id, user_id }: { id: string; user_id: string }) {
     return this.Variants.destroy(id, user_id);

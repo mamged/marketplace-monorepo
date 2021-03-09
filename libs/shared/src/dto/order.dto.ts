@@ -14,12 +14,8 @@ export class ProductOrder {
   quantity: number;
 }
 export abstract class OrderDTO {
-  @Field(type => UserSchema)
-  user: UserSchema;
   @Field()
-  totalPrice: number;
+  user_id: string;
   @Field(type => ProductOrder)
   products: ProductOrder[];
-  @Field(type => Date)
-  created_at: Date;
 }

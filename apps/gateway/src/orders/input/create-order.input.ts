@@ -10,6 +10,6 @@ export class CreateOrderInput {
   quantity: number;
   @IsUUID()
   @IsNotEmpty()
-  @Field()
+  @Field({description: "this suppose to be variant Id"})
   id: string;
 }

@@ -1,16 +1,16 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-
-import { OrderEntity as Order } from './order.entity';
+import { OrderEntity } from './order.entity';
 import { OrderDTO } from '@commerce/shared';
+
 @Injectable()
 export class OrderService {
   constructor(
-    @InjectRepository(Order)
-    private readonly orders: Repository<Order>,
+    @InjectRepository(OrderEntity)
+    private readonly orders: Repository<OrderEntity>,
   ) {}
-  async get(user_id: string): Promise<Order[]> {
+  async get(user_id: string): Promise<OrderEntity[]> {
     return this.orders.find({ user_id });
   }
   async markOrderStatus(id, status) {
@@ -21,31 +21,36 @@ export class OrderService {
   async findByIdAndUserId(id, user_id) {
     return this.orders.findOneOrFail({ id, user_id });
   }
-  async create({ products, user_id }): Promise<Order> {
+  async create({ products, user_id }: OrderDTO): Promise<OrderEntity> {
+    // console.log('!!!products!!!', products);
     const INITIAL_VALUE = 0;
     const total_price = products.reduce(
-      (accumulator, product) =>
-        accumulator + product.ordered_quantity * product.price,
+      (accumulator, Orderedproduct) =>
+        accumulator + Orderedproduct.quantity * Orderedproduct.product.price,
       INITIAL_VALUE,
     );
-    const databaseProducts = products.map((product) => {
+    const databaseProducts = products.map((Orderedproduct) => {
       //add price to the order to avoid price changes by seller in the future after order placed
-      return { id: product.id, quantity: product.ordered_quantity, price: product.price };
+      return { id: Orderedproduct.product.id, quantity: Orderedproduct.quantity, price: Orderedproduct.product.price };
     });
-    const actualProducts = products.map((product) => {
-      product.quantity = product.quantity - product.ordered_quantity;
-      delete product.ordered_quantity;
-      return { ...product };
-    });
-    products = databaseProducts;
+    // const actualProducts = products.map((Orderedproduct) => {
+    //   Orderedproduct.quantity = Orderedproduct.quantity - Orderedproduct.quantity;
+    //   delete Orderedproduct.quantity;
+    //   return { ...Orderedproduct.product };
+    // });
 
     const order = await this.orders.create({
-      products,
+      products: databaseProducts,
       user_id,
       total_price,
     });
     await this.orders.save(order);
-    order.products = actualProducts;
+    
+    
+    // console.log('!!!databaseProducts!!!',databaseProducts)
+    // const returnedVal = {...order, products};
+    order.products = products;
+    console.log('!!!order!!!', order);
     return order;
   }
   async destroy({ id, user_id }) {

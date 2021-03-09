@@ -1,6 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { MessagePattern, EventPattern } from '@nestjs/microservices';
+import { OrderDTO } from '@commerce/shared';
 @Controller('orders')
 export class OrderController {
   constructor(private readonly orders: OrderService) {}
@@ -18,7 +19,7 @@ export class OrderController {
     return this.orders.destroy({ id, user_id });
   }
   @MessagePattern('create_order')
-  store(data: any) {
+  store(data: OrderDTO) {
     return this.orders.create(data);
   }
   @EventPattern('order_charged')

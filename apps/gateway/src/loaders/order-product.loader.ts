@@ -23,7 +23,7 @@ export class OrderProductDataLoader implements IDataLoader<string, ProductDTO> {
             product: fetchedProducts.find(
               (entity) => entity.toString() === product.id,
             ),
-            quantity_ordered: products.find((p) => p.id === product.id)
+            quantity: products.find((p) => p.id === product.id)
               .quantity,
           };
         });

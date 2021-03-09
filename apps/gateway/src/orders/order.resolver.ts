@@ -12,9 +12,7 @@ import { UseGuards } from '@nestjs/common';
 import {
   config,
   ProductDTO,
-  OrderDTO,
   UserDTO,
-  ProductOrder,
 } from '@commerce/shared';
 import { UserEntity } from '@commerce/users';
 import { ProductEntity } from '@commerce/products';
@@ -26,7 +24,6 @@ import { OrderService } from './order.service';
 import { UUID } from '../shared/validation/uuid.validation';
 import { UserDataLoader } from '../loaders/user.loader';
 // import { Order, ProductInput } from "../schemas/graphql";
-import { Product } from 'src/schemas/graphql';
 import { OrderSchema } from './schema/order.schema';
 import { ProductSchema } from '../products/schema/product.schema';
 
@@ -49,10 +46,6 @@ export class OrderResolver {
   async user(@Parent() order: OrderSchema): Promise<UserDTO> {
     return this.usersDataLoader.load(order.user_id);
   }
-  @ResolveField(() => [ProductSchema])
-  async products(@Parent() order: OrderEntity): Promise<ProductDTO[]> {
-    return this.orderProductLoader.loadMany(order.products);
-  }
   @Query(returns => OrderSchema)
   @UseGuards(new AuthGuard())
   orders(@Context('user') user: any): Promise<OrderSchema[]> {
@@ -69,7 +62,7 @@ export class OrderResolver {
     @Args('products', { type: () => [CreateOrderInput] })
     products: CreateOrderInput[],
     @Context('user') user: any,
-  ): Promise<Product[]> {
+  ): Promise<ProductEntity[]> {
     return this.orderService.createOrder(products, user);
   }
 }
