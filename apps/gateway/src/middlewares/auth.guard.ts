@@ -18,18 +18,19 @@ import { Request } from 'express';
 export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
+    const ctx: any = GqlExecutionContext.create(context).getContext();
+    const authHeader = request?.headers?.authorization || ctx?.req[Object.getOwnPropertySymbols(ctx?.req)[1]]?.authorization;
     if (request) {
-      if (!request.headers.authorization) {
+      if (!authHeader) {
         return false;
       }
-      await this.validateToken(request.headers.authorization);
+      await this.validateToken(authHeader);
       return true;
     } else {
-      const ctx: any = GqlExecutionContext.create(context).getContext();
-      if (!ctx.headers.authorization) {
+      if (!ctx?.req[Object.getOwnPropertySymbols(ctx?.req)[1]]?.authorization) {
         return false;
       }
-      ctx.user = await this.validateToken(ctx.headers.authorization);
+      ctx.user = await this.validateToken(authHeader);
       return true;
     }
   }
