@@ -4,7 +4,15 @@
 
 ## Description
 
-An event-driven multi-seller marketplace backend
+An event-driven multi-seller marketplace backend.
+Built with Nestjs.
+
+- 🛍️ Order management.
+- ％ Product discounts.
+- 🎟️ Voucher management.
+- 🤑 Customer refund wallet.
+- 🚚 Shipping rates.
+- 🧾 Tax configuration per region.
 
 
 ## Installation
